@@ -1,0 +1,12 @@
+*.o
+*.a
+*.out
+*.rar
+*.zip
+*.json
+.vscode
+vgcore.*
+log/
+# Temporary
+*.html
+*.txt
