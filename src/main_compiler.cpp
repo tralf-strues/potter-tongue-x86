@@ -313,13 +313,13 @@ void makeGraphDump(const FlagManager* flagManager, const Node* tree, bool detail
     assert(tree);
     assert(graphDump);
 
-    int count = counterFileUpdate("log/tree_dumps/graph/count.cnt");
+    int count = counterFileUpdate("../examples/log/tree_dumps/graph/count.cnt");
        
     char textFilename[MAX_FILENAME_LENGTH] = {};
-    snprintf(textFilename, sizeof(textFilename), "%s%u.txt", "log/tree_dumps/graph/text/tree", count);
+    snprintf(textFilename, sizeof(textFilename), "%s%u.txt", "../examples/log/tree_dumps/graph/text/tree", count);
     
     char imageFilename[MAX_FILENAME_LENGTH] = {};
-    snprintf(imageFilename, sizeof(imageFilename), "%s%u.svg", "log/tree_dumps/graph/img/tree", count);
+    snprintf(imageFilename, sizeof(imageFilename), "%s%u.svg", "../examples/log/tree_dumps/graph/img/tree", count);
 
     graphDump(tree, textFilename, imageFilename, detailed);
 
@@ -355,7 +355,7 @@ Error compile(const FlagManager* flagManager)
 
     if (flagManager->tokenDumpEnabled)
     {
-        FILE* tokensDumpFile = fopen("dumped_tokens.txt", "w");
+        FILE* tokensDumpFile = fopen("../examples/log/dumped_tokens.txt", "w");
         assert(tokensDumpFile);
 
         dumpTokens(tokenizer.tokens, tokenizer.tokensCount, tokensDumpFile);
@@ -391,7 +391,7 @@ Error compile(const FlagManager* flagManager)
 
     if (flagManager->treeDumpEnabled)
     {
-        FILE* file = fopen("dumped_tree.txt", "w");
+        FILE* file = fopen("../examples/log/dumped_tree.txt", "w");
         assert(file);
 
         dumpToFile(file, tree);
