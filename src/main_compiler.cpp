@@ -358,7 +358,7 @@ Error compile(const FlagManager* flagManager)
         FILE* tokensDumpFile = fopen("../examples/log/dumped_tokens.txt", "w");
         assert(tokensDumpFile);
 
-        dumpTokens(tokenizer.tokens, tokenizer.tokensCount, tokensDumpFile);
+        dumpTokens(&tokenizer, tokensDumpFile);
 
         fclose(tokensDumpFile);
     }

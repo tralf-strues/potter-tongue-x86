@@ -211,32 +211,7 @@ void syntaxError(Parser* parser, ParseError error)
 
     printf("SYNTAX ERROR: %s\n", errorString(error));
 
-    Token       token      = *curToken(parser);
-    const char* lineStart  = token.pos;
-    const char* lineEnd    = token.pos;
-
-    const char* buffer     = parser->tokenizer->buffer;
-    size_t      bufferSize = parser->tokenizer->bufferSize;
-
-    while (lineStart > buffer && *(lineStart - 1) != '\n' && *lineStart != '\n')
-    {
-        lineStart--;
-    }
-
-    while (lineEnd < buffer + bufferSize && *(lineEnd + 1) != '\n' && *lineEnd != '\n')
-    {
-        lineEnd++;
-    }
-
-    int lineOffset = digitsCount(token.line + 1) + 1;
-    printf("%zu|%.*s\n", token.line + 1, (int) (lineEnd - lineStart + 1), lineStart);
-
-    for (size_t i = 0; i + lineStart < token.pos + lineOffset; i++)
-    {
-        putchar(' ');
-    }
-
-    printf("^\n");
+    printTokenLinePos(parser->tokenizer, curToken(parser), stdout, nullptr);
 }
 
 ParseError parseProgram(Parser* parser, SymbolTable* table, Node** root)

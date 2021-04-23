@@ -345,10 +345,51 @@ bool processId(Tokenizer* tokenizer)
     return true;
 }
 
-void dumpTokens(const Token* tokens, size_t count, FILE* file)
+void printTokenLinePos(const Tokenizer* tokenizer, const Token* token, FILE* file, const char* offsetString)
 {
-    assert(tokens);
+    ASSERT_TOKENIZER(tokenizer);
+    assert(token);
     assert(file);
+
+    const char* lineStart  = token->pos;
+    const char* lineEnd    = token->pos;
+
+    const char* buffer     = tokenizer->buffer;
+    size_t      bufferSize = tokenizer->bufferSize;
+
+    if (*lineStart == '\n') { lineStart--; }
+    while (lineStart > buffer && *(lineStart - 1) != '\n' && *lineStart != '\n')
+    {
+        lineStart--;
+    }
+
+    if (*lineEnd == '\n') { lineEnd--; }
+    while (lineEnd < buffer + bufferSize && *(lineEnd + 1) != '\n' && *lineEnd != '\n')
+    {
+        lineEnd++;
+    }
+
+    int lineOffset = digitsCount(token->line + 1) + 1;
+    
+    if (offsetString != nullptr) { fprintf(file, offsetString); }
+    fprintf(file, "%zu|%.*s\n", token->line + 1, (int) (lineEnd - lineStart + 1), lineStart);
+
+    if (offsetString != nullptr) { fprintf(file, offsetString); }
+    for (size_t i = 0; i + lineStart < token->pos + lineOffset; i++)
+    {
+        fputc(' ', file);
+    }
+
+    fprintf(file, "^\n");
+}
+
+void dumpTokens(const Tokenizer* tokenizer, FILE* file)
+{
+    ASSERT_TOKENIZER(tokenizer);
+    assert(file);
+
+    const Token* tokens = tokenizer->tokens;
+    size_t       count  = tokenizer->tokensCount;
 
     for (size_t i = 0; i < count; i++)
     {
@@ -399,17 +440,9 @@ void dumpTokens(const Token* tokens, size_t count, FILE* file)
             }
         }
 
-        fprintf(file, "\tline = %zu\n", tokens[i].line);
-
-        if (tokens[i].pos[0] == '\n')
-        {
-            fprintf(file, "\tpos  = '\\n'\n\n");
-        }
-        else
-        {
-            size_t length = strcspn(tokens[i].pos, "\n");
-            fprintf(file, "\tpos  = '%.*s'\n\n", (int) length, tokens[i].pos);
-        }
+        printTokenLinePos(tokenizer, tokens + i, file, "\t");
+        
+        if (i + 1 == count) { fputc('\n', file); }
     }
 }
 

@@ -1,11 +1,23 @@
-# Overview
+# Potter Tongue for x86-64
 
-# New features for potter-tongue
-## 1. Switch from float to integer :abacus:
+**Contents**
+- **[New features for potter-tongue](#new-features-for-potter-tongue)**
+  - [1. Switch from float to integer](#1-switch-from-float-to-integer-abacus)
+    - [Arithmetic operations and sqrt](#arithmetic-operations-and-sqrt)
+    - [Input and output](#input-and-output)
+  - [2. Constant strings](#2-constant-strings-scroll)
+    - [Declaring global strings](#a-declaring-global-strings)
+    - [Passing strings to flagrate](#b-passing-strings-to-flagrate)
+    - [Writing new-line character](#c-writing-new-line-character)
+  - [3. Arrays](#3-arrays-link)
+  - [4. Void functions](#4-void-functions-waning_crescent_moon)
+- **[Final language grammar :pencil:](#final-language-grammar-pencil)**
+
+## New features for potter-tongue
+### 1. Switch from float to integer :abacus:
 First things first, my language used floating-point numbers. Now I would like it to only be able to have integer type. Noninteger values will therefore have to be manually interpreted as fixed-point. This particularly means **no need in "colloshoo" (floor)** function. 
 
-### Working with fixed-point interpretation
-Suppose, for example, we want to have precision equal to 4 digits after the decimal point. Several problem arise with this approach.
+It's important to look at how working with fixed-point interpretation is done. Suppose, for example, we want to have precision equal to 4 digits after the decimal point. Several problem arise with this approach.
 
 #### Arithmetic operations and sqrt
 Let's look at how arithmetic operations change. *Addition* and *subtraction* stay the same. We just imagine there is no decimal point. *Multiplication* is a bit trickier - after it you would have to divide the result by the precision (in our case 4). Similar to multiplication, *division* and *sqrt* are done by firstly multiplying the dividend by the precision (in our case 4).
@@ -38,31 +50,31 @@ Input       | Return value | Case
 *22.020202* | 220202       | frac > precision (truncation!)
 > Here frac is length of the fractional part. 
 
-## 2. Constant strings :scroll:
+### 2. Constant strings :scroll:
 Strings are an integral part of almost all programming languages. That being said, potter-tongue doesn't support them :see_no_evil:. But not anymore! You can now declare ***global strings*** and ***pass strings to `flagrate`*** function, as well as switch to ***new line***.
 
-### a. Declaring global strings
+#### Declaring global strings
 Global strings can be declared pretty easily. Below a string called `<<The boy who lived>>` is declared. It contains string "Hello, World!" (without quotes). Note, that string declarations are allowed only ***before function declarations***!
 ```
 Chapter <<StringName>> "String"
 Chapter <<The boy who lived>> "Hello, World!"
 ```
 
-### b. Passing strings to flagrate
+#### Passing strings to flagrate
 Flagrate can now be passed either a global or local string. The syntax looks like the following:
 ```
-- flagrate <<The boy who lived>> (oNo) Prints "Hello, World!"
-- flagrate "Hello, World!"       (oNo) The same as the previous
+- flagrate <<TheBoyWhoLived>> (oNo) Prints "Hello, World!"
+- flagrate "Hello, World!"    (oNo) The same as the previous
 ``` 
 
-### c. Writing new-line character
+#### Writing new-line character
 In order to switch printing to the next line, you can just use the `circumrota` keyword with flagrate.
 
 ```
 - flagrate circumrota (oNo) Prints new-line character
 ```
 
-## 3. Arrays :link:
+### 3. Arrays :link:
 Next, I decided to add arrays of integer numbers. They can be created in functions, but ***only inside the main scope*** of a function (i.e. you cannot declare them inside a conditional statement or loop!).
 ```
 - capacious-extremis <ArrayName>, <Expression> (oNo) creates array of size Exression
@@ -80,7 +92,7 @@ Accessing elements of an array.
 - avenseguim a carpe-retractum array~0~ epoximise array~1~ epoximise array~2~
 ```
 
-## 4. Void functions :waning_crescent_moon:
+### 4. Void functions :waning_crescent_moon:
 Previously all functions were supposed to return something. With the introduction of void functions, the syntax for function declaration has to change. Now if you don't want a function to have a return value, then you specify it using the keyword `horcrux` before name of the function.
 ```
 (oNo) Declares a function with a return value
@@ -96,7 +108,7 @@ alohomora
 colloportus
 ```
 
-# Final language grammar :pencil:
+## Final language grammar :pencil:
 Finally, the grammar is ready and I can begin incorporating aforementioned features into the compiler.
 ```
 ================================================================================
@@ -168,7 +180,7 @@ Sqrt         ::= sqrt ( Expression )
 ExprList     ::= Expression {, Expression}*
 ParamList    ::= horcrux | Var {, Var}*
 
-StringName   ::= '<<' String '>>'
+StringName   ::= '<<' Var '>>'
 StringQuoted ::= '"' String '"'
 String       ::= ['A'-'Z', 'a'-'z', ' ']+
 Var          ::= ['A'-'Z', 'a'-'z']+

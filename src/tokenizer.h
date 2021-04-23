@@ -54,8 +54,9 @@ bool isId               (const Token* token, const char* id);
 bool isComparand        (const Token* token);
 bool isTerm             (const Token* token);
 bool isFactor           (const Token* token);
- 
+
 void tokenizeBuffer     (Tokenizer* tokenizer);
-void dumpTokens         (const Token* tokens, size_t count, FILE* file);
+void printTokenLinePos  (const Tokenizer* tokenizer, const Token* token, FILE* file, const char* offsetString);  
+void dumpTokens         (const Tokenizer* tokenizer, FILE* file);
 
 const char* tokenTypeToString(TokenType type);
