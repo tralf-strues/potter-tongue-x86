@@ -38,7 +38,7 @@ bool   requireNewLines     (Parser* parser);
 void   syntaxError         (Parser* parser, ParseError error);
 
 Node*  parseProgramBody    (Parser* parser);
-// Node*  parseSDeclaration   (Parser* parser);
+Node*  parseSDeclaration   (Parser* parser);
 Node*  parseFDeclaration   (Parser* parser);
 
 Node*  parseBlock          (Parser* parser);
@@ -65,6 +65,7 @@ Node*  parseStandardFunc   (Parser* parser, KeywordCode keywordCode);
 Node*  parseExprList       (Parser* parser);
 Node*  parseParamList      (Parser* parser);
 
+Node*  parseStringId       (Parser* parser);
 Node*  parseQuotedString   (Parser* parser);
 Node*  parseId             (Parser* parser);
 Node*  parseNumber         (Parser* parser);
@@ -238,33 +239,81 @@ Node* parseProgramBody(Parser* parser)
     ASSERT_PARSER(parser);
     CHECK_END_REACHED(nullptr);
 
-    Node* root = parseFDeclaration(parser);
-
-    if (root == nullptr) { SYNTAX_ERROR(PARSE_ERROR_FUNCTION_DECLARATION_NEEDED); }
-
-    Node* prevFDeclaration = root;
-    Node* nextFDeclaration = nullptr;
-
-    while ((nextFDeclaration = parseFDeclaration(parser)) != nullptr)
+    Node* root             = parseSDeclaration(parser);
+    Node* lastSDeclaration = root;
+    if (root != nullptr)
     {
-        setLeft(prevFDeclaration, nextFDeclaration);
-        
-        prevFDeclaration = nextFDeclaration;
+        Node* nextSDeclaration = nullptr;
+
+        while ((nextSDeclaration = parseSDeclaration(parser)) != nullptr)
+        {
+            setLeft(lastSDeclaration, nextSDeclaration);
+            
+            lastSDeclaration = nextSDeclaration;
+        }
+    }
+
+    Node* lastFDeclaration = parseFDeclaration(parser);
+    if (root == nullptr)
+    {
+        root = lastFDeclaration; 
+    }
+    else
+    {
+        setLeft(lastSDeclaration, lastFDeclaration);
+    }
+
+    if (lastFDeclaration == nullptr) 
+    { 
+        SYNTAX_ERROR(PARSE_ERROR_FUNCTION_DECLARATION_NEEDED); 
+    }
+
+    Node* nextFDeclaration = nullptr;
+    Node* nextSDeclaration = nullptr; 
+    while (true)
+    {
+        nextSDeclaration = parseSDeclaration(parser);
+        if (nextSDeclaration != nullptr)
+        {
+            SYNTAX_ERROR(PARSE_ERROR_STRING_DECLARATION_AFTER_FIRST_FUNCTION_DECLARATION);
+        }
+
+        nextFDeclaration = parseFDeclaration(parser);
+        if (nextFDeclaration == nullptr) { break; }
+
+        setLeft(lastFDeclaration, nextFDeclaration);
+        lastFDeclaration = nextFDeclaration;
     }
 
     return root;
 }
 
-// Node* parseSDeclaration(Parser* parser)
-// {
-//     ASSERT_PARSER(parser);
-//     CHECK_END_REACHED(nullptr);
+Node* parseSDeclaration(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+    CHECK_END_REACHED(nullptr);
 
-//     if (!isKeyword(curToken(parser), STR_QUOTE_KEYWORD)) { return nullptr; }
-//     proceed(parser);
+    if (!isKeyword(curToken(parser), SDECL_KEYWORD)) { return nullptr; }
+    proceed(parser);
 
-//     Node* stringQuoted = parse
-// }
+    Node* stringDeclaration = newNode(SDECL_TYPE, {}, nullptr, nullptr);
+    setRight(stringDeclaration, parseStringId(parser));
+    
+    if (stringDeclaration->right == nullptr)
+    {
+        SYNTAX_ERROR(PARSE_ERROR_NO_STRING_ID_IN_DECLARATION);
+    }
+
+    setRight(stringDeclaration->right, parseQuotedString(parser));
+    if (stringDeclaration->right->right == nullptr)
+    {
+        SYNTAX_ERROR(PARSE_ERROR_NO_QUOTED_STRING_IN_DECLARATION);
+    }
+
+    REQUIRE_NEW_LINES();
+
+    return stringDeclaration;
+}
 
 Node* parseFDeclaration(Parser* parser)
 {
@@ -673,6 +722,12 @@ Node* parsePrint(Parser* parser)
     if (!isKeyword(curToken(parser), PRINT_KEYWORD)) { return nullptr; }
     proceed(parser);
 
+    Node* stringId = parseStringId(parser);
+    if (stringId != nullptr)
+    {
+        return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), stringId);
+    }
+
     Node* quotedString = parseQuotedString(parser);
     if (quotedString != nullptr)
     {
@@ -790,6 +845,25 @@ Node* parseParamList(Parser* parser)
     return param;
 }
 
+Node* parseStringId(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+
+    if (!isKeyword(curToken(parser), STR_ID_OPEN_KEYWORD)) { return nullptr; }
+    proceed(parser);
+
+    Node* stringId = parseId(parser);
+    if (stringId == nullptr) { SYNTAX_ERROR(PARSE_ERROR_ID_NEEDED); }
+
+    if (!isKeyword(curToken(parser), STR_ID_CLOSE_KEYWORD))
+    {
+        SYNTAX_ERROR(PARSE_ERROR_NO_CLOSE_STRING_ID);
+    }
+    proceed(parser);
+
+    return stringId;
+}
+
 Node* parseQuotedString(Parser* parser)
 {
     ASSERT_PARSER(parser);
@@ -808,12 +882,8 @@ Node* parseQuotedString(Parser* parser)
                            nullptr);
 
     proceed(parser);
-    if (!isKeyword(curToken(parser), STR_QUOTE_KEYWORD)) 
-    { 
-        SYNTAX_ERROR(PARSE_ERROR_NO_SECOND_QUOTE_AFTER_STRING);
-    }
+    REQUIRE_KEYWORD(STR_QUOTE_KEYWORD, PARSE_ERROR_NO_SECOND_QUOTE_AFTER_STRING);
     
-    proceed(parser);
     return string;
 }
 

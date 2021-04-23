@@ -30,6 +30,7 @@ const char* NODE_GRAPH_STYLES[TYPES_COUNT] = {
         "",                                                                  /* MATH_TYPE      */
         ", color=\"#D2691E\", fillcolor=\"#FFFAEF\", fontcolor=\"#FF7F50\"", /* NUMBER_TYPE    */
 
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* SDECL_TYPE     */
         ", color=\"#75A673\", fillcolor=\"#EDFFED\", fontcolor=\"#75A673\""  /* STRING_TYPE    */
     };
 
@@ -192,7 +193,7 @@ int counterFileUpdate(const char* filename)
     }
     else
     {
-        fscanf(counterFile, "%d", &count);
+        fscanf(counterFile, "%d", &count); 
         fseek(counterFile, 0, SEEK_SET);
     }
 
@@ -251,7 +252,7 @@ void graphDumpSubtree(FILE* file, const Node* node, bool detailed)
     {
         case FDECL_TYPE:     
         { 
-            fprintf(file, "D (%s)", data.isVoidFunction ? "void" : "non-void"); 
+            fprintf(file, "FDECL (%s)", data.isVoidFunction ? "void" : "non-void"); 
             break; 
         }
         
@@ -272,7 +273,8 @@ void graphDumpSubtree(FILE* file, const Node* node, bool detailed)
         
         case MATH_TYPE:      { fprintf(file, "\\%s", mathOpToString(data.operation)); break; } 
         case NUMBER_TYPE:    { fprintf(file, "%" PRId64 "", data.number);             break; } 
-        case STRING_TYPE:    { fprintf(file, "\\\"%s\\\"", data.string);              break; } 
+        case SDECL_TYPE:     { fprintf(file, "SDECL");                                break; } 
+        case STRING_TYPE:    { fprintf(file, "\\\"%s\\\"",  data.string);             break; } 
 
         default:    
         { 
@@ -489,6 +491,7 @@ const char* nodeTypeToString(NodeType type)
         case MATH_TYPE:      { return TO_STR(MATH_TYPE);      }
         case NUMBER_TYPE:    { return TO_STR(NUMBER_TYPE);    }
 
+        case SDECL_TYPE:     { return TO_STR(SDECL_TYPE);     }
         case STRING_TYPE:    { return TO_STR(STRING_TYPE);    }
 
         default:             { return nullptr;                }          

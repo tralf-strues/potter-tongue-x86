@@ -150,7 +150,7 @@ return  ::= 'reverte'
 Grammar      ::= 'Godric's-Hollow' Var NewLines ProgramBody 'Privet-Drive'
 
 ProgramBody  ::= {StringDecl}+ {FunctionDecl}+
-StringDecl   ::= 'Chapter' StringName StringQuoted
+StringDecl   ::= 'Chapter' StringName StringQuoted NewLines
 FunctionDecl ::= 'imperio' Var ParamList Block | 'imperio' horcrux Var ParamList Block
 
 Block        ::= NewLines { NewLines Statement* NewLines } NewLines
@@ -161,12 +161,12 @@ Jump         ::= return Expression
 Expression   ::= Comparand {[<, >, ==, !=, <=, >=] Comparand}*
 Comparand    ::= Term {[+, -] Term}*
 Term         ::= Factor {[*, /] Factor}*
-Factor       ::= ( Expression ) | Num | *Var | Call | Read | Sqrt | randjmp
+Factor       ::= ( Expression ) | Num | *Var | Call | Read | Sqrt | randjmp | MemAccess
 
 Condition    ::= 'revelio' ( Expression ) Block 'otherwise' Block | 'revelio' ( Expression ) Block
 Loop         ::= 'while' ( Expression ) Block
 
-ArrayDecl    ::= 'capacious-extremis' Var ',' Expression
+ArrayDecl    ::= 'capacious' Var ',' Expression
 VariableDecl ::= 'avenseguim' Assignment
 
 Assignment   ::= LValue = Expression

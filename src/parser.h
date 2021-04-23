@@ -56,6 +56,10 @@ enum ParseError
 
     PARSE_ERROR_NO_STRING_AFTER_QUOTE,
     PARSE_ERROR_NO_SECOND_QUOTE_AFTER_STRING,
+    PARSE_ERROR_NO_CLOSE_STRING_ID,
+    PARSE_ERROR_NO_STRING_ID_IN_DECLARATION,
+    PARSE_ERROR_NO_QUOTED_STRING_IN_DECLARATION,
+    PARSE_ERROR_STRING_DECLARATION_AFTER_FIRST_FUNCTION_DECLARATION,
 
     TOTAL_PARSE_ERRORS
 };
@@ -111,6 +115,11 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
 
     "after an opening quote \" there has to be a string",
     "quoted string has to have a closing \" after a string",
+
+    "global string reference has to end with '>>'",
+    "there has to be <<StringName>> after 'Chapter' in global string declaration",
+    "there has to be \"String\" after <<StringName>>  in global string declaration",
+    "all global string have to be declared before any function declarations"
 };
 
 struct Parser

@@ -69,6 +69,8 @@ enum KeywordCode
     LESS_KEYWORD,
     GREATER_KEYWORD,
 
+    // ADECL_KEYWORD,
+
     STR_QUOTE_KEYWORD,
     SDECL_KEYWORD,
     STR_ID_OPEN_KEYWORD,
@@ -141,6 +143,8 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] = {
     { "greater-equal",   13, GREATER_EQUAL_KEYWORD, TO_STR(GREATER_EQUAL_KEYWORD) }, 
     { "less",            4,  LESS_KEYWORD,          TO_STR(LESS_KEYWORD)          },
     { "greater",         7,  GREATER_KEYWORD,       TO_STR(GREATER_KEYWORD)       },
+    
+    // { "capacious",       9,  ADECL_KEYWORD,         TO_STR(ADECL_KEYWORD)         },
     
     { "\"",              1,  STR_QUOTE_KEYWORD,     TO_STR(STR_QUOTE_KEYWORD)     },
     { "Chapter",         7,  SDECL_KEYWORD,         TO_STR(SDECL_KEYWORD)         },

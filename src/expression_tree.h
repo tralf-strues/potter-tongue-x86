@@ -13,7 +13,6 @@ union NodeData
     const char* string;
 };
 
-// FIXME: change all names 
 enum NodeType
 {
     FDECL_TYPE,
@@ -37,6 +36,7 @@ enum NodeType
     MATH_TYPE,
     NUMBER_TYPE,
 
+    SDECL_TYPE,
     STRING_TYPE,
 
     TYPES_COUNT
