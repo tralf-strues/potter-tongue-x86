@@ -311,7 +311,6 @@ void makeGraphDump(const FlagManager* flagManager, const Node* tree, bool detail
 {
     assert(flagManager);
     assert(tree);
-    assert(graphDump);
 
     int count = counterFileUpdate("../examples/log/tree_dumps/graph/count.cnt");
        

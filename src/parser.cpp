@@ -55,10 +55,13 @@ Node*  parseCondition      (Parser* parser);
 Node*  parseLoop           (Parser* parser);
 
 Node*  parseVDeclaration   (Parser* parser);
+Node*  parseADeclaration   (Parser* parser);
 
 Node*  parseAssignment     (Parser* parser);
+Node*  parseLValue         (Parser* parser);
 
 Node*  parseCall           (Parser* parser);
+Node*  parsePrintFloat     (Parser* parser);
 Node*  parsePrint          (Parser* parser);
 Node*  parseStandardFunc   (Parser* parser, KeywordCode keywordCode);
 
@@ -68,6 +71,7 @@ Node*  parseParamList      (Parser* parser);
 Node*  parseStringId       (Parser* parser);
 Node*  parseQuotedString   (Parser* parser);
 Node*  parseId             (Parser* parser);
+Node*  parseMemAccess      (Parser* parser);
 Node*  parseNumber         (Parser* parser);
 
 void construct(Parser* parser, Tokenizer* tokenizer)
@@ -414,12 +418,14 @@ Node* parseCmdLine(Parser* parser)
 
     proceed(parser);
 
-    Node* node = parseExpression(parser);
+    Node* node = parseVDeclaration(parser);
 
-    if (node == nullptr) { node = parseVDeclaration(parser); }
+    if (node == nullptr) { node = parseADeclaration(parser); }
     if (node == nullptr) { node = parseAssignment(parser);   }
     if (node == nullptr) { node = parseJump(parser);         }
+    if (node == nullptr) { node = parsePrintFloat(parser);   }
     if (node == nullptr) { node = parsePrint(parser);        }
+    if (node == nullptr) { node = parseExpression(parser);   } // Has to be after assignment!
     if (node == nullptr) { return nullptr;                   }
 
     REQUIRE_NEW_LINES();
@@ -539,52 +545,66 @@ Node* parseFactor(Parser* parser)
     if (isNumberType(curToken(parser)))
     {
         factor = parseNumber(parser);
+        return factor;
     }
-    else
+
+    factor = parseMemAccess(parser);
+    if (factor != nullptr) { return factor; }
+
+    switch (curToken(parser)->data.keywordCode)
     {
-        switch (curToken(parser)->data.keywordCode)
+        case BRACKET_KEYWORD:
         {
-            case BRACKET_KEYWORD:
-            {
-                proceed(parser);
-                factor = parseExpression(parser);
-                if (factor == nullptr) { SYNTAX_ERROR(PARSE_ERROR_NO_EXPRESSION_INSIDE_BRACKETS); }
-        
-                REQUIRE_KEYWORD(BRACKET_KEYWORD, PARSE_ERROR_BRACKET_NEEDED);
-                break;
-            }
-
-            case DEREF_KEYWORD:
-            {
-                proceed(parser);
-                factor = parseId(parser);
-                if (factor == nullptr) { SYNTAX_ERROR(PARSE_ERROR_DEREFERENCING_NO_VARIABLE); }
-        
-                REQUIRE_VAR_DECLARED(factor->data.id);
-
-                break;
-            }
-
-            case CALL_KEYWORD:  { factor = parseCall         (parser);                break; }
-            case FLOOR_KEYWORD: { factor = parseStandardFunc (parser, FLOOR_KEYWORD); break; }
-            case SQRT_KEYWORD:  { factor = parseStandardFunc (parser, SQRT_KEYWORD);  break; }
-
-            case SCAN_KEYWORD:
-            {
-                factor = newNode(CALL_TYPE, {}, ID(KEYWORDS[SCAN_KEYWORD].string), nullptr);
-                proceed(parser);
-                break;
-            }
-
-            case RAND_JUMP_KEYWORD:
-            {
-                factor = newNode(CALL_TYPE, {}, ID(KEYWORDS[RAND_JUMP_KEYWORD].string), nullptr);
-                proceed(parser);
-                break;
-            }
-
-            default: { break; }
+            proceed(parser);
+            factor = parseExpression(parser);
+            if (factor == nullptr) { SYNTAX_ERROR(PARSE_ERROR_NO_EXPRESSION_INSIDE_BRACKETS); }
+    
+            REQUIRE_KEYWORD(BRACKET_KEYWORD, PARSE_ERROR_BRACKET_NEEDED);
+            break;
         }
+
+        case DEREF_KEYWORD:
+        {
+            proceed(parser);
+            factor = parseId(parser);
+            if (factor == nullptr) { SYNTAX_ERROR(PARSE_ERROR_DEREFERENCING_NO_VARIABLE); }
+    
+            REQUIRE_VAR_DECLARED(factor->data.id);
+
+            break;
+        }
+
+        case CALL_KEYWORD:  { factor = parseCall         (parser);                break; }
+        case FLOOR_KEYWORD: { factor = parseStandardFunc (parser, FLOOR_KEYWORD); break; }
+        case SQRT_KEYWORD:  { factor = parseStandardFunc (parser, SQRT_KEYWORD);  break; }
+
+        case SCAN_KEYWORD:
+        {
+            factor = newNode(CALL_TYPE, {}, ID(KEYWORDS[SCAN_KEYWORD].string), nullptr);
+            proceed(parser);
+            break;
+        }
+
+        case SCAN_FLOAT_KEYWORD:
+        {
+            proceed(parser);
+            // FIXME: add error handling
+            factor = newNode(CALL_TYPE, 
+                             {}, 
+                             ID(KEYWORDS[SCAN_FLOAT_KEYWORD].string), 
+                             parseExpression(parser));
+            // proceed(parser);
+            break;
+        }
+
+        case RAND_JUMP_KEYWORD:
+        {
+            factor = newNode(CALL_TYPE, {}, ID(KEYWORDS[RAND_JUMP_KEYWORD].string), nullptr);
+            proceed(parser);
+            break;
+        }
+
+        default: { break; }
     }
 
     return factor;
@@ -660,31 +680,90 @@ Node* parseVDeclaration(Parser* parser)
     pushVariable(parser->curFunction, id);
 
     Node* declaration = parseAssignment(parser);
-    if (declaration == nullptr) { SYNTAX_ERROR(PARSE_ERROR_VARIABLE_DECLARATION_NO_ASSIGNMENT); }
+    if (declaration == nullptr || declaration->type == MEM_ACCESS_TYPE) 
+    { 
+        SYNTAX_ERROR(PARSE_ERROR_VARIABLE_DECLARATION_NO_ASSIGNMENT); 
+    }
 
     declaration->type = VDECL_TYPE;
 
     return declaration;
 }
 
+Node* parseADeclaration(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+    
+    if (!isKeyword(curToken(parser), ADECL_KEYWORD)) { return nullptr; }
+    proceed(parser);
+
+    if (!isIdType(curToken(parser))) { SYNTAX_ERROR(PARSE_ERROR_ID_NEEDED); }
+
+    // const char* id = curToken(parser)->data.id;
+    // if (getVarOffset(parser->curFunction, id) != -1) { SYNTAX_ERROR(PARSE_ERROR_VARIABLE_SECOND_DECLARATION); }
+    // pushVariable(parser->curFunction, id);
+
+    Node* arrayDeclaration = newNode(ADECL_TYPE, {}, parseId(parser), nullptr);
+    if (arrayDeclaration->left == nullptr)
+    {
+        SYNTAX_ERROR(PARSE_ERROR_ARRAY_DECLARATION_NO_NAME);
+    }
+
+    REQUIRE_KEYWORD(COMMA_KEYWORD, PARSE_ERROR_ARRAY_DECLARATION_NO_COMMA);
+
+    setRight(arrayDeclaration, parseExpression(parser));
+    if (arrayDeclaration->right == nullptr)
+    {
+        SYNTAX_ERROR(PARSE_ERROR_ARRAY_DECLARATION_NO_SIZE);
+    }
+
+    return arrayDeclaration;
+}
+
 Node* parseAssignment(Parser* parser)
 {
     ASSERT_PARSER(parser);
     
-    if (!isIdType(curToken(parser)) || isEndReached(parser) || 
-        (!isEndReached(parser) && !isKeyword(curToken(parser) + 1, ASSIGN_KEYWORD)))
+    // if (!isIdType(curToken(parser)) || isEndReached(parser) || 
+    //     (!isEndReached(parser) && !isKeyword(curToken(parser) + 1, ASSIGN_KEYWORD)))
+    // {
+    //     return nullptr;
+    // }
+
+    size_t assignmentStart = parser->offset;
+
+    Node* lvalue = parseLValue(parser);
+    if (lvalue == nullptr) { return nullptr; }
+
+    if (!isKeyword(curToken(parser), ASSIGN_KEYWORD))
     {
+        parser->offset = assignmentStart;
         return nullptr;
     }
 
-    Node* variable = parseId(parser);
-    REQUIRE_VAR_DECLARED(variable->data.id);
-    REQUIRE_KEYWORD(ASSIGN_KEYWORD, PARSE_ERROR_VARIABLE_DECLARATION_NO_ASSIGNMENT);
+    proceed(parser);
 
     Node* expression = parseExpression(parser);
     if (expression == nullptr) { SYNTAX_ERROR(PARSE_ERROR_VARIABLE_ASSIGNMENT_NO_EXPRESSION); }
 
-    return newNode(ASSIGN_TYPE, {}, variable, expression);
+    // Node* variable = parseId(parser);
+    // REQUIRE_VAR_DECLARED(variable->data.id); // TODO: add this to every place I use arrays!
+    // REQUIRE_KEYWORD(ASSIGN_KEYWORD, PARSE_ERROR_VARIABLE_DECLARATION_NO_ASSIGNMENT);
+
+    return newNode(ASSIGN_TYPE, {}, lvalue, expression);
+}
+
+Node* parseLValue(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+
+    Node* lvalue = parseMemAccess(parser);
+    if (lvalue == nullptr)
+    {
+        lvalue = parseId(parser);
+    }
+
+    return lvalue;
 }
 
 Node* parseCall(Parser* parser)
@@ -715,12 +794,43 @@ Node* parseCall(Parser* parser)
     return newNode(CALL_TYPE, {}, function, exprList);
 }
 
+Node* parsePrintFloat(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+
+    if (!isKeyword(curToken(parser), PRINT_FLOAT_KEYWORD)) { return nullptr; }
+    proceed(parser);
+
+    Node* precision = parseExpression(parser);
+    if (precision == nullptr) { SYNTAX_ERROR(PARSE_ERROR_PRINT_FLOAT_PRECISION_NEEDED); }
+
+    REQUIRE_KEYWORD(COMMA_KEYWORD, PARSE_ERROR_PRINT_FLOAT_NO_COMMA);
+
+    Node* expression = parseExpression(parser);
+    if (expression == nullptr) { SYNTAX_ERROR(PARSE_ERROR_PRINT_FLOAT_EXPRESSION_NEEDED); }
+
+    Node* firstParam  = newNode(EXPR_LIST_TYPE, {}, precision,  nullptr);
+    Node* secondParam = newNode(EXPR_LIST_TYPE, {}, expression, firstParam);
+    
+    Node* callNode = newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_FLOAT_KEYWORD].string), secondParam);
+
+    return callNode;
+}
+
 Node* parsePrint(Parser* parser)
 {
     ASSERT_PARSER(parser);
     
     if (!isKeyword(curToken(parser), PRINT_KEYWORD)) { return nullptr; }
     proceed(parser);
+
+    if (isKeyword(curToken(parser), STR_NEW_LINE_KEYWORD))
+    {
+        proceed(parser);
+
+        Node* newLine = newNode(STRING_TYPE, {.string = "\n"}, nullptr, nullptr);
+        return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), newLine);
+    }
 
     Node* stringId = parseStringId(parser);
     if (stringId != nullptr)
@@ -897,6 +1007,28 @@ Node* parseId(Parser* parser)
     proceed(parser);
 
     return newNode(ID_TYPE, { .id = id }, nullptr, nullptr);
+}
+
+Node* parseMemAccess(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+
+    if (!isIdType(curToken(parser)) || 
+        isEndReached(parser) || 
+        !isKeyword(curToken(parser) + 1, MEM_ACCESS_KEYWORD)) 
+    {
+        return nullptr;
+    }
+
+    Node* memAccess = newNode(MEM_ACCESS_TYPE, {}, parseId(parser), nullptr);
+    proceed(parser);
+
+    setRight(memAccess, parseExpression(parser));
+    if (memAccess->right == nullptr) { SYNTAX_ERROR(PARSE_ERROR_MEM_ACCESS_IVALID_EXPRESSION); }
+
+    REQUIRE_KEYWORD(MEM_ACCESS_KEYWORD, PARSE_ERROR_MEM_ACCESS_NO_SECOND_BRACKET);
+
+    return memAccess;
 }
 
 Node* parseNumber(Parser* parser)

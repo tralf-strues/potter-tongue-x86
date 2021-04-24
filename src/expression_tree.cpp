@@ -11,27 +11,30 @@
 const size_t MAX_COMMAND_LENGTH = 256;
 
 const char* NODE_GRAPH_STYLES[TYPES_COUNT] = {
-        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* FDECL_TYPE     */
-        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* VDECL_TYPE     */
-        ", color=\"#F06292\", fillcolor=\"#fff9fa\", fontcolor=\"#F06292\"", /* ID_TYPE        */
-        "",                                                                  /* EXPR_LIST_TYPE */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* FDECL_TYPE      */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* VDECL_TYPE      */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* ADECL_TYPE      */
 
-        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* BLOCK_TYPE     */
-        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* STATEMENT_TYPE */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* MEM_ACCESS_TYPE */
+        ", color=\"#F06292\", fillcolor=\"#fff9fa\", fontcolor=\"#F06292\"", /* ID_TYPE         */
+        "",                                                                  /* EXPR_LIST_TYPE  */
 
-        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* COND_TYPE      */ 
-        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* IFELSE_TYPE    */
-        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* LOOP_TYPE      */
-        "",                                                                  /* ASSIGN_TYPE    */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* BLOCK_TYPE      */
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* STATEMENT_TYPE  */
 
-        "",                                                                  /* CALL_TYPE      */
-        "",                                                                  /* JUMP_TYPE      */
+        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* COND_TYPE       */ 
+        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* IFELSE_TYPE     */
+        ", color=\"#367ACC\", fillcolor=\"#E0F5FF\", fontcolor=\"#4881CC\"", /* LOOP_TYPE       */
+        "",                                                                  /* ASSIGN_TYPE     */
 
-        "",                                                                  /* MATH_TYPE      */
-        ", color=\"#D2691E\", fillcolor=\"#FFFAEF\", fontcolor=\"#FF7F50\"", /* NUMBER_TYPE    */
+        "",                                                                  /* CALL_TYPE       */
+        "",                                                                  /* JUMP_TYPE       */
 
-        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* SDECL_TYPE     */
-        ", color=\"#75A673\", fillcolor=\"#EDFFED\", fontcolor=\"#75A673\""  /* STRING_TYPE    */
+        "",                                                                  /* MATH_TYPE       */
+        ", color=\"#D2691E\", fillcolor=\"#FFFAEF\", fontcolor=\"#FF7F50\"", /* NUMBER_TYPE     */
+
+        ", color=\"#000000\", fillcolor=\"#FFFFFF\", fontcolor=\"#000000\"", /* SDECL_TYPE      */
+        ", color=\"#75A673\", fillcolor=\"#EDFFED\", fontcolor=\"#75A673\""  /* STRING_TYPE     */
     };
 
 const char*  UNIVERSAL_MAIN_NAME  = "main";
@@ -256,25 +259,42 @@ void graphDumpSubtree(FILE* file, const Node* node, bool detailed)
             break; 
         }
         
-        case VDECL_TYPE:     { fprintf(file, "=");           break; }
-        case ID_TYPE:        { fprintf(file, "%s", data.id); break; } 
-        case EXPR_LIST_TYPE: { fprintf(file, "param");       break; } 
-        
-        case BLOCK_TYPE:     { fprintf(file, "Block");       break; }
-        case STATEMENT_TYPE: { fprintf(file, "S");           break; }
+        case VDECL_TYPE:      { fprintf(file, "=");           break; }
+        case ADECL_TYPE:      { fprintf(file, "Array");       break; }
 
-        case COND_TYPE:      { fprintf(file, "if");          break; } 
-        case IFELSE_TYPE:    { fprintf(file, "if-else");     break; } 
-        case LOOP_TYPE:      { fprintf(file, "while");       break; } 
-        case ASSIGN_TYPE:    { fprintf(file, "=");           break; } 
+        case MEM_ACCESS_TYPE: { fprintf(file, "[ ]");         break; }
+        case ID_TYPE:         { fprintf(file, "%s", data.id); break; } 
+        case EXPR_LIST_TYPE:  { fprintf(file, "param");       break; } 
         
-        case CALL_TYPE:      { fprintf(file, "call");        break; } 
-        case JUMP_TYPE:      { fprintf(file, "return");      break; } 
+        case BLOCK_TYPE:      { fprintf(file, "Block");       break; }
+        case STATEMENT_TYPE:  { fprintf(file, "S");           break; }
+
+        case COND_TYPE:       { fprintf(file, "if");          break; } 
+        case IFELSE_TYPE:     { fprintf(file, "if-else");     break; } 
+        case LOOP_TYPE:       { fprintf(file, "while");       break; } 
+        case ASSIGN_TYPE:     { fprintf(file, "=");           break; } 
         
-        case MATH_TYPE:      { fprintf(file, "\\%s", mathOpToString(data.operation)); break; } 
-        case NUMBER_TYPE:    { fprintf(file, "%" PRId64 "", data.number);             break; } 
-        case SDECL_TYPE:     { fprintf(file, "SDECL");                                break; } 
-        case STRING_TYPE:    { fprintf(file, "\\\"%s\\\"",  data.string);             break; } 
+        case CALL_TYPE:       { fprintf(file, "call");        break; } 
+        case JUMP_TYPE:       { fprintf(file, "return");      break; } 
+        
+        case MATH_TYPE:       { fprintf(file, "\\%s", mathOpToString(data.operation)); break; } 
+        case NUMBER_TYPE:     { fprintf(file, "%" PRId64 "", data.number);             break; } 
+        case SDECL_TYPE:      { fprintf(file, "SDECL");                                break; } 
+        
+        case STRING_TYPE:    
+        { 
+            // this is needed when 'circumrota' is used
+            if (data.string[0] == '\n') 
+            { 
+                fprintf(file, KEYWORDS[STR_NEW_LINE_KEYWORD].string);             
+            }
+            else                        
+            { 
+                fprintf(file, "\\\"%s\\\"",  data.string); 
+            }
+            
+            break; 
+        } 
 
         default:    
         { 
@@ -472,29 +492,32 @@ const char* nodeTypeToString(NodeType type)
 {
     switch (type)
     {
-        case FDECL_TYPE:     { return TO_STR(FDECL_TYPE);     }
-        case VDECL_TYPE:     { return TO_STR(VDECL_TYPE);     }
-        case ID_TYPE:        { return TO_STR(ID_TYPE);        }
-        case EXPR_LIST_TYPE: { return TO_STR(EXPR_LIST_TYPE); }
+        case FDECL_TYPE:      { return TO_STR(FDECL_TYPE);     }
+        case VDECL_TYPE:      { return TO_STR(VDECL_TYPE);     }
+        case ADECL_TYPE:      { return TO_STR(ADECL_TYPE);     }
+
+        case MEM_ACCESS_TYPE: { return TO_STR(MEM_ACCESS_TYPE); }
+        case ID_TYPE:         { return TO_STR(ID_TYPE);        }
+        case EXPR_LIST_TYPE:  { return TO_STR(EXPR_LIST_TYPE); }
         
-        case BLOCK_TYPE:     { return TO_STR(BLOCK_TYPE);     }
-        case STATEMENT_TYPE: { return TO_STR(STATEMENT_TYPE); }
+        case BLOCK_TYPE:      { return TO_STR(BLOCK_TYPE);     }
+        case STATEMENT_TYPE:  { return TO_STR(STATEMENT_TYPE); }
 
-        case COND_TYPE:      { return TO_STR(COND_TYPE);      }
-        case IFELSE_TYPE:    { return TO_STR(IFELSE_TYPE);    }
-        case LOOP_TYPE:      { return TO_STR(LOOP_TYPE);      }
-        case ASSIGN_TYPE:    { return TO_STR(ASSIGN_TYPE);    }
+        case COND_TYPE:       { return TO_STR(COND_TYPE);      }
+        case IFELSE_TYPE:     { return TO_STR(IFELSE_TYPE);    }
+        case LOOP_TYPE:       { return TO_STR(LOOP_TYPE);      }
+        case ASSIGN_TYPE:     { return TO_STR(ASSIGN_TYPE);    }
 
-        case CALL_TYPE:      { return TO_STR(CALL_TYPE);      }
-        case JUMP_TYPE:      { return TO_STR(JUMP_TYPE);      }
+        case CALL_TYPE:       { return TO_STR(CALL_TYPE);      }
+        case JUMP_TYPE:       { return TO_STR(JUMP_TYPE);      }
 
-        case MATH_TYPE:      { return TO_STR(MATH_TYPE);      }
-        case NUMBER_TYPE:    { return TO_STR(NUMBER_TYPE);    }
+        case MATH_TYPE:       { return TO_STR(MATH_TYPE);      }
+        case NUMBER_TYPE:     { return TO_STR(NUMBER_TYPE);    }
 
-        case SDECL_TYPE:     { return TO_STR(SDECL_TYPE);     }
-        case STRING_TYPE:    { return TO_STR(STRING_TYPE);    }
+        case SDECL_TYPE:      { return TO_STR(SDECL_TYPE);     }
+        case STRING_TYPE:     { return TO_STR(STRING_TYPE);    }
 
-        default:             { return nullptr;                }          
+        default:              { return nullptr;                }          
     };
 
     return nullptr;

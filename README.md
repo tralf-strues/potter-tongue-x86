@@ -161,13 +161,13 @@ Jump         ::= return Expression
 Expression   ::= Comparand {[<, >, ==, !=, <=, >=] Comparand}*
 Comparand    ::= Term {[+, -] Term}*
 Term         ::= Factor {[*, /] Factor}*
-Factor       ::= ( Expression ) | Num | *Var | Call | Read | Sqrt | randjmp | MemAccess
+Factor       ::= ( Expression ) | Num | MemAccess | *Var | Call | Read | Sqrt | randjmp
 
 Condition    ::= 'revelio' ( Expression ) Block 'otherwise' Block | 'revelio' ( Expression ) Block
 Loop         ::= 'while' ( Expression ) Block
 
 ArrayDecl    ::= 'capacious' Var ',' Expression
-VariableDecl ::= 'avenseguim' Assignment
+VariableDecl ::= 'avenseguim' Var = Expression
 
 Assignment   ::= LValue = Expression
 LValue       ::= Var | MemAccess 

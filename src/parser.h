@@ -23,6 +23,9 @@ enum ParseError
 
     PARSE_ERROR_PRINT_EXPRESSION_NEEDED,
     PARSE_ERROR_FLOOR_EXPRESSION_NEEDED,
+    PARSE_ERROR_PRINT_FLOAT_PRECISION_NEEDED,
+    PARSE_ERROR_PRINT_FLOAT_NO_COMMA,
+    PARSE_ERROR_PRINT_FLOAT_EXPRESSION_NEEDED,
 
     PARSE_ERROR_IF_EXPRESSION_NEEDED,
     PARSE_ERROR_IF_BLOCK_NEEDED,
@@ -36,6 +39,13 @@ enum ParseError
     PARSE_ERROR_VARIABLE_UNDECLARED_USAGE,
     PARSE_ERROR_VARIABLE_ASSIGNMENT_NO_EXPRESSION,
     PARSE_ERROR_DEREFERENCING_NO_VARIABLE,
+
+    PARSE_ERROR_ARRAY_DECLARATION_NO_COMMA,
+    PARSE_ERROR_ARRAY_DECLARATION_NO_NAME,
+    PARSE_ERROR_ARRAY_DECLARATION_NO_SIZE,
+
+    PARSE_ERROR_MEM_ACCESS_IVALID_EXPRESSION,
+    PARSE_ERROR_MEM_ACCESS_NO_SECOND_BRACKET, // FIXME: bracket
 
     PARSE_ERROR_OPEN_BRACE_NEEDED,
     PARSE_ERROR_CLOSE_BRACE_NEEDED,
@@ -82,6 +92,9 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
 
     "couldn't find an expression after 'flagrate' operator",
     "couldn't find an expression after 'colloshoo' operator",
+    "couldn't find an precision after 'flagrate-bombarda' operator",
+    "there has to be a ',' between precision and expression",
+    "couldn't find an expression after 'flagrate-bombarda' operator",
 
     "revelio operator needs a condition",
     "couldn't find revelio operator's body",
@@ -95,6 +108,13 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
     "the variable hasn't been defined",
     "no expression after assignment operator 'carpe-retractum'",
     "'legilimens' isn't followed by a variable",
+
+    "when declaring an array, after its name there has to be a comma",
+    "no array name found",
+    "no array size found",
+
+    "invalid expression for memory access (must be 'array~expression~')",
+    "no closing '~' in memory access",
 
     "couldn't find alohomora",
     "couldn't find colloportus",

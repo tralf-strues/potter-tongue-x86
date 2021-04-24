@@ -17,8 +17,9 @@ enum NodeType
 {
     FDECL_TYPE,
     VDECL_TYPE,
-    // ADECL_TYPE,      TODO:
-    // MEM_ACCESS_TYPE, TODO:
+    ADECL_TYPE,
+    
+    MEM_ACCESS_TYPE,
     ID_TYPE,
     EXPR_LIST_TYPE,
 
