@@ -1,0 +1,73 @@
+Godric's-Hollow Hogwarts
+
+(oNo) ax^2 + bx + c = 0
+(oNo) 1) a = 0 
+(oNo)     a) b = 0, c  = 0 --> inf sols 
+(oNo)     b) b = 0, c != 0 --> 0   sols 
+(oNo)     c)                   1   sols: -c/b 
+(oNo) 2) a != 0, D = b*b - 4ac 
+(oNo)     a) D = 0 --> 1 sols: -b/2a
+(oNo)     b) D < 0 --> 0 sols
+(oNo)     c) D > 0 --> 2 sols: (-b - sqrt(D)) / 2a, (-b + sqrt(D)) / 2a
+
+imperio love horcrux
+alohomora
+    - avenseguim Harry    carpe-retractum accio
+    - avenseguim Hermione carpe-retractum accio
+    - avenseguim Ronald   carpe-retractum accio
+
+    revelio protego legilimens Harry equal horcrux protego
+    alohomora
+        - depulso OWL protego legilimens Harry, legilimens Hermione, legilimens Ronald protego
+    colloportus 
+    otherwise
+    alohomora
+        - depulso NEWT protego legilimens Harry, legilimens Hermione, legilimens Ronald protego 
+    colloportus
+colloportus
+
+imperio horcrux OWL Harry, Hermione, Ronald
+alohomora
+    revelio protego legilimens Hermione equal horcrux protego
+    alohomora
+        revelio protego legilimens Ronald equal horcrux protego
+        alohomora
+            - flagrate duo flipendo tria
+        colloportus
+        otherwise
+        alohomora
+            - flagrate horcrux
+        colloportus
+    colloportus
+    otherwise
+    alohomora
+        - flagrate tria flipendo duo
+        - flagrate protego duo flipendo tria protego geminio legilimens Ronald sectumsempra legilimens Hermione
+    colloportus
+colloportus
+
+imperio horcrux NEWT Harry, Hermione, Ronald
+alohomora
+    - avenseguim Dumbldore carpe-retractum legilimens Hermione geminio legilimens Hermione flipendo duo geminio duo geminio legilimens Harry geminio legilimens Ronald
+
+    revelio protego legilimens Dumbldore equal horcrux protego
+    alohomora
+        - flagrate tria flipendo duo
+        - flagrate protego duo flipendo tria protego geminio legilimens Hermione sectumsempra duo sectumsempra legilimens Harry 
+    colloportus 
+
+    revelio protego legilimens Dumbldore less horcrux protego
+    alohomora
+        - flagrate horcrux
+    colloportus 
+
+    revelio protego legilimens Dumbldore greater horcrux protego
+    alohomora
+        - flagrate duo
+        - avenseguim Umbridge carpe-retractum crucio protego legilimens Dumbldore protego
+        - flagrate protego protego duo flipendo tria protego geminio legilimens Hermione flipendo  legilimens Umbridge protego sectumsempra duo sectumsempra legilimens Harry 
+        - flagrate protego protego duo flipendo tria protego geminio legilimens Hermione epoximise legilimens Umbridge protego sectumsempra duo sectumsempra legilimens Harry 
+    colloportus 
+colloportus
+
+Privet-Drive 

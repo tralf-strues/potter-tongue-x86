@@ -8,5 +8,5 @@
 vgcore.*
 log/
 # Temporary
+examples/log/
 *.html
-*.txt

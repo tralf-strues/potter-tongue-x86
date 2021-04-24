@@ -1,0 +1,13 @@
+Godric's-Hollow stringsExample
+
+Chapter <<Message>> "Hello, World!"
+
+imperio love horcrux
+alohomora
+    - flagrate  " The real question is how long you are going to live... "
+    - flagrate  <<Message>>
+    - flagrate  <<MessageNotExisting>>
+    - reverte horcrux
+colloportus
+
+Privet-Drive 

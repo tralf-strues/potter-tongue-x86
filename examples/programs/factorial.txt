@@ -1,0 +1,25 @@
+Godric's-Hollow factorial
+
+(oNo) finds factorial of a number
+imperio fact n
+alohomora 
+    revelio protego legilimens n greater tria flipendo duo protego
+    alohomora
+        - reverte legilimens n geminio depulso fact protego legilimens n flipendo tria epoximise duo protego
+    colloportus
+    otherwise
+    alohomora
+        - reverte tria flipendo duo
+    colloportus
+colloportus 
+
+imperio love horcrux
+alohomora
+    - avenseguim n carpe-retractum horcrux
+    - n carpe-retractum accio
+    - avenseguim result carpe-retractum depulso fact protego colloshoo protego legilimens n protego protego
+    - flagrate legilimens result
+    - reverte horcrux
+colloportus
+
+Privet-Drive 
