@@ -102,11 +102,23 @@ int getVarOffset(Function* function, const char* variable)
     assert(variable);
     assert(function->vars);
 
-    for (size_t i = 0; i < function->varsCount; i++)
+    int index = 0;
+
+    for (; index < (int) function->varsCount; index++)
     {
-        if (strcmp(function->vars[i], variable) == 0)
+        if (strcmp(function->vars[index], variable) != 0)
         {
-            return i;
+            continue;
+        }
+
+        // FIXME: add isParam function or something similar
+        if (index < (int) function->paramsCount)
+        {
+            return 2 * 8 + (index + 1) * 8;  
+        }
+        else 
+        {
+            return -(index + 1) * 8;
         }
     }
 

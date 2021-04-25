@@ -1,0 +1,53 @@
+Godric's-Hollow Hogwarts
+
+imperio love horcrux
+alohomora
+    
+    - depulso testArithmeticIf protego protego
+    - depulso testWhile protego 10, 1, 5 protego
+
+colloportus
+
+
+imperio testArithmeticIf horcrux
+alohomora
+    (oNo) a = 5
+    - avenseguim a carpe-retractum 5
+
+    (oNo) b = 2
+    - avenseguim b carpe-retractum 2
+
+    (oNo) c = a + b = 7
+    - avenseguim c carpe-retractum legilimens a epoximise legilimens b
+
+    (oNo) c = c + b * 2 - (a - 1) = 7 + 2 * 2 - 4 = 7
+    (oNo) - c carpe-retractum legilimens c epoximise legilimens b geminio 2 flipendo protego legilimens a flipendo 1 protego
+
+    revelio protego 5 epoximise -5 protego
+    alohomora
+        - b carpe-retractum legilimens c flipendo legilimens a (oNo) b = c - a = 7 - 5 = 2 
+    colloportus
+    otherwise
+    alohomora
+        - b carpe-retractum legilimens a flipendo legilimens c (oNo) b = a - c = 5 - 7 = -2
+    colloportus
+
+    - reverte legilimens b
+colloportus
+
+
+imperio testWhile start, delta, counter
+alohomora
+    - avenseguim low  carpe-retractum legilimens start
+    - avenseguim high carpe-retractum legilimens start
+
+    while protego legilimens counter greater-equal 0 protego 
+    alohomora
+        - low  carpe-retractum legilimens low  flipendo  legilimens delta
+        - high carpe-retractum legilimens high epoximise legilimens delta
+    colloportus
+
+    - reverte legilimens low 
+colloportus
+
+Privet-Drive 

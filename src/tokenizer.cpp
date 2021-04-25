@@ -150,8 +150,8 @@ void tokenizeBuffer(Tokenizer* tokenizer)
     while (!finished(tokenizer))
     {
         if (!processQuotedString(tokenizer) && 
-            !processKeyword(tokenizer) && 
             !processNumeric(tokenizer) && 
+            !processKeyword(tokenizer) && 
             !processId(tokenizer))
         {
             break;

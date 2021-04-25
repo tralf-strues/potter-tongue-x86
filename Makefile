@@ -64,7 +64,7 @@ LibDir = libs
 
 LIBS = $(wildcard $(LibDir)/*.a)
 DEPS = $(wildcard $(SrcDir)/*.h) $(wildcard $(LibDir)/*.h)
-OBJS = $(IntDir)/main_compiler.o $(IntDir)/syntax.o $(IntDir)/tokenizer.o $(IntDir)/expression_tree.o $(IntDir)/parser.o $(IntDir)/symbol_table.o $(IntDir)/compiler.o 
+OBJS = $(IntDir)/main_compiler.o $(IntDir)/syntax.o $(IntDir)/tokenizer.o $(IntDir)/expression_tree.o $(IntDir)/parser.o $(IntDir)/symbol_table.o $(IntDir)/compiler.o $(IntDir)/nasm_compilation.o $(IntDir)/x86_64_specification.o
 
 $(BinDir)/compiler.out: $(OBJS) $(LIBS) $(DEPS)
 	g++ -o $(BinDir)/compiler.out $(OBJS) $(LIBS)
@@ -89,3 +89,9 @@ $(IntDir)/symbol_table.o: $(SrcDir)/symbol_table.cpp $(DEPS)
 
 $(IntDir)/compiler.o: $(SrcDir)/compiler.cpp $(DEPS)
 	g++ -o $(IntDir)/compiler.o -c $(SrcDir)/compiler.cpp $(Options)
+
+$(IntDir)/nasm_compilation.o: $(SrcDir)/nasm_compilation.cpp $(DEPS)
+	g++ -o $(IntDir)/nasm_compilation.o -c $(SrcDir)/nasm_compilation.cpp $(Options)
+
+$(IntDir)/x86_64_specification.o: $(SrcDir)/x86_64_specification.cpp $(DEPS)
+	g++ -o $(IntDir)/x86_64_specification.o -c $(SrcDir)/x86_64_specification.cpp $(Options)

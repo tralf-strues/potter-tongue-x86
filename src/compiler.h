@@ -1,8 +1,14 @@
 #pragma once
 
+#include <assert.h>
 #include <stdio.h>
 #include "symbol_table.h"
 #include "expression_tree.h"
+      
+#define ASSERT_COMPILER(compiler) assert(compiler);              \
+                                  assert(compiler->table);       \
+                                  assert(compiler->tree);        \
+                                  assert(compiler->file);        \
 
 enum CompilerError
 {
@@ -35,7 +41,11 @@ struct Compiler
     CompilerError status;
 };
 
-void          construct   (Compiler* compiler, Node* tree, SymbolTable* table);
-void          destroy     (Compiler* compiler);
-const char*   errorString (CompilerError error);
-CompilerError compile     (Compiler* compiler, const char* outputFile);
+void          construct     (Compiler* compiler, Node* tree, SymbolTable* table);
+void          destroy       (Compiler* compiler);
+const char*   errorString   (CompilerError error);
+CompilerError compile       (Compiler* compiler, const char* outputFile);
+
+void          write         (Compiler* compiler, const char* format, ...);
+void          writeNewLine  (Compiler* compiler);
+void          writeIndented (Compiler* compiler, const char* format, ...);

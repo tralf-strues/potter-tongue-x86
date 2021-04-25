@@ -1,21 +1,18 @@
 #include <assert.h>
 #include <string.h>
-#include <inttypes.h>
 
-#include "compiler.h"
+#include "nasm_compilation.h"
 
-#define ASSERT_COMPILER(compiler) assert(compiler);        \
-                                  assert(compiler->table); \
-                                  assert(compiler->file);  \
-
-#define OUTPUT   compiler->file
 #define CUR_FUNC compiler->curFunction
 
-const size_t HORIZONTAL_LINE_LENGTH = 50;
+const size_t HORIZONTAL_LINE_LENGTH     = 50;
+const char*  INDENTATION                = "        ";
+const size_t MAX_INDENTED_STRING_LENGTH = 512;
 
 void compileError        (Compiler* compiler, CompilerError error); 
 
 void writeHorizontalLine (Compiler* compiler);
+void writeFileHeader     (Compiler* compiler);
 void writeFunctionHeader (Compiler* compiler);
 
 void writeFunction       (Compiler* compiler, Node* node);
@@ -73,89 +70,149 @@ void compileError(Compiler* compiler, CompilerError error)
     printf("COMPILATION ERROR: %s\n", errorString(error));
 }
 
+// FIXME: rdi, rsi, rdx, rcx, r8, r9
+
 CompilerError compile(Compiler* compiler, const char* outputFile)
 {
     assert(compiler);
     assert(outputFile);
 
-    // OUTPUT = fopen(outputFile, "w");
-    // if (OUTPUT == nullptr)
-    // {
-    //     compileError(compiler, COMPILER_ERROR_FILE_OPEN_FAILURE);
-    //     return compiler->status;
-    // }
+    compiler->file = fopen(outputFile, "w");
+    if (compiler->file == nullptr)
+    {
+        compileError(compiler, COMPILER_ERROR_FILE_OPEN_FAILURE);
+        return compiler->status;
+    }
 
-    // if (getFunction(compiler->table, MAIN_FUNCTION_NAME) == nullptr)
-    // {
-    //     compileError(compiler, COMPILER_ERROR_NO_MAIN_FUNCTION);
-    //     return compiler->status;
-    // }
+    if (getFunction(compiler->table, MAIN_FUNCTION_NAME) == nullptr)
+    {
+        compileError(compiler, COMPILER_ERROR_NO_MAIN_FUNCTION);
+        return compiler->status;
+    }
 
-    // CUR_FUNC = compiler->table->functions;
+    writeFileHeader(compiler);
 
-    // fprintf(OUTPUT, "call :love\n"
-    //                 "hlt\n\n");
+    CUR_FUNC = compiler->table->functions;
 
-    // Node* curDeclaration = compiler->tree;
-    // while (curDeclaration != nullptr)
-    // {
-    //     writeFunction(compiler, curDeclaration->right);
-    //     curDeclaration = curDeclaration->left;
-    //     CUR_FUNC++;
-    // }
+    Node* curDeclaration = compiler->tree;
+    while (curDeclaration != nullptr)
+    {
+        writeFunction(compiler, curDeclaration->right);
+        curDeclaration = curDeclaration->left;
+        CUR_FUNC++;
 
-    // fclose(OUTPUT);
+        write(compiler, "\n\n");
+    }
+
+    fclose(compiler->file);
 
     return compiler->status;
+}
+
+void write(Compiler* compiler, const char* format, ...)
+{
+    ASSERT_COMPILER(compiler);
+    assert(format);
+
+    va_list args;
+    va_start(args, format);
+
+    vfprintf(compiler->file, format, args);
+}
+
+void writeNewLine(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "\n");
+}
+
+//------------------------------------------------------------------------------
+//! Writes the formatted string with indentation. String INDENTATION is written
+//! before the string and after each '\n' (unless it's the last character in
+//! the string).
+//! 
+//! @param compiler
+//! @param format
+//! @param ...
+//------------------------------------------------------------------------------
+void writeIndented(Compiler* compiler, const char* format, ...)
+{
+    ASSERT_COMPILER(compiler);
+    assert(format);
+
+    static char string[MAX_INDENTED_STRING_LENGTH];
+
+    va_list args;
+    va_start(args, format);
+
+    fprintf(compiler->file, INDENTATION);
+    vfprintf(compiler->file, format, args);
 }
 
 void writeHorizontalLine(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
 
-    fprintf(OUTPUT, "; ");
+    write(compiler, "; ");
 
     for (size_t i = 0; i < HORIZONTAL_LINE_LENGTH; i++)
     {
-        fprintf(OUTPUT, "=");
+        write(compiler, "=");
     }
 
-    fprintf(OUTPUT, "\n");
+    write(compiler, "\n");
 }
 
+void writeFileHeader(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "global _start   \n" 
+                    "section .text   \n\n"
+                    "_start:         \n"
+                    "\tcall love     \n"
+                    "\tmov rax, 0x3C \n"
+                    "\txor rdi, rdi  \n"
+                    "\tsyscall       \n\n");
+}
+
+// TODO:
+// 1) for each variable write it's offset in the form [rbp - x]
+// 2)
 void writeFunctionHeader(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
 
     writeHorizontalLine(compiler);
-    fprintf(OUTPUT, "; %s\n;\n; params: ", CUR_FUNC->name);
+    write(compiler, "; %s\n;\n; params: ", CUR_FUNC->name);
 
     for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
     {
-        fprintf(OUTPUT, "%s", CUR_FUNC->vars[i]);
+        write(compiler, "%s", CUR_FUNC->vars[i]);
 
         if (i < CUR_FUNC->paramsCount - 1)
         {
-            fprintf(OUTPUT, ", ");
+            write(compiler, ", ");
         }
     }
 
-    fprintf(OUTPUT, "\n; vars: ");
+    write(compiler, "\n; vars:   ");
 
     for (size_t i = CUR_FUNC->paramsCount; i < CUR_FUNC->varsCount; i++)
     {
-        fprintf(OUTPUT, "%s", CUR_FUNC->vars[i]);
+        write(compiler, "%s", CUR_FUNC->vars[i]);
 
         if (i < CUR_FUNC->varsCount - 1)
         {
-            fprintf(OUTPUT, ", ");
+            write(compiler, ", ");
         }
     }
 
-    fprintf(OUTPUT, "\n");
+    write(compiler, "\n");
     writeHorizontalLine(compiler);
 
-    fprintf(OUTPUT, "%s:\n", CUR_FUNC->name);
+    write(compiler, "%s:\n", CUR_FUNC->name);
 }
 
 void writeFunction(Compiler* compiler, Node* node)
@@ -165,14 +222,27 @@ void writeFunction(Compiler* compiler, Node* node)
 
     writeFunctionHeader(compiler);
 
-    for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
+    write_push_r64(compiler, RBP);          // push rbp
+    write_mov_r64_r64(compiler, RBP, RSP) ; // mov  rbp, rsp
+    
+    // FIXME: local vars change
+    if (CUR_FUNC->varsCount != CUR_FUNC->paramsCount)
     {
-        fprintf(OUTPUT, "pop [rax+%zu]\n", 2 + i);
+        write_sub_r64_imm32(compiler, RSP, 8 * (CUR_FUNC->varsCount - CUR_FUNC->paramsCount)); 
     }
 
-    fprintf(OUTPUT, "\n");
+    // for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
+    // {
+    //     writeIndented(compiler, "pop [rax+%zu]\n", 2 + i);
+    // }
+
+    write(compiler, "\n");
     writeBlock(compiler, node->left);
-    fprintf(OUTPUT, "ret\n\n");
+
+    write(compiler, ".RETURN:\n");
+    write_mov_r64_r64(compiler, RSP, RBP); // mov rsp, rbp
+    write_pop_r64(compiler, RBP);          // pop rbp
+    write_ret(compiler);                   // ret
 }
 
 void writeBlock(Compiler* compiler, Node* node)
@@ -210,29 +280,30 @@ void writeCondition(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    fprintf(OUTPUT, "; IF statement\n");
+    writeIndented(compiler, "; ==== if-else statement ====\n");
 
-    writeExpression(compiler, node->left);
+    writeIndented(compiler, "; condition's expression\n");
+    writeExpression(compiler, node->left);             // (rax = condition)
 
     size_t label = compiler->curCondLabel++;
+    write_test_r64_r64(compiler, RAX, RAX);            // test rax, rax 
+    write_jz_rel32(compiler, ".ELSE_", label);         // jz .ELSE_x
 
-    fprintf(OUTPUT, "push 0\n"
-                    "je :IF_END_%zu\n\n",
-                    label);
+    writeNewLine(compiler);
 
+    writeIndented(compiler, "; if true\n");
     writeBlock(compiler, node->right->left);    
-
-    fprintf(OUTPUT, "jmp :IF_ELSE_END_%zu\n"
-                    "IF_END_%zu:\n", 
-                    label,
-                    label);
+    write_jmp_rel32(compiler, ".END_IF_ELSE_", label); // jmp .END_IF_ELSE_x
+    
+    writeNewLine(compiler);
+    write(compiler, ".ELSE_%zu:\n\n",label); 
 
     if (node->right->right != nullptr)
     {
         writeBlock(compiler, node->right->right);
     }
 
-    fprintf(OUTPUT, "IF_ELSE_END_%zu:\n\n", label);
+    write(compiler, ".END_IF_ELSE_%zu:\n\n", label);
 }
 
 void writeLoop(Compiler* compiler, Node* node)
@@ -242,21 +313,22 @@ void writeLoop(Compiler* compiler, Node* node)
 
     size_t label = compiler->curLoopLabel++;
 
-    fprintf(OUTPUT, "\nWHILE_%zu:\n", label);
-    writeExpression(compiler, node->left);
+    writeIndented(compiler, "; ==== while ====\n");
+    write(compiler, ".WHILE_%zu:\n");
 
-    fprintf(OUTPUT, "push 0\n"
-                    "je :WHILE_END_%zu\n"
-                    "WHILE_BODY_%zu:\n",
-                    label,
-                    label);
+    writeIndented(compiler, "; exit condition\n");
+    writeExpression(compiler, node->left);           // (rax = condition)
+    
+    write_test_r64_r64(compiler, RAX, RAX);          // test rax, rax 
+    write_jz_rel32(compiler, ".END_WHILE_", label);  // jz .END_WHILE_x
+    writeNewLine(compiler);
 
+    writeIndented(compiler, "; loop body\n");
     writeBlock(compiler, node->right);
 
-    fprintf(OUTPUT, "jmp :WHILE_%zu\n"
-                    "WHILE_END_%zu:\n\n",
-                    label,
-                    label);
+    write_jmp_rel32(compiler, ".END_WHILE_", label); // jmp .END_WHILE_x
+
+    write(compiler, ".END_WHILE_%zu:\n\n", label);
 }
 
 void writeAssignment(Compiler* compiler, Node* node)
@@ -264,9 +336,16 @@ void writeAssignment(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    writeExpression(compiler, node->right);
+    const char* var       = node->left->data.id;
+    Mem64       varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, var)); 
 
-    fprintf(OUTPUT, "pop [rax+%d]\n\n", 2 + getVarOffset(CUR_FUNC, node->left->data.id));
+    writeIndented(compiler, "; --- assignment to %s ---\n", var);
+
+    writeIndented(compiler, "; evaluating expression\n");
+    writeExpression(compiler, node->right);      // (rax = expression)
+
+    write_mov_m64_r64(compiler, varMemory, RAX); // mov [rbp + offset], rax
+    writeIndented(compiler, "; --- assignment to %s ---\n\n", var);
 }
 
 void writeReturn(Compiler* compiler, Node* node)
@@ -274,13 +353,8 @@ void writeReturn(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    writeExpression(compiler, node->right);
-
-    fprintf(OUTPUT, "push rax\n"
-                    "push [rax]\n"
-                    "sub\n"
-                    "pop rax\n"
-                    "ret\n\n");
+    writeExpression(compiler, node->right);   // (rax = expression)
+    write_jmp_rel32(compiler, ".RETURN", -1); // jmp .RETURN
 }
 
 void writeExpression(Compiler* compiler, Node* node)
@@ -306,22 +380,40 @@ void writeMath(Compiler* compiler, Node* node)
 
     MathOp operation = node->data.operation;
 
+    writeExpression(compiler, node->left);       // (rax = expression1)
+    
+    writeNewLine(compiler);
+    write_push_r64(compiler, RAX, "save rax");   // push rax
+    writeNewLine(compiler);
+
+    writeExpression(compiler, node->right);      // (rax = expression2)
+
+    write_mov_r64_r64(compiler, RBX, RAX);       // rbx = rax = expression2
+    write_pop_r64(compiler, RAX, "restore rax"); // pop rax 
+
+    writeNewLine(compiler);
+
+    // FIXME: add isBinaryOperation function
     if (operation > DIV_OP)
     {
         writeCompare(compiler, node);
         return;
     }
 
-    writeExpression(compiler, node->left);
-    writeExpression(compiler, node->right);
-
     switch (node->data.operation)
     {
-        case ADD_OP: { fprintf(OUTPUT, "add\n\n"); break; }
-        case SUB_OP: { fprintf(OUTPUT, "sub\n\n"); break; }
-        case MUL_OP: { fprintf(OUTPUT, "mul\n\n"); break; }
-        case DIV_OP: { fprintf(OUTPUT, "div\n\n"); break; }
-        default:     { assert(!"Valid math op");   break; }
+        case ADD_OP: { write_add_r64_r64  (compiler, RAX, RBX); break; } // add  rax, rbx
+        case SUB_OP: { write_sub_r64_r64  (compiler, RAX, RBX); break; } // sub  rax, rbx
+        case MUL_OP: { write_imul_r64_r64 (compiler, RAX, RBX); break; } // imul rax, rbx
+        
+        case DIV_OP: 
+        { 
+            write_xor_r64_r64(compiler, RDX, RDX, "; rdx = 0 (for the division below)");
+            write_idiv_r64(compiler, RBX);
+            break; 
+        }
+
+        default: { assert(!"Valid math op"); break; }
     }
 }
 
@@ -332,30 +424,28 @@ void writeCompare(Compiler* compiler, Node* node)
 
     size_t label = compiler->curCmpLabel++;
 
-    writeExpression(compiler, node->left);
-    writeExpression(compiler, node->right);
+    write_cmp_r64_r64(compiler, RAX, RBX);
 
     switch (node->data.operation)
     {
-        case EQUAL_OP:         { fprintf(OUTPUT, "je");     break; }
-        case NOT_EQUAL_OP:     { fprintf(OUTPUT, "jne");    break; }
-        case LESS_OP:          { fprintf(OUTPUT, "jb");     break; }
-        case GREATER_OP:       { fprintf(OUTPUT, "ja");     break; }
-        case LESS_EQUAL_OP:    { fprintf(OUTPUT, "jbe");    break; }
-        case GREATER_EQUAL_OP: { fprintf(OUTPUT, "jae");    break; }
-        default:               { assert(!"Invalid cmp op"); break;}
+        case EQUAL_OP:         { write_je_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
+        case NOT_EQUAL_OP:     { write_jne_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
+        case LESS_OP:          { write_jl_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
+        case GREATER_OP:       { write_jg_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
+        case LESS_EQUAL_OP:    { write_jle_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
+        case GREATER_EQUAL_OP: { write_jge_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
+
+        default:               { assert(!"Invalid cmp op"); break; }
     }
 
-    fprintf(OUTPUT, " :COMPARISON_%zu\n"
-                    "push 0\n"
-                    "jmp :COMPARISON_END_%zu\n"
-                    "COMPARISON_%zu:\n"
-                    "push 1\n"
-                    "COMPARISON_END_%zu:\n\n", 
-                    label,
-                    label,
-                    label,
-                    label);
+    write_mov_r64_imm64(compiler, RAX, 0, "false");
+    write_jmp_rel32(compiler, ".COMPARISON_END_", label);
+
+    write(compiler, ".COMPARISON_TRUE_%zu", label);
+
+    write_mov_r64_imm64(compiler, RAX, 1, "true");
+
+    write(compiler, ".COMPARISON_END_%zu", label);
 }
 
 void writeNumber(Compiler* compiler, Node* node)
@@ -363,7 +453,7 @@ void writeNumber(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    fprintf(OUTPUT, "push %" PRId64 "\n", node->data.number);
+    write_mov_r64_imm64(compiler, RAX, node->data.number);
 }
 
 void writeVar(Compiler* compiler, Node* node)
@@ -371,13 +461,17 @@ void writeVar(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    fprintf(OUTPUT, "push [rax+%d]\n", 2 + getVarOffset(CUR_FUNC, node->data.id));
+    Mem64 varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, node->data.id)); 
+
+    write_mov_r64_m64(compiler, RAX, varMemory);
 }
 
 void writeCall(Compiler* compiler, Node* node)
 {
-    ASSERT_COMPILER(compiler);
+    ASSERT_COMPILER(compiler); 
     assert(node);
+
+    writeIndented(compiler, "; --- calling %s() ---\n", node->left->data.id);
 
     if (writeStdCall(compiler, node)) { return; }
 
@@ -388,26 +482,29 @@ void writeCall(Compiler* compiler, Node* node)
         return; 
     }
 
-    Node* curParamExpr = node->right;
+    Node*  curParamExpr = node->right;
+    size_t paramNumber  = function->paramsCount;
     while (curParamExpr != nullptr)
     {
-        writeExpression(compiler, curParamExpr->left);
+        writeIndented(compiler, "; param %zu\n", paramNumber);
+
+        writeExpression(compiler, curParamExpr->left); // (rax = expression)
+        write_push_r64(compiler, RAX);                 // push rax
+
         curParamExpr = curParamExpr->right;
+        paramNumber--;
     }
 
-    fprintf(OUTPUT, "; calling %s\n"
-                    "push [rax+1]\n"
-                    "push rax\n"
-                    "push [rax+1]\n"
-                    "add\n"
-                    "pop rax\n"
-                    "pop [rax]\n"
-                    "push %zu\n"
-                    "pop [rax+1]\n"
-                    "call :%s\n\n",
-                    function->name,
-                    function->varsCount + 2,
-                    function->name);
+    writeNewLine(compiler);
+
+    write_call_rel32(compiler, function->name, -1);
+
+    if (function->paramsCount > 0)
+    {
+        write_add_r64_imm32(compiler, RSP, function->paramsCount * 8);
+    }
+
+    writeNewLine(compiler);
 }
 
 bool writeStdCall(Compiler* compiler, Node* node)
@@ -415,34 +512,34 @@ bool writeStdCall(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    const char* name = node->left->data.id;
-    if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
-    {
-        writeExpression(compiler, node->right->left);
-        fprintf(OUTPUT, "out\n");
-    } 
-    else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
-    {
-        fprintf(OUTPUT, "in\n");
-    } 
-    else if (strcmp(name, KEYWORDS[FLOOR_KEYWORD].string) == 0)
-    {
-        writeExpression(compiler, node->right->left);
-        fprintf(OUTPUT, "flr\n");
-    }
-    else if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
-    {
-        writeExpression(compiler, node->right->left);
-        fprintf(OUTPUT, "sqrt\n");
-    }  
-    else if (strcmp(name, KEYWORDS[RAND_JUMP_KEYWORD].string) == 0)
-    {
-        fprintf(OUTPUT, "rndjmp\n");
-    }
-    else 
-    {
-        return false;
-    }
+    // const char* name = node->left->data.id;
+    // if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
+    // {
+    //     writeExpression(compiler, node->right->left);
+    //     fprintf(OUTPUT, "out\n");
+    // } 
+    // else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
+    // {
+    //     fprintf(OUTPUT, "in\n");
+    // } 
+    // else if (strcmp(name, KEYWORDS[FLOOR_KEYWORD].string) == 0)
+    // {
+    //     writeExpression(compiler, node->right->left);
+    //     fprintf(OUTPUT, "flr\n");
+    // }
+    // else if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
+    // {
+    //     writeExpression(compiler, node->right->left);
+    //     fprintf(OUTPUT, "sqrt\n");
+    // }  
+    // else if (strcmp(name, KEYWORDS[RAND_JUMP_KEYWORD].string) == 0)
+    // {
+    //     fprintf(OUTPUT, "rndjmp\n");
+    // }
+    // else 
+    // {
+    //     return false;
+    // }
 
-    return true;
+    return false; // FIXME: switch back to true
 }
