@@ -317,16 +317,16 @@ void writeLoop(Compiler* compiler, Node* node)
     write(compiler, ".WHILE_%zu:\n");
 
     writeIndented(compiler, "; exit condition\n");
-    writeExpression(compiler, node->left);           // (rax = condition)
+    writeExpression(compiler, node->left);          // (rax = condition)
     
-    write_test_r64_r64(compiler, RAX, RAX);          // test rax, rax 
-    write_jz_rel32(compiler, ".END_WHILE_", label);  // jz .END_WHILE_x
+    write_test_r64_r64(compiler, RAX, RAX);         // test rax, rax 
+    write_jz_rel32(compiler, ".END_WHILE_", label); // jz .END_WHILE_x
     writeNewLine(compiler);
 
     writeIndented(compiler, "; loop body\n");
     writeBlock(compiler, node->right);
 
-    write_jmp_rel32(compiler, ".END_WHILE_", label); // jmp .END_WHILE_x
+    write_jmp_rel32(compiler, ".WHILE_", label);    // jmp .END_WHILE_x
 
     write(compiler, ".END_WHILE_%zu:\n\n", label);
 }
@@ -438,14 +438,14 @@ void writeCompare(Compiler* compiler, Node* node)
         default:               { assert(!"Invalid cmp op"); break; }
     }
 
-    write_mov_r64_imm64(compiler, RAX, 0, "false");
+    write_xor_r64_r64(compiler, RAX, RAX, "false");
     write_jmp_rel32(compiler, ".COMPARISON_END_", label);
 
-    write(compiler, ".COMPARISON_TRUE_%zu", label);
+    write(compiler, ".COMPARISON_TRUE_%zu:\n", label);
 
     write_mov_r64_imm64(compiler, RAX, 1, "true");
 
-    write(compiler, ".COMPARISON_END_%zu", label);
+    write(compiler, ".COMPARISON_END_%zu:\n", label);
 }
 
 void writeNumber(Compiler* compiler, Node* node)

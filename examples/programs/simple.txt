@@ -41,13 +41,15 @@ alohomora
     - avenseguim low  carpe-retractum legilimens start
     - avenseguim high carpe-retractum legilimens start
 
-    while protego legilimens counter greater-equal 0 protego 
+    while protego legilimens counter greater 0 protego 
     alohomora
         - low  carpe-retractum legilimens low  flipendo  legilimens delta
         - high carpe-retractum legilimens high epoximise legilimens delta
+
+        - counter carpe-retractum legilimens counter flipendo 1
     colloportus
 
-    - reverte legilimens low 
+    - reverte legilimens high 
 colloportus
 
 Privet-Drive 

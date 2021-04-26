@@ -114,11 +114,11 @@ int getVarOffset(Function* function, const char* variable)
         // FIXME: add isParam function or something similar
         if (index < (int) function->paramsCount)
         {
-            return 2 * 8 + (index + 1) * 8;  
+            return 2 * 8 + index * 8;  
         }
         else 
         {
-            return -(index + 1) * 8;
+            return -(index - (int) function->paramsCount + 1) * 8;
         }
     }
 

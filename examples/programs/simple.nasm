@@ -18,6 +18,7 @@ love:
         mov rbp, rsp
 
         ; --- calling testArithmeticIf() ---
+
         call testArithmeticIf
 
         ; --- calling testWhile() ---
@@ -30,6 +31,7 @@ love:
         ; param 1
         mov rax, 10
         push rax
+
         call testWhile
         add rsp, 24
 
@@ -76,7 +78,7 @@ testArithmeticIf:
         mov [rbp - 24], rax
         ; --- assignment to c ---
 
-        ; === if-else statement ===
+        ; ==== if-else statement ====
         ; condition's expression
         mov rax, 5
 
@@ -146,20 +148,20 @@ testWhile:
 
         ; --- assignment to low ---
         ; evaluating expression
-        mov rax, [rbp + 24]
-        mov [rbp - 32], rax
+        mov rax, [rbp + 16]
+        mov [rbp - 8], rax
         ; --- assignment to low ---
 
         ; --- assignment to high ---
         ; evaluating expression
-        mov rax, [rbp + 24]
-        mov [rbp - 40], rax
+        mov rax, [rbp + 16]
+        mov [rbp - 16], rax
         ; --- assignment to high ---
 
-        ; === while ===
+        ; ==== while ====
 .WHILE_0:
         ; exit condition
-        mov rax, [rbp + 40]
+        mov rax, [rbp + 32]
 
         push rax ; save rax
 
@@ -168,46 +170,62 @@ testWhile:
         pop rax ; restore rax
 
         cmp rax, rbx
-        jge .COMPARISON_TRUE_0
-        mov rax, 0 ; false
+        jg .COMPARISON_TRUE_0
+        xor rax, rax ; false
         jmp .COMPARISON_END_0
-.COMPARISON_TRUE_0        mov rax, 1 ; true
-.COMPARISON_END_0        test rax, rax
+.COMPARISON_TRUE_0:
+        mov rax, 1 ; true
+.COMPARISON_END_0:
+        test rax, rax
         jz .END_WHILE_0
 
         ; loop body
         ; --- assignment to low ---
         ; evaluating expression
-        mov rax, [rbp - 32]
+        mov rax, [rbp - 8]
 
         push rax ; save rax
 
-        mov rax, [rbp + 32]
+        mov rax, [rbp + 24]
         mov rbx, rax
         pop rax ; restore rax
 
         sub rax, rbx
-        mov [rbp - 32], rax
+        mov [rbp - 8], rax
         ; --- assignment to low ---
 
         ; --- assignment to high ---
         ; evaluating expression
-        mov rax, [rbp - 40]
+        mov rax, [rbp - 16]
 
         push rax ; save rax
 
-        mov rax, [rbp + 32]
+        mov rax, [rbp + 24]
         mov rbx, rax
         pop rax ; restore rax
 
         add rax, rbx
-        mov [rbp - 40], rax
+        mov [rbp - 16], rax
         ; --- assignment to high ---
 
-        jmp .END_WHILE_0
+        ; --- assignment to counter ---
+        ; evaluating expression
+        mov rax, [rbp + 32]
+
+        push rax ; save rax
+
+        mov rax, 1
+        mov rbx, rax
+        pop rax ; restore rax
+
+        sub rax, rbx
+        mov [rbp + 32], rax
+        ; --- assignment to counter ---
+
+        jmp .WHILE_0
 .END_WHILE_0:
 
-        mov rax, [rbp - 32]
+        mov rax, [rbp - 16]
         jmp .RETURN
 .RETURN:
         mov rsp, rbp

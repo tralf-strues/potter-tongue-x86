@@ -10,4 +10,5 @@ log/
 
 # Temporary
 examples/log/
+examples/programs/execs/
 *.html
