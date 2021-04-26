@@ -3,8 +3,10 @@ Godric's-Hollow Hogwarts
 imperio love horcrux
 alohomora
     
-    - depulso testArithmeticIf protego protego
-    - depulso testWhile protego 10, 1, 5 protego
+    (oNo) - depulso testArithmeticIf protego protego
+    (oNo) - depulso testWhile        protego 10, -30, 5 protego
+    
+    - depulso testAccio        protego protego
 
 colloportus
 
@@ -50,6 +52,23 @@ alohomora
     colloportus
 
     - reverte legilimens high 
+colloportus
+
+
+imperio testFlagrate horcrux
+alohomora
+    - avenseguim a carpe-retractum -100
+
+    - flagrate 10
+    - flagrate legilimens a
+colloportus
+
+
+imperio testAccio horcrux
+alohomora
+    - avenseguim input carpe-retractum accio 
+
+    - flagrate legilimens input
 colloportus
 
 Privet-Drive 

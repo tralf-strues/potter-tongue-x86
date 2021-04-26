@@ -16,6 +16,7 @@ enum CompilerError
     COMPILER_ERROR_FILE_OPEN_FAILURE,
     COMPILER_ERROR_NO_MAIN_FUNCTION,
     COMPILER_ERROR_CALL_UNDEFINED_FUNCTION,
+    COMPILER_ERROR_NO_STDIO_NASM_CODE,
 
     COMPILER_ERRORS_COUNT
 };
@@ -24,7 +25,8 @@ static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
     "no error",
     "couldn't open file to write output to",
     "main function ('love') wasn't found",
-    "calling undefined function"
+    "calling undefined function",
+    "could find io.nasm with standard I/O functions"
 };
 
 struct Compiler

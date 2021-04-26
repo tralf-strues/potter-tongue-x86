@@ -2,14 +2,20 @@
 #include <string.h>
 
 #include "nasm_compilation.h"
+#include "../libs/file_manager.h"
 
 #define CUR_FUNC compiler->curFunction
 
 const size_t HORIZONTAL_LINE_LENGTH     = 50;
-const char*  INDENTATION                = "        ";
+const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
+const size_t IO_BUFFER_SIZE             = 64;
 
 void compileError        (Compiler* compiler, CompilerError error); 
+
+void writeStdFunctions   (Compiler* compiler);
+void writeStdData        (Compiler* compiler);
+void writeStdBSS         (Compiler* compiler);
 
 void writeHorizontalLine (Compiler* compiler);
 void writeFileHeader     (Compiler* compiler);
@@ -30,6 +36,7 @@ void writeCompare        (Compiler* compiler, Node* node);
 void writeNumber         (Compiler* compiler, Node* node);
 void writeVar            (Compiler* compiler, Node* node);
 
+void writeParamList      (Compiler* compiler, Node* node, const Function* function);
 void writeCall           (Compiler* compiler, Node* node);
 bool writeStdCall        (Compiler* compiler, Node* node);
 
@@ -72,6 +79,51 @@ void compileError(Compiler* compiler, CompilerError error)
 
 // FIXME: rdi, rsi, rdx, rcx, r8, r9
 
+// FIXME: make filenames parameters
+void writeStdFunctions(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+    
+    char*  stdioNasm      = nullptr;
+    size_t stdioNasmBytes = 0;
+
+    if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
+    {
+        compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
+        return;
+    }
+
+    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->file);
+    writeNewLine(compiler);
+
+    free(stdioNasm);
+
+    Function* function = pushFunction(compiler->table, "flagrate");
+    pushParameter(function, "number");
+
+    Function* accio    = pushFunction(compiler->table, "accio");
+}
+
+void writeStdData(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "section .data\n"
+                    "IO_BUFFER_SIZE equ %zu\n",
+                    IO_BUFFER_SIZE);
+}
+
+void writeStdBSS(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "section .bss\n"
+                    "IO_BUFFER:\n" 
+                    "resb %zu\n"
+                    "IO_BUFFER_END:\n",
+                    IO_BUFFER_SIZE);
+}
+
 CompilerError compile(Compiler* compiler, const char* outputFile)
 {
     assert(compiler);
@@ -92,6 +144,8 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
 
     writeFileHeader(compiler);
 
+    writeStdFunctions(compiler);
+
     CUR_FUNC = compiler->table->functions;
 
     Node* curDeclaration = compiler->tree;
@@ -103,6 +157,10 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
 
         write(compiler, "\n\n");
     }
+
+    writeStdData(compiler);
+    writeNewLine(compiler);
+    writeStdBSS(compiler);
 
     fclose(compiler->file);
 
@@ -466,21 +524,10 @@ void writeVar(Compiler* compiler, Node* node)
     write_mov_r64_m64(compiler, RAX, varMemory);
 }
 
-void writeCall(Compiler* compiler, Node* node)
+void writeParamList(Compiler* compiler, Node* node, const Function* function)
 {
-    ASSERT_COMPILER(compiler); 
+    ASSERT_COMPILER(compiler);
     assert(node);
-
-    writeIndented(compiler, "; --- calling %s() ---\n", node->left->data.id);
-
-    if (writeStdCall(compiler, node)) { return; }
-
-    Function* function = getFunction(compiler->table, node->left->data.id);
-    if (function == nullptr) 
-    {
-        compileError(compiler, COMPILER_ERROR_CALL_UNDEFINED_FUNCTION);
-        return; 
-    }
 
     Node*  curParamExpr = node->right;
     size_t paramNumber  = function->paramsCount;
@@ -494,7 +541,25 @@ void writeCall(Compiler* compiler, Node* node)
         curParamExpr = curParamExpr->right;
         paramNumber--;
     }
+}
 
+void writeCall(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler); 
+    assert(node);
+
+    writeIndented(compiler, "; --- calling %s() ---\n", node->left->data.id);
+
+    // if (writeStdCall(compiler, node)) { return; } // FIXME: 
+
+    Function* function = getFunction(compiler->table, node->left->data.id);
+    if (function == nullptr) 
+    {
+        compileError(compiler, COMPILER_ERROR_CALL_UNDEFINED_FUNCTION);
+        return; 
+    }
+
+    writeParamList(compiler, node, function);
     writeNewLine(compiler);
 
     write_call_rel32(compiler, function->name, -1);
@@ -512,12 +577,13 @@ bool writeStdCall(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    // const char* name = node->left->data.id;
-    // if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
-    // {
-    //     writeExpression(compiler, node->right->left);
-    //     fprintf(OUTPUT, "out\n");
-    // } 
+    const char* name = node->left->data.id;
+    if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
+    {
+        writeParamList(compiler, node, getFunction(compiler->table, "flagrate"));
+        // writeExpression(compiler, node->right->left);
+        
+    } 
     // else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
     // {
     //     fprintf(OUTPUT, "in\n");
@@ -536,10 +602,10 @@ bool writeStdCall(Compiler* compiler, Node* node)
     // {
     //     fprintf(OUTPUT, "rndjmp\n");
     // }
-    // else 
-    // {
-    //     return false;
-    // }
+    else 
+    {
+        return false;
+    }
 
-    return false; // FIXME: switch back to true
+    return true; // FIXME: switch back to true
 }
