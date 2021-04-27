@@ -5,8 +5,8 @@
 #include <inttypes.h>
 
 #include "expression_tree.h"
-#include "../libs/utilib.h"
-#include "../libs/file_manager.h"
+#include "../../libs/utilib.h"
+#include "../../libs/file_manager.h"
 
 const size_t MAX_COMMAND_LENGTH = 256;
 
@@ -492,32 +492,32 @@ const char* nodeTypeToString(NodeType type)
 {
     switch (type)
     {
-        case FDECL_TYPE:      { return TO_STR(FDECL_TYPE);     }
-        case VDECL_TYPE:      { return TO_STR(VDECL_TYPE);     }
-        case ADECL_TYPE:      { return TO_STR(ADECL_TYPE);     }
+        case FDECL_TYPE:      { return TO_STR(FDECL_TYPE);      }
+        case VDECL_TYPE:      { return TO_STR(VDECL_TYPE);      }
+        case ADECL_TYPE:      { return TO_STR(ADECL_TYPE);      }
 
         case MEM_ACCESS_TYPE: { return TO_STR(MEM_ACCESS_TYPE); }
-        case ID_TYPE:         { return TO_STR(ID_TYPE);        }
-        case EXPR_LIST_TYPE:  { return TO_STR(EXPR_LIST_TYPE); }
+        case ID_TYPE:         { return TO_STR(ID_TYPE);         }
+        case EXPR_LIST_TYPE:  { return TO_STR(EXPR_LIST_TYPE);  }
         
-        case BLOCK_TYPE:      { return TO_STR(BLOCK_TYPE);     }
-        case STATEMENT_TYPE:  { return TO_STR(STATEMENT_TYPE); }
+        case BLOCK_TYPE:      { return TO_STR(BLOCK_TYPE);      }
+        case STATEMENT_TYPE:  { return TO_STR(STATEMENT_TYPE);  }
 
-        case COND_TYPE:       { return TO_STR(COND_TYPE);      }
-        case IFELSE_TYPE:     { return TO_STR(IFELSE_TYPE);    }
-        case LOOP_TYPE:       { return TO_STR(LOOP_TYPE);      }
-        case ASSIGN_TYPE:     { return TO_STR(ASSIGN_TYPE);    }
+        case COND_TYPE:       { return TO_STR(COND_TYPE);       }
+        case IFELSE_TYPE:     { return TO_STR(IFELSE_TYPE);     }
+        case LOOP_TYPE:       { return TO_STR(LOOP_TYPE);       }
+        case ASSIGN_TYPE:     { return TO_STR(ASSIGN_TYPE);     }
 
-        case CALL_TYPE:       { return TO_STR(CALL_TYPE);      }
-        case JUMP_TYPE:       { return TO_STR(JUMP_TYPE);      }
+        case CALL_TYPE:       { return TO_STR(CALL_TYPE);       }
+        case JUMP_TYPE:       { return TO_STR(JUMP_TYPE);       }
 
-        case MATH_TYPE:       { return TO_STR(MATH_TYPE);      }
-        case NUMBER_TYPE:     { return TO_STR(NUMBER_TYPE);    }
+        case MATH_TYPE:       { return TO_STR(MATH_TYPE);       }
+        case NUMBER_TYPE:     { return TO_STR(NUMBER_TYPE);     }
 
-        case SDECL_TYPE:      { return TO_STR(SDECL_TYPE);     }
-        case STRING_TYPE:     { return TO_STR(STRING_TYPE);    }
+        case SDECL_TYPE:      { return TO_STR(SDECL_TYPE);      }
+        case STRING_TYPE:     { return TO_STR(STRING_TYPE);     }
 
-        default:              { return nullptr;                }          
+        default:              { return nullptr; }          
     };
 
     return nullptr;

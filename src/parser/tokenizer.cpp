@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "tokenizer.h"
-#include "../libs/utilib.h"
+#include "../../libs/utilib.h"
 
 #define ASSERT_TOKENIZER(tokenizer) assert((tokenizer));           \
                                     assert((tokenizer)->buffer);   \

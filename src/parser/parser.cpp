@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "parser.h"
-#include "../libs/utilib.h"
+#include "../../libs/utilib.h"
 
 #define ASSERT_PARSER(parser) assert(parser);                      \
                               assert(parser->tokenizer);           \

@@ -2,7 +2,7 @@
 
 #include "tokenizer.h"
 #include "expression_tree.h"
-#include "symbol_table.h"
+#include "../symbol_table/symbol_table.h"
 
 enum ParseError
 {

@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "nasm_compilation.h"
-#include "../libs/file_manager.h"
+#include "../../libs/file_manager.h"
 
 #define CUR_FUNC compiler->curFunction
 
@@ -13,7 +13,7 @@ const size_t IO_BUFFER_SIZE             = 64;
 
 void compileError        (Compiler* compiler, CompilerError error); 
 
-void writeStdFunctions   (Compiler* compiler);
+void writeStdFunctions   (Compiler* compiler); 
 void writeStdData        (Compiler* compiler);
 void writeStdBSS         (Compiler* compiler);
 
@@ -146,7 +146,7 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
 
     writeStdFunctions(compiler);
 
-    CUR_FUNC = compiler->table->functions;
+    CUR_FUNC = compiler->table->functionsData.functions;
 
     Node* curDeclaration = compiler->tree;
     while (curDeclaration != nullptr)
@@ -247,7 +247,7 @@ void writeFunctionHeader(Compiler* compiler)
 
     for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
     {
-        write(compiler, "%s", CUR_FUNC->vars[i]);
+        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
 
         if (i < CUR_FUNC->paramsCount - 1)
         {
@@ -257,11 +257,11 @@ void writeFunctionHeader(Compiler* compiler)
 
     write(compiler, "\n; vars:   ");
 
-    for (size_t i = CUR_FUNC->paramsCount; i < CUR_FUNC->varsCount; i++)
+    for (size_t i = CUR_FUNC->paramsCount; i < CUR_FUNC->varsData.count; i++)
     {
-        write(compiler, "%s", CUR_FUNC->vars[i]);
+        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
 
-        if (i < CUR_FUNC->varsCount - 1)
+        if (i < CUR_FUNC->varsData.count - 1)
         {
             write(compiler, ", ");
         }
@@ -284,9 +284,9 @@ void writeFunction(Compiler* compiler, Node* node)
     write_mov_r64_r64(compiler, RBP, RSP) ; // mov  rbp, rsp
     
     // FIXME: local vars change
-    if (CUR_FUNC->varsCount != CUR_FUNC->paramsCount)
+    if (CUR_FUNC->varsData.count != CUR_FUNC->paramsCount)
     {
-        write_sub_r64_imm32(compiler, RSP, 8 * (CUR_FUNC->varsCount - CUR_FUNC->paramsCount)); 
+        write_sub_r64_imm32(compiler, RSP, 8 * (CUR_FUNC->varsData.count - CUR_FUNC->paramsCount)); 
     }
 
     // for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)

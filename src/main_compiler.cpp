@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "tokenizer.h"
-#include "parser.h"
-#include "compiler.h"
+
+#include "parser/tokenizer.h"
+#include "parser/parser.h"
+#include "compiler/compiler.h"
 #include "../libs/file_manager.h"
 
 #define UTB_DEFINITIONS

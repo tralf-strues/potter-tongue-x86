@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include "symbol_table.h"
-#include "expression_tree.h"
+#include "../symbol_table/symbol_table.h"
+#include "../parser/expression_tree.h"
       
 #define ASSERT_COMPILER(compiler) assert(compiler);              \
                                   assert(compiler->table);       \
