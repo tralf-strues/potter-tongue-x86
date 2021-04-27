@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FILE_MANAGER_H
+#define FILE_MANAGER_H
+
 #include <stdio.h>
 
 // flags for makeTextCaseHomogeneous
@@ -29,3 +31,5 @@ size_t replaceAllOccurrences   (char* buffer, size_t bufferSize, char target, ch
 char*  strToLower              (char* str);
 char*  strToUpper              (char* str);
 Text*  makeTextCaseHomogeneous (Text* text, const char* flag);
+
+#endif

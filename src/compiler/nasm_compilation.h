@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NASM_COMPILATION_H
+#define NASM_COMPILATION_H
 
 #include "compiler.h"
 #include "x86_64_specification.h"
@@ -48,7 +49,7 @@ void write_idiv_r64      (Compiler* compiler, Reg64 reg,                       c
 //! @defgroup NASM_CONTROL_FLOW Control flow instructions in NASM
 //! @addtogroup NASM_CONTROL_FLOW
 //! @{
-
+ 
 void write_call_rel32 (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
 void write_ret        (Compiler* compiler, const char* comment = nullptr);
 void write_jmp_rel32  (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
@@ -76,3 +77,5 @@ void write_mov_r64_m64   (Compiler* compiler, Reg64 dest, Mem64 src,      const 
 
 //! @}
 //---------------------------------NASM_MOVE------------------------------------
+
+#endif

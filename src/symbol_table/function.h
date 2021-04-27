@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FUNCTION_H
+#define FUNCTION_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +12,7 @@
 #define elem_t   const char*             
 
 #undef DYNAMIC_ARRAY_H
-#include "../dynamic_array/dynamic_array.h"
+#include "../../libs/dynamic_array/dynamic_array.h" 
 #undef STRUCT             
 #undef ELEMENTS      
 #undef INSERT             
@@ -43,10 +44,12 @@ int  getVarOffset    (Function* function, const char* variable);
 #define elem_t   Function
 
 #undef DYNAMIC_ARRAY_H
-#include "../dynamic_array/dynamic_array.h"
+#include "../../libs/dynamic_array/dynamic_array.h"
 #undef STRUCT             
 #undef ELEMENTS      
 #undef INSERT             
 #undef FIND               
 #undef elem_t
 //--------------------------------FunctionsData---------------------------------
+
+#endif

@@ -101,7 +101,7 @@ void writeStdFunctions(Compiler* compiler)
     Function* function = pushFunction(compiler->table, "flagrate");
     pushParameter(function, "number");
 
-    Function* accio    = pushFunction(compiler->table, "accio");
+    pushFunction(compiler->table, "accio");
 }
 
 void writeStdData(Compiler* compiler)
@@ -198,8 +198,6 @@ void writeIndented(Compiler* compiler, const char* format, ...)
 {
     ASSERT_COMPILER(compiler);
     assert(format);
-
-    static char string[MAX_INDENTED_STRING_LENGTH];
 
     va_list args;
     va_start(args, format);

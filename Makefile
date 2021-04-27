@@ -1,97 +1,63 @@
-Options = -std=c++2a -g -Wpedantic -Wall 
+# -----------------------------------Constants----------------------------------
+AllWarnings    = -Wall -Wextra -pedantic
+SomeWarnings   = -Wall -Wextra
+LittleWarnings = -Wall
+NoWarnings     = 
+# -----------------------------------Constants----------------------------------
 
-# qwerty1337
+Mode = DEBUG_MODE
+# ----------------------------------Debug-mode----------------------------------
+ifeq ($(Mode), DEBUG_MODE)
+	ModeLinkerOptions   = -g
+	ModeCompilerOptions = -O1 -g
+endif
+# ----------------------------------Debug-mode----------------------------------
 
-# -Wpedantic -Wall 
+# ---------------------------------Release-mode---------------------------------
+ifeq ($(Mode), RELEASE_MODE)
+	ModeLinkerOptions   = 
+	ModeCompilerOptions = -O2 -g -DNDEBUG
+endif
+# ---------------------------------Release-mode---------------------------------
 
-# Godric's-Hollow factorial
+# ------------------------------------Options-----------------------------------
+LXXFLAGS = $(ModeLinkerOptions) 
+CXXFLAGS = -std=c++20 $(ModeCompilerOptions) $(AllWarnings)
+# ------------------------------------Options-----------------------------------
 
-# imperio fact n
-# alohomora 
-#     revelio legilimens n greater tria flipendo duo
-#     alohomora
-#         - reverte n geminio fact protego n flipendo tria epoximise duo protego
-#     colloportus
-#     otherwise
-#     alohomora
-#         - reverte tria epoximise duo
-#     colloportus
-# colloportus 
-
-# imperio love horcrux
-# alohomora
-#     - avenseguim n carpe-retractum horcrux
-#     - n carpe-retractum accio
-#     - avenseguim result carpe-retractum fact protego colloshoo protego n protego protego
-#     - flagrate legilimens result
-# colloportus
-
-# Privet-Drive
-
-# Godric's-Hollow factorial
-
-# imperio fact n
-# alohomora 
-#     revelio protego legilimens n greater tria flipendo duo protego
-#     alohomora
-#         - reverte legilimens n geminio depulso fact protego legilimens n flipendo tria epoximise duo protego
-#     colloportus
-#     otherwise
-#     alohomora
-#         - reverte tria epoximise duo
-#     colloportus
-
-#     while protego tria flipendo duo protego
-#     alohomora
-#         - flagrate maxima
-#     colloportus
-# colloportus 
-
-# imperio love horcrux
-# alohomora
-#     - avenseguim n carpe-retractum horcrux
-#     - n carpe-retractum accio
-#     - avenseguim result carpe-retractum depulso fact protego colloshoo protego legilimens n protego protego
-#     - flagrate legilimens result
-# colloportus
-
-# Privet-Drive
-
+# -------------------------------------Files------------------------------------
 SrcDir = src
 BinDir = bin
 IntDir = $(BinDir)/intermediates
 LibDir = libs
 
-LIBS = $(wildcard $(LibDir)/*.a)
-DEPS = $(wildcard $(SrcDir)/*.h) $(wildcard $(LibDir)/*.h)
-OBJS = $(IntDir)/main_compiler.o $(IntDir)/syntax.o $(IntDir)/tokenizer.o $(IntDir)/expression_tree.o $(IntDir)/parser.o $(IntDir)/symbol_table.o $(IntDir)/compiler.o $(IntDir)/nasm_compilation.o $(IntDir)/x86_64_specification.o
+CompilerDir = $(SrcDir)/compiler
+DynArrayDir = $(SrcDir)/dynamic_array
+ParserDir   = $(SrcDir)/parser
+SymTableDir = $(SrcDir)/symbol_table
 
-$(BinDir)/compiler.out: $(OBJS) $(LIBS) $(DEPS)
-	g++ -o $(BinDir)/compiler.out $(OBJS) $(LIBS)
+Libs = $(wildcard $(LibDir)/*.a) $(wildcard $(LibDir)/*.h) 
 
-$(IntDir)/main_compiler.o: $(SrcDir)/main_compiler.cpp $(DEPS)
-	g++ -o $(IntDir)/main_compiler.o -c $(SrcDir)/main_compiler.cpp $(Options)
+Deps = $(wildcard $(SrcDir)/*.h)      \
+	   $(wildcard $(CompilerDir)/*.h) \
+	   $(wildcard $(DynArrayDir)/*.h) \
+	   $(wildcard $(ParserDir)/*.h)   \
+	   $(wildcard $(SymTableDir)/*.h)
 
-$(IntDir)/syntax.o: $(SrcDir)/syntax.cpp $(DEPS)
-	g++ -o $(IntDir)/syntax.o -c $(SrcDir)/syntax.cpp $(Options)
+CppSrc = $(notdir $(wildcard $(SrcDir)/*.cpp)      \
+		          $(wildcard $(CompilerDir)/*.cpp) \
+		          $(wildcard $(ParserDir)/*.cpp)   \
+		          $(wildcard $(SymTableDir)/*.cpp)) 
 
-$(IntDir)/tokenizer.o: $(SrcDir)/tokenizer.cpp $(DEPS)
-	g++ -o $(IntDir)/tokenizer.o -c $(SrcDir)/tokenizer.cpp $(Options)
+Objs = $(addprefix $(IntDir)/, $(CppSrc:.cpp=.o))
+Exec = compiler.out
+# -------------------------------------Files------------------------------------
 
-$(IntDir)/expression_tree.o: $(SrcDir)/expression_tree.cpp $(DEPS)
-	g++ -o $(IntDir)/expression_tree.o -c $(SrcDir)/expression_tree.cpp $(Options)
+# ----------------------------------Make rules----------------------------------
+$(BinDir)/$(Exec): $(Objs) $(Deps) $(Libs) 
+	$(CXX) -o $(BinDir)/$(Exec) $(Objs) $(Libs) $(LDFLAGS)
 
-$(IntDir)/parser.o: $(SrcDir)/parser.cpp $(DEPS)
-	g++ -o $(IntDir)/parser.o -c $(SrcDir)/parser.cpp $(Options)
-
-$(IntDir)/symbol_table.o: $(SrcDir)/symbol_table.cpp $(DEPS)
-	g++ -o $(IntDir)/symbol_table.o -c $(SrcDir)/symbol_table.cpp $(Options)
-
-$(IntDir)/compiler.o: $(SrcDir)/compiler.cpp $(DEPS)
-	g++ -o $(IntDir)/compiler.o -c $(SrcDir)/compiler.cpp $(Options)
-
-$(IntDir)/nasm_compilation.o: $(SrcDir)/nasm_compilation.cpp $(DEPS)
-	g++ -o $(IntDir)/nasm_compilation.o -c $(SrcDir)/nasm_compilation.cpp $(Options)
-
-$(IntDir)/x86_64_specification.o: $(SrcDir)/x86_64_specification.cpp $(DEPS)
-	g++ -o $(IntDir)/x86_64_specification.o -c $(SrcDir)/x86_64_specification.cpp $(Options)
+vpath %.cpp $(SrcDir) $(CompilerDir) $(DynArrayDir) $(ParserDir) $(SymTableDir)
+$(IntDir)/%.o: %.cpp $(Deps)
+	$(CXX) -c $< $(CXXFLAGS) -o $@
+# ----------------------------------Make rules----------------------------------

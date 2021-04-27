@@ -1,10 +1,11 @@
-#pragma once
+#ifndef UTILIB_H
+#define UTILIB_H
 
 #include <math.h>
 #include <string.h>
 
 static const double DOUBLE_PRECISION = 1e-9;
-static const char*  LETTERS          = "abcdefghijklmnopqrstuvwxyz"
+static const char   LETTERS[]        = "abcdefghijklmnopqrstuvwxyz"
                                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 int    dcompare    (double num1, double num2, double precision);
@@ -56,4 +57,6 @@ char* copyString(const char* string, size_t length)
 }
 
 #undef UTB_DEFINITIONS
+#endif
+
 #endif

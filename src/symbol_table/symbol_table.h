@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SYMBOL_TABLE_H
+#define SYMBOL_TABLE_H
 
 #include <stdlib.h>
 #include "function.h"
@@ -11,7 +12,7 @@ struct String
 
 struct SymbolTable
 {
-    FunctionsData functionsData;
+    FunctionsData functionsData; 
 
     String*   strings;
     size_t    stringsCapacity;
@@ -28,3 +29,5 @@ Function* getFunction        (SymbolTable* table, const char* function);
 String*   pushString         (SymbolTable* table, const String string);
 String*   getStringByName    (SymbolTable* table, const char* name);
 String*   getStringByContent (SymbolTable* table, const char* content);
+
+#endif

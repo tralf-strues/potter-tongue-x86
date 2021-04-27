@@ -1,4 +1,6 @@
-#pragma once
+#ifndef X86_64_SPECIFICATION_H
+#define X86_64_SPECIFICATION_H
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -57,3 +59,5 @@ static const char* REGISTERS_64_STRINGS[TOTAL_REGISTERS_64] = {
 const char* reg64ToString (Reg64 reg);
 Mem64       mem64BaseDisp (Reg64 base, int32_t displacement); 
 bool        isValidScale  (uint8_t scale);
+
+#endif

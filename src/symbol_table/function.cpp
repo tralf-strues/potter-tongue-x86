@@ -11,7 +11,7 @@ const double REALLOC_MULTIPLIER = 1.8;
 #define elem_t   const char*  
 
 #undef DYNAMIC_ARRAY_CPP
-#include "../dynamic_array/dynamic_array.cpp"
+#include "../../libs/dynamic_array/dynamic_array.cpp"
 
 #undef STRUCT             
 #undef ELEMENTS      
@@ -26,7 +26,7 @@ void destroyFunction(Function* function)
 {
     assert(function);
 
-    destroy(&function->varsData, (void (*) (const char**)) free);
+    destroy(&function->varsData, nullptr);
     function->name        = nullptr;
     function->paramsCount = 0;
 }
@@ -54,6 +54,7 @@ int getVarOffset(Function* function, const char* variable)
     assert(function->varsData.vars);
 
     int varIndex = findVariable(&function->varsData, variable);
+    if (varIndex == -1) { return -1; }
 
     // FIXME: add isParam function or something similar
     if (varIndex < (int) function->paramsCount)
@@ -78,7 +79,7 @@ int getVarOffset(Function* function, const char* variable)
 #define elem_t   Function
 
 #undef DYNAMIC_ARRAY_CPP
-#include "../dynamic_array/dynamic_array.cpp"
+#include "../../libs/dynamic_array/dynamic_array.cpp"
 
 #undef STRUCT             
 #undef ELEMENTS      

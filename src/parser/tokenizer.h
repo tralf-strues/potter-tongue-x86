@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
+
 #include "syntax.h"
 
 union TokenData
@@ -60,3 +62,5 @@ void printTokenLinePos  (const Tokenizer* tokenizer, const Token* token, FILE* f
 void dumpTokens         (const Tokenizer* tokenizer, FILE* file);
 
 const char* tokenTypeToString(TokenType type);
+
+#endif

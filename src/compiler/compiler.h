@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COMPILER_H
+#define COMPILER_H
 
 #include <assert.h>
 #include <stdio.h>
@@ -51,3 +52,5 @@ CompilerError compile       (Compiler* compiler, const char* outputFile);
 void          write         (Compiler* compiler, const char* format, ...);
 void          writeNewLine  (Compiler* compiler);
 void          writeIndented (Compiler* compiler, const char* format, ...);
+
+#endif

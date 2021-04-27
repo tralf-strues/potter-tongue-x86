@@ -57,6 +57,8 @@ int INSERT(STRUCT* container, elem_t element)
     }
 
     container->ELEMENTS[container->count++] = element;
+
+    return container->count - 1;
 }
 
 int FIND(STRUCT* container, elem_t element)
@@ -64,7 +66,7 @@ int FIND(STRUCT* container, elem_t element)
     assert(container);
     assert(container->ELEMENTS);
 
-    for (int i = 0; i < container->count; i++)
+    for (int i = 0; i < (int) container->count; i++)
     {
         if (container->cmp(container->ELEMENTS[i], element) == 0)
         {

@@ -1,6 +1,8 @@
-#pragma once
-#include <stdlib.h>
+#ifndef SYNTAX_H
+#define SYNTAX_H
 
+#include <stdlib.h>
+ 
 enum MathOp
 {
     ADD_OP,
@@ -92,7 +94,7 @@ struct Keyword
     const char* codeString;
 };
 
-static const char* MAIN_FUNCTION_NAME = "love";
+static const char MAIN_FUNCTION_NAME[] = "love";
 
 #define TO_STR(keywordCode) #keywordCode
 
@@ -163,3 +165,5 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] = {
 const char* mathOpToString      (MathOp operation);
 const char* keywordCodeToString (KeywordCode keywordCode);
 const char* getKeywordString    (KeywordCode keywordCode);
+ 
+#endif

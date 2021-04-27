@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EXPRESSION_TREE_H
+#define EXPRESSION_TREE_H
 
 #include <stdarg.h>
 #include "syntax.h"
@@ -84,3 +85,5 @@ void   dumpToFile        (FILE* file, const Node* root);
 Node*  readTreeFromFile  (const char* filename);
 
 const char* nodeTypeToString(NodeType type);
+
+#endif

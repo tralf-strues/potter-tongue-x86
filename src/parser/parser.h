@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARSER_H
+#define PARSER_H
 
 #include "tokenizer.h"
 #include "expression_tree.h"
@@ -157,3 +158,4 @@ void        destroy      (Parser* parser);
 const char* errorString  (ParseError error);
 ParseError  parseProgram (Parser* parser, SymbolTable* table, Node** root);
 
+#endif
