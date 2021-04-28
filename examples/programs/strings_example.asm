@@ -1,3 +1,12 @@
+global _start   
+section .text   
+
+_start:         
+	call love     
+	mov rax, 0x3C 
+	xor rdi, rdi  
+	syscall       
+
 ;------------------------------------------------------------------------------
 ; Standard potter-tongue function, that prints decimal number to STDOUT.
 ; 
@@ -131,23 +140,3 @@ accio:
                 mov cl, byte [rsi]
                 cmp cl, 0xa                    ; new line character
 
-                je .END_WHILE
-
-                imul rax, rbx
-                
-                add  rax, rcx
-                sub  rax, '0'
-
-                inc rsi
-                jmp .WHILE_DIGITS_LEFT
-.END_WHILE:
-
-                test r12, r12
-                jz .SKIP_NEGATIVE_SIGN
-
-                neg rax
-.SKIP_NEGATIVE_SIGN:
-
-                mov rsp, rbp
-                pop rbp
-                ret

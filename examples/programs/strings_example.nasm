@@ -1,3 +1,12 @@
+global _start   
+section .text   
+
+_start:         
+	call love     
+	mov rax, 0x3C 
+	xor rdi, rdi  
+	syscall       
+
 ;------------------------------------------------------------------------------
 ; Standard potter-tongue function, that prints decimal number to STDOUT.
 ; 
@@ -151,3 +160,59 @@ accio:
                 mov rsp, rbp
                 pop rbp
                 ret
+
+; ==================================================
+; love
+;
+; params: 
+; vars:   
+; ==================================================
+love:
+                push rbp
+                mov rbp, rsp
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR1
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR2
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, Message
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                mov rax, 0
+                jmp .RETURN
+.RETURN:
+                mov rsp, rbp
+                pop rbp
+                ret
+
+
+section .data
+IO_BUFFER_SIZE equ 256
+Message:
+                db "Hello, World!", 0
+STR1:
+                db " The real question is how long you are going to live... ", 0
+STR2:
+                db `\n`, 0
+
+section .bss
+IO_BUFFER:
+                resb 256
+IO_BUFFER_END:

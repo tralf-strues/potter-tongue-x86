@@ -36,7 +36,8 @@ struct Mem64
     uint8_t scale;        // either 2, 4 or 8 (otherwise isn't used)
 };
 
-static const char* REGISTERS_64_STRINGS[TOTAL_REGISTERS_64] = {
+static const char* REGISTERS_64_STRINGS[TOTAL_REGISTERS_64] = 
+{
     "rax",
     "rcx",
     "rdx",

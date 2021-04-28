@@ -72,6 +72,7 @@ void write_jge_rel32  (Compiler* compiler, const char* label, int labelNum, cons
 
 void write_mov_r64_r64   (Compiler* compiler, Reg64 dest, Reg64 src,      const char* comment = nullptr);
 void write_mov_r64_imm64 (Compiler* compiler, Reg64 dest, int64_t number, const char* comment = nullptr);
+void write_mov_r64_imm64 (Compiler* compiler, Reg64 dest, const char* label, int labelNum, const char* comment = nullptr);
 void write_mov_m64_r64   (Compiler* compiler, Mem64 dest, Reg64 src,      const char* comment = nullptr);
 void write_mov_r64_m64   (Compiler* compiler, Reg64 dest, Mem64 src,      const char* comment = nullptr);
 

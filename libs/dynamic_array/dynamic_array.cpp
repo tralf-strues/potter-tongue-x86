@@ -41,8 +41,8 @@ void realloc(STRUCT* container)
 {
     assert(container);
 
-    container->capacity     *= REALLOC_MULTIPLIER;
-    container->ELEMENTS = (elem_t*) realloc(container->ELEMENTS, 
+    container->capacity *= REALLOC_MULTIPLIER;
+    container->ELEMENTS  = (elem_t*) realloc(container->ELEMENTS, 
                                              container->capacity * sizeof(elem_t));
     assert(container->ELEMENTS);
 }

@@ -79,7 +79,8 @@ const char*  DEFAULT_OUTPUT      = "a.asm";
 const size_t MAX_FILENAME_LENGTH = 128;
 const size_t MAX_COMMAND_LENGTH  = 256;
 
-const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] = {
+const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] = 
+{
     /*====FLAG_TOKEN_DUMP====*/
     "\tPrint parsed tokens in the following format:\n"
     "\tToken <token_number>:\n"
@@ -120,7 +121,8 @@ const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] = {
     "\tSpecify output file.\n"
 };
 
-const FlagSpecification FLAG_SPECIFICATIONS[TOTAL_FLAGS] = {
+const FlagSpecification FLAG_SPECIFICATIONS[TOTAL_FLAGS] = 
+{
     { FLAG_TOKEN_DUMP,      
       "--token-dump",      
       processFlagTokenDump,     
@@ -385,8 +387,10 @@ Error compile(const FlagManager* flagManager)
     }
 
     if (flagManager->symbTableDumpEnabled)
-    {
+    {   
+        printf("\n");
         dump(&table);
+        printf("\n");
     }
 
     if (flagManager->treeDumpEnabled)

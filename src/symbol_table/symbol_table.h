@@ -2,32 +2,25 @@
 #define SYMBOL_TABLE_H
 
 #include <stdlib.h>
-#include "function.h"
-
-struct String 
-{
-    const char* name;
-    const char* content;
-};
+#include "functions_data.h"
+#include "strings_data.h"
 
 struct SymbolTable
 {
     FunctionsData functionsData; 
-
-    String*   strings;
-    size_t    stringsCapacity;
-    size_t    stringsCount;
+    StringsData   stringsData;
 };
 
 void      construct          (SymbolTable* table);
 void      destroy            (SymbolTable* table);
-void      dump               (SymbolTable* table);
+void      dump               (const SymbolTable* table);
 
 Function* pushFunction       (SymbolTable* table, const char* function);
 Function* getFunction        (SymbolTable* table, const char* function);
 
-String*   pushString         (SymbolTable* table, const String string);
+String*   pushString         (SymbolTable* table, String string);
 String*   getStringByName    (SymbolTable* table, const char* name);
 String*   getStringByContent (SymbolTable* table, const char* content);
+int       getStringNumber    (SymbolTable* table, String* string);
 
 #endif

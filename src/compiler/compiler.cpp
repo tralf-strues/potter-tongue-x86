@@ -9,12 +9,13 @@
 const size_t HORIZONTAL_LINE_LENGTH     = 50;
 const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
-const size_t IO_BUFFER_SIZE             = 64;
+const size_t IO_BUFFER_SIZE             = 256;
 
 void compileError        (Compiler* compiler, CompilerError error); 
 
 void writeStdFunctions   (Compiler* compiler); 
 void writeStdData        (Compiler* compiler);
+void writeStringsData    (Compiler* compiler);
 void writeStdBSS         (Compiler* compiler);
 
 void writeHorizontalLine (Compiler* compiler);
@@ -33,6 +34,7 @@ void writeReturn         (Compiler* compiler, Node* node);
 void writeExpression     (Compiler* compiler, Node* node);
 void writeMath           (Compiler* compiler, Node* node);
 void writeCompare        (Compiler* compiler, Node* node);
+void writeString         (Compiler* compiler, Node* node);
 void writeNumber         (Compiler* compiler, Node* node);
 void writeVar            (Compiler* compiler, Node* node);
 
@@ -77,53 +79,6 @@ void compileError(Compiler* compiler, CompilerError error)
     printf("COMPILATION ERROR: %s\n", errorString(error));
 }
 
-// FIXME: rdi, rsi, rdx, rcx, r8, r9
-
-// FIXME: make filenames parameters
-void writeStdFunctions(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-    
-    char*  stdioNasm      = nullptr;
-    size_t stdioNasmBytes = 0;
-
-    if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
-    {
-        compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
-        return;
-    }
-
-    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->file);
-    writeNewLine(compiler);
-
-    free(stdioNasm);
-
-    Function* function = pushFunction(compiler->table, "flagrate");
-    pushParameter(function, "number");
-
-    pushFunction(compiler->table, "accio");
-}
-
-void writeStdData(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-
-    write(compiler, "section .data\n"
-                    "IO_BUFFER_SIZE equ %zu\n",
-                    IO_BUFFER_SIZE);
-}
-
-void writeStdBSS(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-
-    write(compiler, "section .bss\n"
-                    "IO_BUFFER:\n" 
-                    "resb %zu\n"
-                    "IO_BUFFER_END:\n",
-                    IO_BUFFER_SIZE);
-}
-
 CompilerError compile(Compiler* compiler, const char* outputFile)
 {
     assert(compiler);
@@ -143,12 +98,17 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
     }
 
     writeFileHeader(compiler);
-
     writeStdFunctions(compiler);
+
+    // Skipping strings declarations
+    Node* curDeclaration = compiler->tree;
+    while (curDeclaration != nullptr && curDeclaration->type == SDECL_TYPE)
+    {
+        curDeclaration = curDeclaration->left;
+    }
 
     CUR_FUNC = compiler->table->functionsData.functions;
 
-    Node* curDeclaration = compiler->tree;
     while (curDeclaration != nullptr)
     {
         writeFunction(compiler, curDeclaration->right);
@@ -158,8 +118,12 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
         write(compiler, "\n\n");
     }
 
+    write(compiler, "section .data\n");
     writeStdData(compiler);
+    writeStringsData(compiler);
     writeNewLine(compiler);
+
+    write(compiler, "section .bss\n");
     writeStdBSS(compiler);
 
     fclose(compiler->file);
@@ -187,8 +151,7 @@ void writeNewLine(Compiler* compiler)
 
 //------------------------------------------------------------------------------
 //! Writes the formatted string with indentation. String INDENTATION is written
-//! before the string and after each '\n' (unless it's the last character in
-//! the string).
+//! before the string.
 //! 
 //! @param compiler
 //! @param format
@@ -204,6 +167,87 @@ void writeIndented(Compiler* compiler, const char* format, ...)
 
     fprintf(compiler->file, INDENTATION);
     vfprintf(compiler->file, format, args);
+}
+
+// FIXME: rdi, rsi, rdx, rcx, r8, r9
+
+// FIXME: make filenames parameters
+void writeStdFunctions(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+    
+    char*  stdioNasm      = nullptr;
+    size_t stdioNasmBytes = 0;
+
+    if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
+    {
+        compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
+        return;
+    }
+
+    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->file);
+    writeNewLine(compiler);
+
+    free(stdioNasm);
+
+    // Adding standard functions to the compiler's symbol table
+    for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
+    {
+        const StdFunctionInfo* functionInfo = &STANDARD_FUNCTIONS[i];
+        
+        Function* function = pushFunction(compiler->table, functionInfo->workingName);
+
+        for (size_t param = 0; param < functionInfo->parametersCount; param++)
+        {
+            pushParameter(function, functionInfo->parameters[param]);
+        }
+    }
+}
+
+void writeStdData(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "IO_BUFFER_SIZE equ %zu\n",
+                    IO_BUFFER_SIZE);
+}
+
+void writeStringsData(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    StringsData* stringsData = &compiler->table->stringsData;
+
+    for (size_t i = 0; i < stringsData->count; i++)
+    {
+        if (stringsData->strings[i].name != nullptr)
+        {
+            write(compiler, "%s:\n", stringsData->strings[i].name);
+        } 
+        else 
+        {
+            write(compiler, "STR%zu:\n", getStringNumber(compiler->table, 
+                                                         stringsData->strings + i));
+        }
+
+        if (stringsData->strings[i].content[0] == '\n')
+        {
+            writeIndented(compiler, "db `\\n`, 0\n");
+        }
+        else 
+        {
+            writeIndented(compiler, "db \"%s\", 0\n", stringsData->strings[i].content);
+        }
+    }
+}
+
+void writeStdBSS(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "IO_BUFFER:\n");
+    writeIndented(compiler, "resb %zu\n", IO_BUFFER_SIZE);
+    write(compiler, "IO_BUFFER_END:\n");
 }
 
 void writeHorizontalLine(Compiler* compiler)
@@ -286,11 +330,6 @@ void writeFunction(Compiler* compiler, Node* node)
     {
         write_sub_r64_imm32(compiler, RSP, 8 * (CUR_FUNC->varsData.count - CUR_FUNC->paramsCount)); 
     }
-
-    // for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
-    // {
-    //     writeIndented(compiler, "pop [rax+%zu]\n", 2 + i);
-    // }
 
     write(compiler, "\n");
     writeBlock(compiler, node->left);
@@ -421,6 +460,7 @@ void writeExpression(Compiler* compiler, Node* node)
     switch (node->type)
     {
         case MATH_TYPE:   { writeMath   (compiler, node); break; }
+        case STRING_TYPE: { writeString (compiler, node); break; }
         case NUMBER_TYPE: { writeNumber (compiler, node); break; }
         case ID_TYPE:     { writeVar    (compiler, node); break; }
         case CALL_TYPE:   { writeCall   (compiler, node); break; }
@@ -504,6 +544,15 @@ void writeCompare(Compiler* compiler, Node* node)
     write(compiler, ".COMPARISON_END_%zu:\n", label);
 }
 
+void writeString(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    String* string = getStringByContent(compiler->table, node->data.string);
+    write_mov_r64_imm64(compiler, RAX, "STR", getStringNumber(compiler->table, string));
+}
+
 void writeNumber(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
@@ -517,9 +566,17 @@ void writeVar(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    Mem64 varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, node->data.id)); 
-
-    write_mov_r64_m64(compiler, RAX, varMemory);
+    int varOffset = getVarOffset(CUR_FUNC, node->data.id);
+    if (varOffset != -1)
+    {
+        Mem64 varMemory = mem64BaseDisp(RBP, varOffset); 
+        write_mov_r64_m64(compiler, RAX, varMemory);
+    }
+    else
+    {   
+        String* string = getStringByName(compiler->table, node->data.id);
+        write_mov_r64_imm64(compiler, RAX, node->data.id, -1);
+    }
 }
 
 void writeParamList(Compiler* compiler, Node* node, const Function* function)

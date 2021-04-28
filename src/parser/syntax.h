@@ -2,7 +2,8 @@
 #define SYNTAX_H
 
 #include <stdlib.h>
- 
+
+//--------------------------------Math operations-------------------------------
 enum MathOp
 {
     ADD_OP,
@@ -18,6 +19,11 @@ enum MathOp
     GREATER_OP
 };
 
+const char* mathOpToString(MathOp operation);
+//--------------------------------Math operations-------------------------------
+
+
+//------------------------------------Keywords----------------------------------
 enum KeywordCode
 {
     PROG_START_KEYWORD,
@@ -55,6 +61,7 @@ enum KeywordCode
     SCAN_FLOAT_KEYWORD,
     SCAN_KEYWORD,
     PRINT_FLOAT_KEYWORD,
+    PRINT_STRING_KEYWORD,
     PRINT_KEYWORD,
     FLOOR_KEYWORD,
     SQRT_KEYWORD,
@@ -94,11 +101,10 @@ struct Keyword
     const char* codeString;
 };
 
-static const char MAIN_FUNCTION_NAME[] = "love";
-
 #define TO_STR(keywordCode) #keywordCode
 
-static const Keyword KEYWORDS[KEYWORDS_COUNT] = {
+static const Keyword KEYWORDS[KEYWORDS_COUNT] = 
+{
     { "Godric's-Hollow",   15, PROG_START_KEYWORD,    TO_STR(PROG_START_KEYWORD)    },
     { "Privet-Drive",      12, PROG_END_KEYWORD,      TO_STR(PROG_END_KEYWORD)      },
     { "\n",                1,  NEW_LINE_KEYWORD,      TO_STR(NEW_LINE_KEYWORD)      },
@@ -134,6 +140,7 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] = {
     { "accio-bombarda",    14, SCAN_FLOAT_KEYWORD,    TO_STR(SCAN_FLOAT_KEYWORD)    },
     { "accio",             5,  SCAN_KEYWORD,          TO_STR(SCAN_KEYWORD)          },
     { "flagrate-bombarda", 17, PRINT_FLOAT_KEYWORD,   TO_STR(PRINT_FLOAT_KEYWORD)   },
+    { "flagrate-s",        10, PRINT_STRING_KEYWORD,  TO_STR(PRINT_STRING_KEYWORD)  },
     { "flagrate",          8,  PRINT_KEYWORD,         TO_STR(PRINT_KEYWORD)         },
     { "colloshoo",         9,  FLOOR_KEYWORD,         TO_STR(FLOOR_KEYWORD)         },
     { "crucio",            6,  SQRT_KEYWORD,          TO_STR(SQRT_KEYWORD)          },
@@ -162,8 +169,38 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] = {
     { "circumrota",        10, STR_NEW_LINE_KEYWORD,  TO_STR(STR_NEW_LINE_KEYWORD)  }
 };
 
-const char* mathOpToString      (MathOp operation);
 const char* keywordCodeToString (KeywordCode keywordCode);
 const char* getKeywordString    (KeywordCode keywordCode);
- 
+//------------------------------------Keywords----------------------------------
+
+
+//-------------------------------Standard functions-----------------------------
+static const char   MAIN_FUNCTION_NAME[]              = "love";
+static const size_t STANDARD_FUNCTIONS_COUNT          = 7;
+static const size_t STANDARD_FUNCTIONS_MAX_PARAMETERS = 2;
+
+struct StdFunctionInfo
+{
+    KeywordCode  code;
+    const char*  workingName;
+    const char*  parameters[STANDARD_FUNCTIONS_MAX_PARAMETERS];
+    size_t       parametersCount;
+};
+
+static const StdFunctionInfo STANDARD_FUNCTIONS[STANDARD_FUNCTIONS_COUNT] = 
+{
+    { SCAN_FLOAT_KEYWORD,   "accio_bombarda",    {"precision"},           1 },
+    { SCAN_KEYWORD,         "accio",             {},                      0 },
+
+    { PRINT_FLOAT_KEYWORD,  "flagrate_bombarda", {"precision", "number"}, 2 },
+    { PRINT_STRING_KEYWORD, "flagrate_s",        {"string"},              1 },
+    { PRINT_KEYWORD,        "flagrate",          {"number"},              1 },
+
+    { FLOOR_KEYWORD,        "colloshoo",         {"number"},              1 },
+    { SQRT_KEYWORD,         "crucio",            {"number"},              1 },
+};
+
+const StdFunctionInfo* getStdFunctionInfo(KeywordCode keywordCode);
+//-------------------------------Standard functions-----------------------------
+
 #endif

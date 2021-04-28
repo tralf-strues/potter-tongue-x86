@@ -56,22 +56,22 @@ Strings are an integral part of almost all programming languages. That being sai
 #### Declaring global strings
 Global strings can be declared pretty easily. Below a string called `<<The boy who lived>>` is declared. It contains string "Hello, World!" (without quotes). Note, that string declarations are allowed only ***before function declarations***!
 ```
-Chapter <<StringName>> "String"
-Chapter <<The boy who lived>> "Hello, World!"
+Chapter <<StringName>>     "String"
+Chapter <<TheBoyWhoLived>> "Hello, World!"
 ```
 
-#### Passing strings to flagrate
-Flagrate can now be passed either a global or local string. The syntax looks like the following:
+#### Passing strings to flagrate-s
+A new version of flagrate has been added, called ***`flagrate-s`***. It can now be passed either a global or local string. The syntax looks like the following:
 ```
-- flagrate <<TheBoyWhoLived>> (oNo) Prints "Hello, World!"
-- flagrate "Hello, World!"    (oNo) The same as the previous
+- flagrate-s <<TheBoyWhoLived>> (oNo) Prints "Hello, World!"
+- flagrate-s "Hello, World!"    (oNo) The same as the previous
 ``` 
 
 #### Writing new-line character
 In order to switch printing to the next line, you can just use the `circumrota` keyword with flagrate.
 
 ```
-- flagrate circumrota (oNo) Prints new-line character
+- flagrate-s circumrota (oNo) Prints new-line character
 ```
 
 ### 3. Arrays :link:
@@ -135,6 +135,7 @@ Finally, the grammar is ready and I can begin incorporating aforementioned featu
 =       ::= 'carpe-retractum'
 
 print   ::= 'flagrate'
+prints  ::= 'flagrate-s'
 printf  ::= 'flagrate-bombarda'
 read    ::= 'accio'
 readf   ::= 'accio-bombarda'
@@ -173,7 +174,7 @@ Assignment   ::= LValue = Expression
 LValue       ::= Var | MemAccess 
 
 Call         ::= depulso Var ( ) | depulso Var (ExprList)
-Print        ::= print 'circumrota' | print StringQuoted | print StringName | print Expression | printf Expression ',' Expression
+Print        ::= prints 'circumrota' | prints StringQuoted | prints StringName | print Expression | printf Expression ',' Expression
 Read         ::= read | readf ( Expression )
 Sqrt         ::= sqrt ( Expression )
 

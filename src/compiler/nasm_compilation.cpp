@@ -282,6 +282,19 @@ void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, int64_t number, const c
     writeComment(compiler, comment);
 }
 
+void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, const char* label, int labelNum, const char* comment)
+{
+    ASSERT_COMPILER(compiler);
+
+    writeIndented(compiler, "mov %s, %s", reg64ToString(dest), label);
+    if (labelNum != -1)
+    {
+        write(compiler, "%d", labelNum);
+    }
+
+    writeComment(compiler, comment);
+}
+
 void write_mov_m64_r64(Compiler* compiler, Mem64 dest, Reg64 src, const char* comment)
 {
     ASSERT_COMPILER(compiler);

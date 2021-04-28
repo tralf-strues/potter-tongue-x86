@@ -1,4 +1,5 @@
-#include "function.h"
+#include <stdio.h>
+#include "functions_data.h"
 
 const size_t DEFAULT_CAPACITY   = 8;
 const double REALLOC_MULTIPLIER = 1.8;
@@ -86,4 +87,58 @@ int getVarOffset(Function* function, const char* variable)
 #undef INSERT             
 #undef FIND               
 #undef elem_t 
+
+void dump(const FunctionsData* functionsData)
+{
+    assert(functionsData);
+
+    printf("functionsCapacity = %zu\n"
+           "functionsCount    = %zu\n\n"
+           "functions = {\n    ", 
+           functionsData->capacity, 
+           functionsData->count);
+
+    if (functionsData->count == 0)
+    {
+        printf("nullptr }");
+        return;
+    }
+
+    for (size_t i = 0; i < functionsData->count; i++)
+    {
+        Function* function = functionsData->functions + i;
+        VarsData* varsData = &function->varsData;
+        printf("{ name='%s', varsCapacity=%zu, varsCount=%zu, paramsCount=%zu, \n    "
+               "  vars=[",
+               function->name, 
+               varsData->capacity,
+               varsData->count,
+               function->paramsCount);
+
+        if (varsData->count != 0)
+        {
+            for (size_t j = 0; j < varsData->count; j++)
+            {
+                printf("'%s', ", varsData->vars[j]);
+            }
+
+            printf("\b\b] }");
+        }
+        else 
+        {
+            printf("none] }");
+        }
+
+        if (i < functionsData->count - 1)
+        {
+            printf(",\n\n    ");
+        }
+        else
+        {
+            printf("\n");
+        }
+    }
+
+    printf("}\n");
+}
 //--------------------------------FunctionsData---------------------------------

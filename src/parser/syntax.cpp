@@ -29,7 +29,17 @@ const char* keywordCodeToString(KeywordCode keywordCode)
     return KEYWORDS[keywordCode].codeString;    
 }
 
-const char* getKeywordString(KeywordCode keywordCode)
+const char* getKeywordString(KeywordCode keywordCode) 
 {
     return KEYWORDS[keywordCode].string;
+}
+
+const StdFunctionInfo* getStdFunctionInfo(KeywordCode keywordCode)
+{
+    if (keywordCode < SCAN_FLOAT_KEYWORD || keywordCode > SQRT_KEYWORD)
+    {
+        return nullptr;
+    }
+
+    return &STANDARD_FUNCTIONS[keywordCode - SCAN_FLOAT_KEYWORD];
 }

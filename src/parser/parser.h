@@ -27,6 +27,8 @@ enum ParseError
     PARSE_ERROR_PRINT_FLOAT_PRECISION_NEEDED,
     PARSE_ERROR_PRINT_FLOAT_NO_COMMA,
     PARSE_ERROR_PRINT_FLOAT_EXPRESSION_NEEDED,
+    PARSE_ERROR_PRINT_STRING_INVALID_ARGUMENT,
+    PARSE_ERROR_PRINT_STRING_UNDECLARED_STRING_ID,
 
     PARSE_ERROR_IF_EXPRESSION_NEEDED,
     PARSE_ERROR_IF_BLOCK_NEEDED,
@@ -67,6 +69,8 @@ enum ParseError
 
     PARSE_ERROR_NO_STRING_AFTER_QUOTE,
     PARSE_ERROR_NO_SECOND_QUOTE_AFTER_STRING,
+
+    PARSE_ERROR_STRING_ID_SECOND_DECLARATION,
     PARSE_ERROR_NO_CLOSE_STRING_ID,
     PARSE_ERROR_NO_STRING_ID_IN_DECLARATION,
     PARSE_ERROR_NO_QUOTED_STRING_IN_DECLARATION,
@@ -75,7 +79,8 @@ enum ParseError
     TOTAL_PARSE_ERRORS
 };
 
-static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
+static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = 
+{
     "no error",
 
     "no program start ('Godric's-Hollow') found",
@@ -96,6 +101,8 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
     "couldn't find an precision after 'flagrate-bombarda' operator",
     "there has to be a ',' between precision and expression",
     "couldn't find an expression after 'flagrate-bombarda' operator",
+    "couldn't find a valid expression after 'flagrate-s' operator",
+    "this global string hasn't been declared",
 
     "revelio operator needs a condition",
     "couldn't find revelio operator's body",
@@ -137,6 +144,7 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] = {
     "after an opening quote \" there has to be a string",
     "quoted string has to have a closing \" after a string",
 
+    "this global string has already been declared",
     "global string reference has to end with '>>'",
     "there has to be <<StringName>> after 'Chapter' in global string declaration",
     "there has to be \"String\" after <<StringName>>  in global string declaration",

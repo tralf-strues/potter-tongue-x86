@@ -4,9 +4,6 @@
 #include <string.h>
 #include "symbol_table.h"
 
-void reallocFunctions (SymbolTable* table);
-void reallocVariables (Function* function);
-
 int functionCmp(Function firstFunction, Function secondFunction)
 {
     assert(firstFunction.name);
@@ -15,11 +12,28 @@ int functionCmp(Function firstFunction, Function secondFunction)
     return strcmp(firstFunction.name, secondFunction.name);
 }
 
+int stringCmpByName(String firstString, String secondString)
+{
+    if (firstString.name == secondString.name)                       { return 0; }
+    if (firstString.name == nullptr || secondString.name == nullptr) { return 1; }
+
+    return strcmp(firstString.name, secondString.name);
+}
+
+int stringCmpByContent(String firstString, String secondString)
+{
+    if (firstString.content == secondString.content)                       { return 0; }
+    if (firstString.content == nullptr || secondString.content == nullptr) { return 1; }
+
+    return strcmp(firstString.content, secondString.content);
+}
+
 void construct(SymbolTable* table)
 {
     assert(table);
 
     construct(&table->functionsData, functionCmp);
+    construct(&table->stringsData,   stringCmpByName);
 }
 
 void destroy(SymbolTable* table)
@@ -27,6 +41,7 @@ void destroy(SymbolTable* table)
     assert(table);
 
     destroy(&table->functionsData, destroyFunction);
+    destroy(&table->stringsData,   nullptr);
 }
 
 Function* pushFunction(SymbolTable* table, const char* function)
@@ -53,75 +68,54 @@ Function* getFunction(SymbolTable* table, const char* function)
     return functionIdx != -1 ? table->functionsData.functions + functionIdx : nullptr;
 }
 
-String* pushString(SymbolTable* table, const String string)
+String* pushString(SymbolTable* table, String string)
 {
     assert(table);
     assert(string.name || string.content);
 
-    // while (table->stringsCount >= table->stringsCapacity)
-    // {
-    //     reallocVariables(function);
-    // }
-
-    // function->vars[function->varsCount] = (char*) variable;
-
-    // function->varsCount++;
+    int stringIdx = insertString(&table->stringsData, string);
+    return stringIdx != -1 ? table->stringsData.strings + stringIdx : nullptr;
 }
 
-String*   getStringByName    (SymbolTable* table, const char* name);
-String*   getStringByContent (SymbolTable* table, const char* string);
+String* getStringByName(SymbolTable* table, const char* name)
+{
+    assert(table);
+    assert(name);
 
-void dump(SymbolTable* table)
+    table->stringsData.cmp = stringCmpByName;
+    int stringIdx = findString(&table->stringsData, { name, nullptr });
+
+    return stringIdx != -1 ? table->stringsData.strings + stringIdx : nullptr;
+}
+
+String* getStringByContent(SymbolTable* table, const char* content)
+{
+    assert(table);
+    assert(content);
+
+    table->stringsData.cmp = stringCmpByContent;
+    int stringIdx = findString(&table->stringsData, { nullptr, content });
+
+    return stringIdx != -1 ? table->stringsData.strings + stringIdx : nullptr;
+}
+
+int getStringNumber(SymbolTable* table, String* string)
+{
+    assert(table);
+    assert(string);
+
+    return string - table->stringsData.strings;
+}
+
+void dump(const SymbolTable* table)
 {
     assert(table);
 
-    printf("Symbol table:\n"
-           "    functionsCapacity = %zu\n"
-           "    functionsCount    = %zu\n\n"
-           "    functions = { \n                  ", 
-           table->functionsData.capacity, 
-           table->functionsData.count);
+    printf("==== Symbol table dump ====\n\n");
+    dump(&table->functionsData);
 
-    if (table->functionsData.count == 0)
-    {
-        printf("nullptr }");
-        return;
-    }
+    printf("\n");
+    dump(&table->stringsData);
+    printf("\n==== Symbol table dump ====\n");
 
-    for (size_t i = 0; i < table->functionsData.count; i++)
-    {
-        Function* function = table->functionsData.functions + i;
-        VarsData* varsData = &function->varsData;
-        printf("{ name='%s', varsCapacity=%zu, varsCount=%zu, paramsCount=%zu, \n                  "
-                "  vars=[",
-                function->name, 
-                varsData->capacity,
-                varsData->count,
-                function->paramsCount);
-
-        if (varsData->count != 0)
-        {
-            for (size_t j = 0; j < varsData->count; j++)
-            {
-                printf("'%s', ", varsData->vars[j]);
-            }
-
-            printf("\b\b] }");
-        }
-        else 
-        {
-            printf("none] }");
-        }
-
-        if (i < table->functionsData.count - 1)
-        {
-            printf(",\n                  ");
-        }
-        else
-        {
-            printf("\n");
-        }
-    }
-
-    printf("                }\n");
 }

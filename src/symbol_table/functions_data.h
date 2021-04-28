@@ -50,6 +50,8 @@ int  getVarOffset    (Function* function, const char* variable);
 #undef INSERT             
 #undef FIND               
 #undef elem_t
+
+void dump(const FunctionsData* functionsData);
 //--------------------------------FunctionsData---------------------------------
 
 #endif

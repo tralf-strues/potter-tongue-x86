@@ -62,6 +62,7 @@ Node*  parseLValue         (Parser* parser);
 
 Node*  parseCall           (Parser* parser);
 Node*  parsePrintFloat     (Parser* parser);
+Node*  parsePrintString    (Parser* parser);
 Node*  parsePrint          (Parser* parser);
 Node*  parseStandardFunc   (Parser* parser, KeywordCode keywordCode);
 
@@ -301,21 +302,20 @@ Node* parseSDeclaration(Parser* parser)
     proceed(parser);
 
     Node* stringDeclaration = newNode(SDECL_TYPE, {}, nullptr, nullptr);
-    setRight(stringDeclaration, parseStringId(parser));
+    Node* stringId          = parseStringId(parser);
     
-    if (stringDeclaration->right == nullptr)
-    {
-        SYNTAX_ERROR(PARSE_ERROR_NO_STRING_ID_IN_DECLARATION);
-    }
+    if (stringId == nullptr) { SYNTAX_ERROR(PARSE_ERROR_NO_STRING_ID_IN_DECLARATION); }
+    
+    String* existingString = getStringByName(parser->table, stringId->data.id);
+    if (existingString != nullptr) { SYNTAX_ERROR(PARSE_ERROR_STRING_ID_SECOND_DECLARATION); }
 
-    setRight(stringDeclaration->right, parseQuotedString(parser));
-    if (stringDeclaration->right->right == nullptr)
-    {
-        SYNTAX_ERROR(PARSE_ERROR_NO_QUOTED_STRING_IN_DECLARATION);
-    }
+    setRight(stringDeclaration, stringId);
+    setRight(stringId, parseQuotedString(parser));
+    if (stringId->right == nullptr) { SYNTAX_ERROR(PARSE_ERROR_NO_QUOTED_STRING_IN_DECLARATION); }
 
     REQUIRE_NEW_LINES();
 
+    pushString(parser->table, {stringId->data.id, stringId->right->data.string});
     return stringDeclaration;
 }
 
@@ -327,7 +327,7 @@ Node* parseFDeclaration(Parser* parser)
     if (!isKeyword(curToken(parser), FDECL_KEYWORD)) { return nullptr; }
     proceed(parser);
 
-    Node* functionDeclaration = newNode(FDECL_TYPE, { .isVoidFunction = false }, nullptr, nullptr);
+    Node* functionDeclaration = newNode(FDECL_TYPE, {.isVoidFunction = false}, nullptr, nullptr);
     
     if (isNumber(curToken(parser), 0))
     {
@@ -424,6 +424,7 @@ Node* parseCmdLine(Parser* parser)
     if (node == nullptr) { node = parseAssignment(parser);   }
     if (node == nullptr) { node = parseJump(parser);         }
     if (node == nullptr) { node = parsePrintFloat(parser);   }
+    if (node == nullptr) { node = parsePrintString(parser);  }
     if (node == nullptr) { node = parsePrint(parser);        }
     if (node == nullptr) { node = parseExpression(parser);   } // Has to be after assignment!
     if (node == nullptr) { return nullptr;                   }
@@ -809,12 +810,62 @@ Node* parsePrintFloat(Parser* parser)
     Node* expression = parseExpression(parser);
     if (expression == nullptr) { SYNTAX_ERROR(PARSE_ERROR_PRINT_FLOAT_EXPRESSION_NEEDED); }
 
-    Node* firstParam  = newNode(EXPR_LIST_TYPE, {}, precision,  nullptr);
-    Node* secondParam = newNode(EXPR_LIST_TYPE, {}, expression, firstParam);
-    
-    Node* callNode = newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_FLOAT_KEYWORD].string), secondParam);
+    Node* firstParam   = newNode(EXPR_LIST_TYPE, {}, precision,  nullptr);
+    Node* secondParam  = newNode(EXPR_LIST_TYPE, {}, expression, firstParam);
 
-    return callNode;
+    Node* printFloatId = ID(getStdFunctionInfo(PRINT_FLOAT_KEYWORD)->workingName);
+
+    return newNode(CALL_TYPE, {}, printFloatId, secondParam);
+}
+
+Node* parsePrintString(Parser* parser)
+{
+    ASSERT_PARSER(parser);
+
+    if (!isKeyword(curToken(parser), PRINT_STRING_KEYWORD)) { return nullptr; }
+    proceed(parser);
+
+    Node* paramList     = newNode(EXPR_LIST_TYPE, {}, nullptr, nullptr);
+    Node* printStringId = ID(getStdFunctionInfo(PRINT_STRING_KEYWORD)->workingName);
+
+    if (isKeyword(curToken(parser), STR_NEW_LINE_KEYWORD))
+    {
+        proceed(parser);
+
+        if (getStringByContent(parser->table, "\n") == nullptr)
+        {
+            pushString(parser->table, {nullptr, "\n"});
+        }
+
+        setLeft(paramList, newNode(STRING_TYPE, {.string = "\n"}, nullptr, nullptr));
+        return newNode(CALL_TYPE, {}, printStringId, paramList);
+    }
+
+    Node* stringId = parseStringId(parser);
+    if (stringId != nullptr)
+    {
+        if (getStringByName(parser->table, stringId->data.id) == nullptr)
+        {
+            SYNTAX_ERROR(PARSE_ERROR_PRINT_STRING_UNDECLARED_STRING_ID);
+        }
+
+        setLeft(paramList, stringId);
+        return newNode(CALL_TYPE, {}, printStringId, paramList);
+    }
+
+    Node* quotedString = parseQuotedString(parser);
+    if (quotedString != nullptr)
+    {
+        if (getStringByContent(parser->table, quotedString->data.string) == nullptr)
+        {
+            pushString(parser->table, {nullptr, quotedString->data.string});
+        }
+
+        setLeft(paramList, quotedString);
+        return newNode(CALL_TYPE, {}, printStringId, paramList);
+    }
+
+    SYNTAX_ERROR(PARSE_ERROR_PRINT_STRING_INVALID_ARGUMENT);
 }
 
 Node* parsePrint(Parser* parser)
@@ -824,32 +875,13 @@ Node* parsePrint(Parser* parser)
     if (!isKeyword(curToken(parser), PRINT_KEYWORD)) { return nullptr; }
     proceed(parser);
 
-    if (isKeyword(curToken(parser), STR_NEW_LINE_KEYWORD))
-    {
-        proceed(parser);
-
-        Node* newLine = newNode(STRING_TYPE, {.string = "\n"}, nullptr, nullptr);
-        return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), newLine);
-    }
-
-    Node* stringId = parseStringId(parser);
-    if (stringId != nullptr)
-    {
-        return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), stringId);
-    }
-
-    Node* quotedString = parseQuotedString(parser);
-    if (quotedString != nullptr)
-    {
-        return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), quotedString);
-    }
-
     Node* expression = parseExpression(parser);
     if (expression == nullptr) { SYNTAX_ERROR(PARSE_ERROR_PRINT_EXPRESSION_NEEDED); }
 
     Node* paramList = newNode(EXPR_LIST_TYPE, {}, expression, nullptr);
+    Node* printId   = ID(getStdFunctionInfo(PRINT_KEYWORD)->workingName);
 
-    return newNode(CALL_TYPE, {}, ID(KEYWORDS[PRINT_KEYWORD].string), paramList);
+    return newNode(CALL_TYPE, {}, printId, paramList);
 }
 
 Node* parseStandardFunc(Parser* parser, KeywordCode keywordCode)
