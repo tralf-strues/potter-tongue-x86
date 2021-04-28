@@ -7,7 +7,11 @@ alohomora
     (oNo) - depulso testWhile        protego 10, -30, 5 protego
     
     (oNo) - depulso testAccio        protego protego
-    - depulso testFloat        protego protego
+    
+    (oNo) - depulso testFloatFlagrate protego protego
+    - depulso testFloatAccio protego protego
+        
+    - reverte horcrux
 
 colloportus
 
@@ -72,13 +76,35 @@ alohomora
     - flagrate legilimens input
 colloportus
 
-imperio testFloat horcrux
+imperio testFloatFlagrate horcrux
 alohomora
-    - avenseguim number    carpe-retractum accio 
     - avenseguim precision carpe-retractum accio 
+    - avenseguim number    carpe-retractum accio 
 
-    - flagrate-bombarda legilimens number, legilimens precision
+    - flagrate-bombarda legilimens precision, legilimens number
     - flagrate-s        circumrota
+colloportus
+
+imperio testFloatAccio horcrux
+alohomora
+    - flagrate-s "Enter precision: "
+    - avenseguim precision carpe-retractum accio
+
+    - flagrate-s "Precision is "
+    - flagrate   legilimens precision
+    - flagrate-s circumrota
+    - flagrate-s circumrota
+
+    - flagrate-s "Enter number with a floating point: "
+    - avenseguim number carpe-retractum accio-bombarda protego legilimens precision protego
+
+    - flagrate-s "Number is (with    decimal point): "
+    - flagrate-bombarda legilimens precision, legilimens number
+    - flagrate-s        circumrota
+
+    - flagrate-s "Number is (without decimal point): "
+    - flagrate   legilimens number
+    - flagrate-s circumrota
 colloportus
 
 Privet-Drive 

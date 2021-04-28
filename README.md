@@ -45,6 +45,7 @@ accio-bombarda protego 4 protego
 Here are different cases for precision equal to 4:
 Input       | Return value | Case
 ------------|--------------|-------------------------------
+*220202*    | 2202020000   | frac = 0
 *22.0202*   | 220202       | frac = precision
 *22.02*     | 220200       | frac < precision
 *22.020202* | 220202       | frac > precision (truncation!)

@@ -113,7 +113,7 @@ flagrate_s:
 ; 
 ; Returns: (none)
 ; 
-; Changes: RAX, RBX, RDX, RDI, RSI, R12
+; Changes: RAX, RBX, RCX, RDX, RDI, RSI, R12
 ;------------------------------------------------------------------------------
 flagrate_bombarda:
                 push rbp
@@ -158,7 +158,6 @@ flagrate_bombarda:
 
                 test rax, rax
                 jnz .WHILE_DIGITS_LEFT
-.END_WHILE:
 
                 test r12, r12
                 jz .SKIP_NEGATIVE_SIGN
@@ -239,6 +238,106 @@ accio:
                 pop rbp
                 ret
 
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that reads decimal number from STDIN.
+; 
+; Expects: [RBP + 16] = precision
+; 
+; Returns: RAX = read number
+; 
+; Changes: RAX, RBX, RCX, RDI, RSI, R12
+;------------------------------------------------------------------------------
+accio_bombarda:
+                push rbp
+                mov rbp, rsp
+
+                mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
+                mov rdi, 0x00                   ; fd    = STDIN
+                mov rsi, IO_BUFFER              ; buf   = IO_BUFFER
+                mov rdx, IO_BUFFER_SIZE         ; count = IO_BUFFER_SIZE
+                syscall
+
+                xor rax, rax
+                mov rsi, IO_BUFFER
+                mov rbx, 10
+                xor rcx, rcx
+
+                xor r12, r12                    ; r12 = is number negative
+
+                cmp byte [rsi], '-'                   
+                jne .NOT_NEGATIVE
+                mov r12, 1
+                inc rsi
+.NOT_NEGATIVE:
+
+		; Parsing until '.'
+.UNTIL_DECIMAL_POINT:
+                mov cl, byte [rsi]
+
+                cmp cl, 0xa                    ; new line character
+                je .DECIMAL_POINT_REACHED
+
+		cmp cl, '.'
+		je .DECIMAL_POINT_REACHED
+
+                imul rax, rbx
+                
+                add  rax, rcx
+                sub  rax, '0'
+
+                inc rsi
+                jmp .UNTIL_DECIMAL_POINT
+
+.DECIMAL_POINT_REACHED:
+
+		; Parsing after '.' (maximum precision times)
+		mov rdi, qword [rbp + 16]	; rdi = precision
+
+		cmp cl, '.'
+		jne .NOT_SKIP_POINT
+		inc rsi
+.NOT_SKIP_POINT:
+
+.PARSE_PRECISION_TIMES:
+		test rdi, rdi
+		jz .END_PARSE_PRECISION_TIMES
+
+		mov cl, byte [rsi]
+                cmp cl, 0xa                    ; new line character
+                je .END_PARSE_PRECISION_TIMES
+
+                imul rax, rbx
+                
+                add  rax, rcx
+                sub  rax, '0'
+
+                inc rsi
+		dec rdi
+                jmp .PARSE_PRECISION_TIMES
+
+.END_PARSE_PRECISION_TIMES:
+
+		; Finish multiplying by 10 in case rdi isn't 0 at this point
+.REMAINING_DIGITS:
+		test rdi, rdi
+		jz .END_REMAINING_DIGITS
+
+		imul rax, rbx
+		dec rdi
+
+		jmp .REMAINING_DIGITS
+.END_REMAINING_DIGITS:
+
+                test r12, r12
+                jz .SKIP_NEGATIVE_SIGN
+
+                neg rax
+.SKIP_NEGATIVE_SIGN:
+
+                mov rsp, rbp
+                pop rbp
+                ret
+
 ; ==================================================
 ; love
 ;
@@ -249,10 +348,12 @@ love:
                 push rbp
                 mov rbp, rsp
 
-                ; --- calling testFloat() ---
+                ; --- calling testFloatAccio() ---
 
-                call testFloat
+                call testFloatAccio
 
+                mov rax, 0
+                jmp .RETURN
 .RETURN:
                 mov rsp, rbp
                 pop rbp
@@ -525,33 +626,33 @@ testAccio:
 
 
 ; ==================================================
-; testFloat
+; testFloatFlagrate
 ;
 ; params: 
-; vars:   number, precision
+; vars:   precision, number
 ; ==================================================
-testFloat:
+testFloatFlagrate:
                 push rbp
                 mov rbp, rsp
                 sub rsp, 16
 
-                ; --- assignment to number ---
+                ; --- assignment to precision ---
                 ; evaluating expression
                 ; --- calling accio() ---
 
                 call accio
 
                 mov [rbp - 8], rax
-                ; --- assignment to number ---
-
                 ; --- assignment to precision ---
+
+                ; --- assignment to number ---
                 ; evaluating expression
                 ; --- calling accio() ---
 
                 call accio
 
                 mov [rbp - 16], rax
-                ; --- assignment to precision ---
+                ; --- assignment to number ---
 
                 ; --- calling flagrate_bombarda() ---
                 ; param 2
@@ -578,10 +679,158 @@ testFloat:
                 ret
 
 
+; ==================================================
+; testFloatAccio
+;
+; params: 
+; vars:   precision, number
+; ==================================================
+testFloatAccio:
+                push rbp
+                mov rbp, rsp
+                sub rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR1
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- assignment to precision ---
+                ; evaluating expression
+                ; --- calling accio() ---
+
+                call accio
+
+                mov [rbp - 8], rax
+                ; --- assignment to precision ---
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR2
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR3
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- assignment to number ---
+                ; evaluating expression
+                ; --- calling accio_bombarda() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call accio_bombarda
+                add rsp, 8
+
+                mov [rbp - 16], rax
+                ; --- assignment to number ---
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR4
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_bombarda() ---
+                ; param 2
+                mov rax, [rbp - 16]
+                push rax
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call flagrate_bombarda
+                add rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR5
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 16]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+.RETURN:
+                mov rsp, rbp
+                pop rbp
+                ret
+
+
 section .data
 IO_BUFFER_SIZE equ 256
 STR0:
                 db `\n`, 0
+STR1:
+                db "Enter precision: ", 0
+STR2:
+                db "Precision is ", 0
+STR3:
+                db "Enter number with a floating point: ", 0
+STR4:
+                db "Number is (with    decimal point): ", 0
+STR5:
+                db "Number is (without decimal point): ", 0
 
 section .bss
 IO_BUFFER:

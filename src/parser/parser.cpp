@@ -582,7 +582,9 @@ Node* parseFactor(Parser* parser)
 
         case SCAN_KEYWORD:
         {
-            factor = newNode(CALL_TYPE, {}, ID(KEYWORDS[SCAN_KEYWORD].string), nullptr);
+            Node* scanId = ID(getStdFunctionInfo(SCAN_KEYWORD)->workingName);
+
+            factor = newNode(CALL_TYPE, {}, scanId, nullptr);
             proceed(parser);
             break;
         }
@@ -590,12 +592,11 @@ Node* parseFactor(Parser* parser)
         case SCAN_FLOAT_KEYWORD:
         {
             proceed(parser);
+            Node* scanFloatId = ID(getStdFunctionInfo(SCAN_FLOAT_KEYWORD)->workingName);
+            Node* param       = newNode(EXPR_LIST_TYPE, {}, parseExpression(parser), nullptr);
             // FIXME: add error handling
-            factor = newNode(CALL_TYPE, 
-                             {}, 
-                             ID(KEYWORDS[SCAN_FLOAT_KEYWORD].string), 
-                             parseExpression(parser));
-            // proceed(parser);
+            factor = newNode(CALL_TYPE, {}, scanFloatId, param);
+            
             break;
         }
 
