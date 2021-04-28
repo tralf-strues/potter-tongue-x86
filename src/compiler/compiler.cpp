@@ -29,6 +29,8 @@ void writeStatement        (Compiler* compiler, Node* node);
 void writeCondition        (Compiler* compiler, Node* node);
 void writeLoop             (Compiler* compiler, Node* node);
 void writeAssignment       (Compiler* compiler, Node* node);
+void writeAssignmentVar    (Compiler* compiler, Node* node);
+void writeAssignmentArray  (Compiler* compiler, Node* node);
 void writeArrayDeclaration (Compiler* compiler, Node* node);
 void writeReturn           (Compiler* compiler, Node* node);
 
@@ -434,16 +436,62 @@ void writeAssignment(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
+    if (node->left->type == ID_TYPE)
+    {
+        writeAssignmentVar(compiler, node);
+    }
+    else
+    {
+        writeAssignmentArray(compiler, node);
+    }
+}
+
+void writeAssignmentVar(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
     const char* var       = node->left->data.id;
     Mem64       varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, var)); 
 
     writeIndented(compiler, "; --- assignment to %s ---\n", var);
 
     writeIndented(compiler, "; evaluating expression\n");
-    writeExpression(compiler, node->right);      // (rax = expression)
+    writeExpression(compiler, node->right);      
 
-    write_mov_m64_r64(compiler, varMemory, RAX); // mov [rbp + offset], rax
+    write_mov_m64_r64(compiler, varMemory, RAX); 
     writeIndented(compiler, "; --- assignment to %s ---\n\n", var);
+}
+
+void writeAssignmentArray(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    const char* var       = node->left->left->data.id;
+    Mem64       varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, var)); 
+
+    writeIndented(compiler, "; --- assignment to %s ---\n", var);
+    write_mov_r64_m64(compiler, RAX, varMemory);             
+
+    write_push_r64(compiler, RAX, "save variable");          
+    writeExpression(compiler, node->left->right);                  
+    write_neg_r64(compiler, RAX, "addressing in memory is from right to left");
+
+    write_push_r64(compiler, RAX, "save index");
+    writeExpression(compiler, node->right);
+
+    write_pop_r64(compiler, RCX, "restore index to rcx");
+    write_pop_r64(compiler, RBX, "restore variable to rbx"); 
+
+    Mem64 arrayElementMemory = {};
+    arrayElementMemory.base  = RBX;
+    arrayElementMemory.index = RCX;
+    arrayElementMemory.scale = 8;
+    write_mov_m64_r64(compiler, arrayElementMemory, RAX); 
+
+    writeIndented(compiler, "; --- assignment to %s ---\n", var);
+    writeNewLine(compiler);
 }
 
 void writeArrayDeclaration(Compiler* compiler, Node* node)

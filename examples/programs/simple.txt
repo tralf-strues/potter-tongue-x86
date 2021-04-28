@@ -115,8 +115,18 @@ colloportus
 imperio testArrays horcrux
 alohomora
     - capacious TestArray, 3
-    - TestArray~1~ carpe-retractum 220202
-    - flagrate TestArray~1~
+    - TestArray~0~ carpe-retractum 22
+    - TestArray~1~ carpe-retractum 02
+    - TestArray~2~ carpe-retractum 02
+    
+    - flagrate   TestArray~0~
+    - flagrate-s circumrota
+
+    - flagrate   TestArray~1~
+    - flagrate-s circumrota
+    
+    - flagrate   TestArray~2~
+    - flagrate-s circumrota
 colloportus
 
 Privet-Drive 

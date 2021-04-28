@@ -837,6 +837,63 @@ testArrays:
                 mov [rbp - 8], rsp
                 sub rsp, rax
 
+                ; --- assignment to TestArray ---
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 0
+                neg rax ; addressing in memory is from right to left
+                push rax ; save index
+                mov rax, 22
+                pop rcx ; restore index to rcx
+                pop rbx ; restore variable to rbx
+                mov [rbx + rcx * 8], rax
+                ; --- assignment to TestArray ---
+
+                ; --- assignment to TestArray ---
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 1
+                neg rax ; addressing in memory is from right to left
+                push rax ; save index
+                mov rax, 2
+                pop rcx ; restore index to rcx
+                pop rbx ; restore variable to rbx
+                mov [rbx + rcx * 8], rax
+                ; --- assignment to TestArray ---
+
+                ; --- assignment to TestArray ---
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 2
+                neg rax ; addressing in memory is from right to left
+                push rax ; save index
+                mov rax, 2
+                pop rcx ; restore index to rcx
+                pop rbx ; restore variable to rbx
+                mov [rbx + rcx * 8], rax
+                ; --- assignment to TestArray ---
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 0
+                neg rax ; addressing in memory is from right to left
+                pop rbx ; restore variable to rbx
+                mov rax, [rbx + rax * 8]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
                 ; --- calling flagrate() ---
                 ; param 1
                 mov rax, [rbp - 8]
@@ -848,6 +905,35 @@ testArrays:
                 push rax
 
                 call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 2
+                neg rax ; addressing in memory is from right to left
+                pop rbx ; restore variable to rbx
+                mov rax, [rbx + rax * 8]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
                 add rsp, 8
 
 .RETURN:
