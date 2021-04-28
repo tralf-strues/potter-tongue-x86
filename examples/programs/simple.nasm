@@ -836,6 +836,20 @@ testArrays:
                 sub rsp, 8
                 mov [rbp - 8], rsp
                 sub rsp, rax
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax ; save variable
+                mov rax, 1
+                neg rax ; addressing in memory is from right to left
+                pop rbx ; restore variable to rbx
+                mov rax, [rbx + rax * 8]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
 .RETURN:
                 mov rsp, rbp
                 pop rbp

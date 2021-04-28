@@ -147,6 +147,14 @@ void write_idiv_r64(Compiler* compiler, Reg64 reg, const char* comment)
     writeComment(compiler, comment);
 }
 
+void write_neg_r64(Compiler* compiler, Reg64 reg, const char* comment)
+{
+    ASSERT_COMPILER(compiler);
+
+    writeIndented(compiler, "neg %s", reg64ToString(reg));
+    writeComment(compiler, comment);
+}
+
 void write_sal_r64_imm8(Compiler* compiler, Reg64 reg, int8_t number, const char* comment)
 {
     ASSERT_COMPILER(compiler);

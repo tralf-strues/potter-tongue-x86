@@ -35,6 +35,7 @@ void writeReturn           (Compiler* compiler, Node* node);
 void writeExpression       (Compiler* compiler, Node* node);
 void writeMath             (Compiler* compiler, Node* node);
 void writeCompare          (Compiler* compiler, Node* node);
+void writeMemAccess        (Compiler* compiler, Node* node);
 void writeString           (Compiler* compiler, Node* node);
 void writeNumber           (Compiler* compiler, Node* node);
 void writeVar              (Compiler* compiler, Node* node);
@@ -463,6 +464,8 @@ void writeArrayDeclaration(Compiler* compiler, Node* node)
     write_sub_r64_imm32(compiler, RSP, 8);
     write_mov_m64_r64(compiler, varMemory, RSP);
     write_sub_r64_r64(compiler, RSP, RAX);
+
+    writeNewLine(compiler);
 }
 
 void writeReturn(Compiler* compiler, Node* node)
@@ -481,13 +484,14 @@ void writeExpression(Compiler* compiler, Node* node)
 
     switch (node->type)
     {
-        case MATH_TYPE:   { writeMath   (compiler, node); break; }
-        case STRING_TYPE: { writeString (compiler, node); break; }
-        case NUMBER_TYPE: { writeNumber (compiler, node); break; }
-        case ID_TYPE:     { writeVar    (compiler, node); break; }
-        case CALL_TYPE:   { writeCall   (compiler, node); break; }
+        case MATH_TYPE:       { writeMath      (compiler, node); break; }
+        case MEM_ACCESS_TYPE: { writeMemAccess (compiler, node); break; }
+        case STRING_TYPE:     { writeString    (compiler, node); break; }
+        case NUMBER_TYPE:     { writeNumber    (compiler, node); break; }
+        case ID_TYPE:         { writeVar       (compiler, node); break; }
+        case CALL_TYPE:       { writeCall      (compiler, node); break; }
 
-        default:          { assert(!"Valid node type");   break; }
+        default:              { assert(!"Valid node type");   break; }
     }
 }
 
@@ -564,6 +568,26 @@ void writeCompare(Compiler* compiler, Node* node)
     write_mov_r64_imm64(compiler, RAX, 1, "true");
 
     write(compiler, ".COMPARISON_END_%zu:\n", label);
+}
+
+void writeMemAccess(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    Mem64 varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, node->left->data.id)); 
+    write_mov_r64_m64(compiler, RAX, varMemory);             
+
+    write_push_r64(compiler, RAX, "save variable");          
+    writeExpression(compiler, node->right);                  
+    write_neg_r64(compiler, RAX, "addressing in memory is from right to left");
+    write_pop_r64(compiler, RBX, "restore variable to rbx"); 
+
+    Mem64 arrayElementMemory = {};
+    arrayElementMemory.base  = RBX;
+    arrayElementMemory.index = RAX;
+    arrayElementMemory.scale = 8;
+    write_mov_r64_m64(compiler, RAX, arrayElementMemory);    
 }
 
 void writeString(Compiler* compiler, Node* node)

@@ -40,6 +40,7 @@ void write_sub_r64_r64   (Compiler* compiler, Reg64 firstReg, Reg64 secondReg, c
 void write_sub_r64_imm32 (Compiler* compiler, Reg64 reg,      int32_t number,  const char* comment = nullptr);
 void write_imul_r64_r64  (Compiler* compiler, Reg64 firstReg, Reg64 secondReg, const char* comment = nullptr);
 void write_idiv_r64      (Compiler* compiler, Reg64 reg,                       const char* comment = nullptr);
+void write_neg_r64       (Compiler* compiler, Reg64 reg,                       const char* comment = nullptr);
 void write_sal_r64_imm8  (Compiler* compiler, Reg64 reg,      int8_t number,   const char* comment = nullptr);
 
 //! @}
