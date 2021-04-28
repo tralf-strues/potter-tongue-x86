@@ -173,14 +173,6 @@ love:
 
                 ; --- calling flagrate_s() ---
                 ; param 1
-                mov rax, STR1
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
                 mov rax, STR2
                 push rax
 
@@ -189,7 +181,39 @@ love:
 
                 ; --- calling flagrate_s() ---
                 ; param 1
-                mov rax, Message
+                mov rax, STR3
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, MessageOne
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR3
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, MessageTwo
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR3
                 push rax
 
                 call flagrate_s
@@ -205,11 +229,13 @@ love:
 
 section .data
 IO_BUFFER_SIZE equ 256
-Message:
+MessageOne:
                 db "Hello, World!", 0
-STR1:
-                db " The real question is how long you are going to live... ", 0
+MessageTwo:
+                db "Hello, Hell!", 0
 STR2:
+                db " The real question is how long you are going to live... ", 0
+STR3:
                 db `\n`, 0
 
 section .bss

@@ -1,12 +1,16 @@
 Godric's-Hollow stringsExample
 
-Chapter <<Message>> "Hello, World!"
+Chapter <<MessageOne>> "Hello, World!"
+Chapter <<MessageTwo>> "Hello, Hell!"
 
 imperio love horcrux
 alohomora
     - flagrate-s " The real question is how long you are going to live... "
     - flagrate-s circumrota
-    - flagrate-s <<Message>>
+    - flagrate-s <<MessageOne>>
+    - flagrate-s circumrota
+    - flagrate-s <<MessageTwo>>
+    - flagrate-s circumrota
     - reverte horcrux
 colloportus
 

@@ -37,7 +37,9 @@ void dump(const StringsData* stringsData)
     for (size_t i = 0; i < stringsData->count; i++)
     {
         String* string = stringsData->strings + i;
-        printf("    { name='%s', content='%s' },\n", string->name, string->content);
+        printf("    { name='%s', content='%s' },\n", 
+               string->name, 
+               string->content[0] == '\n' ? "\\n" : string->content);
     }
 
     printf("}\n");

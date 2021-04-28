@@ -213,11 +213,13 @@ void syntaxError(Parser* parser, ParseError error)
 {
     if (error == PARSE_NO_ERROR) { return; }
 
+    if (parser->status == PARSE_NO_ERROR)
+    {
+        printf("SYNTAX ERROR: %s\n", errorString(error));
+        printTokenLinePos(parser->tokenizer, curToken(parser), stdout, nullptr);
+    }
+    
     parser->status = error;
-
-    printf("SYNTAX ERROR: %s\n", errorString(error));
-
-    printTokenLinePos(parser->tokenizer, curToken(parser), stdout, nullptr);
 }
 
 ParseError parseProgram(Parser* parser, SymbolTable* table, Node** root)
