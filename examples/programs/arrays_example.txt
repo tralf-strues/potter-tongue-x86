@@ -4,8 +4,8 @@ Chapter <<Message>> "Hello, World!"
 
 imperio love horcrux
 alohomora
-    - flagrate <<Message>>
-    - flagrate circumrota
+    - flagrate-s <<Message>>
+    - flagrate-s circumrota
 
     - avenseguim count carpe-retractum 32
     - capacious array, 5 geminio legilimens count epoximise 1

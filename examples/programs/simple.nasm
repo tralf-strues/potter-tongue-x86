@@ -73,7 +73,7 @@ flagrate:
 ; 
 ; Returns: (none)
 ; 
-; Changes: 
+; Changes: RAX, RCX, RDX, RDI, RSI
 ;------------------------------------------------------------------------------
 flagrate_s:
                 push rbp
@@ -89,6 +89,7 @@ flagrate_s:
                 jz .END_STRLEN
 
                 inc rdx
+                inc rsi
                 jmp .LOOP_STRLEN
 .END_STRLEN:
                 ; ==== strlen() ====
@@ -98,6 +99,84 @@ flagrate_s:
                 mov rsi, qword [rbp + 16]
                 mov rdi, 0x01                   ; STDOUT
                 syscall           
+
+                mov rsp, rbp
+                pop rbp
+                ret
+
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that prints decimal number to STDOUT and 
+; puts a decimal point '.' after precision number of least-significant digits.
+; 
+; Expects: [RBP + 16] = precision
+;          [RBP + 24] = number
+; 
+; Returns: (none)
+; 
+; Changes: RAX, RBX, RDX, RDI, RSI, R12
+;------------------------------------------------------------------------------
+flagrate_bombarda:
+                push rbp
+                mov rbp, rsp
+
+                mov rax, qword [rbp + 24]       ; rax = number
+                mov rbx, 10
+                mov rdi, IO_BUFFER_END - 1
+
+                xor r12, r12                    ; is number negative 
+                cmp rax, 0
+                jge .NOT_NEGATIVE
+                mov r12, 1 
+                neg rax
+.NOT_NEGATIVE:
+
+		mov rcx, qword [rbp + 16]	; rcx = precision
+.PRECISION_DIGITS:
+		xor rdx, rdx
+                div rbx                         ; rax = quotient; rdx = last digit
+
+                add dl, '0'
+                mov byte [rdi], dl
+		dec rdi
+
+		dec rcx 
+		test rcx, rcx
+		jnz .PRECISION_DIGITS
+
+		; Putting '.'
+		mov byte [rdi], '.'
+		dec rdi
+
+.WHILE_DIGITS_LEFT:
+                xor rdx, rdx
+                div rbx                         ; rax = quotient; rdx = last digit
+
+                add dl, '0'
+                mov byte [rdi], dl
+
+                dec rdi
+
+                test rax, rax
+                jnz .WHILE_DIGITS_LEFT
+.END_WHILE:
+
+                test r12, r12
+                jz .SKIP_NEGATIVE_SIGN
+
+                mov byte [rdi], '-'
+                dec rdi
+.SKIP_NEGATIVE_SIGN:
+
+                ; Writing the number to STDOUT
+                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
+                mov rsi, rdi
+                inc rsi
+
+                mov rdx, IO_BUFFER_END - 1
+                sub rdx, rdi
+
+                mov rdi, 0x01                   ; STDOUT
+                syscall             
 
                 mov rsp, rbp
                 pop rbp
@@ -170,9 +249,9 @@ love:
                 push rbp
                 mov rbp, rsp
 
-                ; --- calling testAccio() ---
+                ; --- calling testFloat() ---
 
-                call testAccio
+                call testFloat
 
 .RETURN:
                 mov rsp, rbp
@@ -445,8 +524,64 @@ testAccio:
                 ret
 
 
+; ==================================================
+; testFloat
+;
+; params: 
+; vars:   number, precision
+; ==================================================
+testFloat:
+                push rbp
+                mov rbp, rsp
+                sub rsp, 16
+
+                ; --- assignment to number ---
+                ; evaluating expression
+                ; --- calling accio() ---
+
+                call accio
+
+                mov [rbp - 8], rax
+                ; --- assignment to number ---
+
+                ; --- assignment to precision ---
+                ; evaluating expression
+                ; --- calling accio() ---
+
+                call accio
+
+                mov [rbp - 16], rax
+                ; --- assignment to precision ---
+
+                ; --- calling flagrate_bombarda() ---
+                ; param 2
+                mov rax, [rbp - 16]
+                push rax
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call flagrate_bombarda
+                add rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+.RETURN:
+                mov rsp, rbp
+                pop rbp
+                ret
+
+
 section .data
 IO_BUFFER_SIZE equ 256
+STR0:
+                db `\n`, 0
 
 section .bss
 IO_BUFFER:

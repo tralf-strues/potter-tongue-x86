@@ -578,7 +578,6 @@ Node* parseFactor(Parser* parser)
         }
 
         case CALL_KEYWORD:  { factor = parseCall         (parser);                break; }
-        case FLOOR_KEYWORD: { factor = parseStandardFunc (parser, FLOOR_KEYWORD); break; }
         case SQRT_KEYWORD:  { factor = parseStandardFunc (parser, SQRT_KEYWORD);  break; }
 
         case SCAN_KEYWORD:
@@ -903,25 +902,6 @@ Node* parseStandardFunc(Parser* parser, KeywordCode keywordCode)
     Node* paramList = newNode(EXPR_LIST_TYPE, {}, expression, nullptr);
 
     return newNode(CALL_TYPE, {}, ID(KEYWORDS[keywordCode].string), paramList);
-}
-
-Node* parseFloor(Parser* parser)
-{
-    ASSERT_PARSER(parser);
-    
-    if (!isKeyword(curToken(parser), FLOOR_KEYWORD)) { return nullptr; }
-    proceed(parser);
-
-    REQUIRE_KEYWORD(BRACKET_KEYWORD, PARSE_ERROR_BRACKET_NEEDED);
-    
-    Node* expression = parseExpression(parser);
-    if (expression == nullptr) { SYNTAX_ERROR(PARSE_ERROR_FLOOR_EXPRESSION_NEEDED); }
-
-    REQUIRE_KEYWORD(BRACKET_KEYWORD, PARSE_ERROR_BRACKET_NEEDED);
-
-    Node* paramList = newNode(EXPR_LIST_TYPE, {}, expression, nullptr);
-
-    return newNode(CALL_TYPE, {}, ID(KEYWORDS[FLOOR_KEYWORD].string), paramList);
 }
 
 Node* parseSqrt(Parser* parser)

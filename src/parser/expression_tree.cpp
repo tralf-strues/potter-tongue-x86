@@ -40,7 +40,6 @@ const char* NODE_GRAPH_STYLES[TYPES_COUNT] = {
 const char*  UNIVERSAL_MAIN_NAME  = "main";
 const char*  UNIVERSAL_PRINT_NAME = "print";
 const char*  UNIVERSAL_SCAN_NAME  = "scan";
-const char*  UNIVERSAL_FLOOR_NAME = "floor";
 const char*  UNIVERSAL_SQRT_NAME  = "sqrt";
 
 const size_t FIRST_FDECL_LENGTH   = strlen("0 | 0");
@@ -349,10 +348,6 @@ void dumpToFile(FILE* file, const Node* node)
         {
             fprintf(file, "%s ", UNIVERSAL_SCAN_NAME);   
         }
-        else if (strcmp(node->data.id, KEYWORDS[FLOOR_KEYWORD].string) == 0)
-        {
-            fprintf(file, "%s ", UNIVERSAL_FLOOR_NAME);   
-        }
         else if (strcmp(node->data.id, KEYWORDS[SQRT_KEYWORD].string) == 0)
         {
             fprintf(file, "%s ", UNIVERSAL_SQRT_NAME);   
@@ -461,10 +456,6 @@ Node* readTreeFromFile(const char* filename)
             else if (strncmp(buffer + ofs, UNIVERSAL_SCAN_NAME, len) == 0)
             {
                 node->data.id = KEYWORDS[SCAN_KEYWORD].string;
-            }
-            else if (strncmp(buffer + ofs, UNIVERSAL_FLOOR_NAME, len) == 0)
-            {
-                node->data.id = KEYWORDS[FLOOR_KEYWORD].string;
             }
             else if (strncmp(buffer + ofs, UNIVERSAL_SQRT_NAME, len) == 0)
             {

@@ -6,7 +6,8 @@ alohomora
     (oNo) - depulso testArithmeticIf protego protego
     (oNo) - depulso testWhile        protego 10, -30, 5 protego
     
-    - depulso testAccio        protego protego
+    (oNo) - depulso testAccio        protego protego
+    - depulso testFloat        protego protego
 
 colloportus
 
@@ -69,6 +70,15 @@ alohomora
     - avenseguim input carpe-retractum accio 
 
     - flagrate legilimens input
+colloportus
+
+imperio testFloat horcrux
+alohomora
+    - avenseguim number    carpe-retractum accio 
+    - avenseguim precision carpe-retractum accio 
+
+    - flagrate-bombarda legilimens number, legilimens precision
+    - flagrate-s        circumrota
 colloportus
 
 Privet-Drive 

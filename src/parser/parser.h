@@ -98,7 +98,7 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] =
 
     "couldn't find an expression after 'flagrate' operator",
     "couldn't find an expression after 'colloshoo' operator",
-    "couldn't find an precision after 'flagrate-bombarda' operator",
+    "couldn't find a precision after 'flagrate-bombarda' operator",
     "there has to be a ',' between precision and expression",
     "couldn't find an expression after 'flagrate-bombarda' operator",
     "couldn't find a valid expression after 'flagrate-s' operator",

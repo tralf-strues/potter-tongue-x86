@@ -63,7 +63,6 @@ enum KeywordCode
     PRINT_FLOAT_KEYWORD,
     PRINT_STRING_KEYWORD,
     PRINT_KEYWORD,
-    FLOOR_KEYWORD,
     SQRT_KEYWORD,
 
     RAND_JUMP_KEYWORD,
@@ -142,7 +141,6 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] =
     { "flagrate-bombarda", 17, PRINT_FLOAT_KEYWORD,   TO_STR(PRINT_FLOAT_KEYWORD)   },
     { "flagrate-s",        10, PRINT_STRING_KEYWORD,  TO_STR(PRINT_STRING_KEYWORD)  },
     { "flagrate",          8,  PRINT_KEYWORD,         TO_STR(PRINT_KEYWORD)         },
-    { "colloshoo",         9,  FLOOR_KEYWORD,         TO_STR(FLOOR_KEYWORD)         },
     { "crucio",            6,  SQRT_KEYWORD,          TO_STR(SQRT_KEYWORD)          },
 
     { "riddikulus",        10, RAND_JUMP_KEYWORD,     TO_STR(RAND_JUMP_KEYWORD)     },
@@ -176,7 +174,7 @@ const char* getKeywordString    (KeywordCode keywordCode);
 
 //-------------------------------Standard functions-----------------------------
 static const char   MAIN_FUNCTION_NAME[]              = "love";
-static const size_t STANDARD_FUNCTIONS_COUNT          = 7;
+static const size_t STANDARD_FUNCTIONS_COUNT          = 6;
 static const size_t STANDARD_FUNCTIONS_MAX_PARAMETERS = 2;
 
 struct StdFunctionInfo
@@ -196,7 +194,6 @@ static const StdFunctionInfo STANDARD_FUNCTIONS[STANDARD_FUNCTIONS_COUNT] =
     { PRINT_STRING_KEYWORD, "flagrate_s",        {"string"},              1 },
     { PRINT_KEYWORD,        "flagrate",          {"number"},              1 },
 
-    { FLOOR_KEYWORD,        "colloshoo",         {"number"},              1 },
     { SQRT_KEYWORD,         "crucio",            {"number"},              1 },
 };
 
