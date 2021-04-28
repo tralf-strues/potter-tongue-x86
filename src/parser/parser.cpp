@@ -702,9 +702,9 @@ Node* parseADeclaration(Parser* parser)
 
     if (!isIdType(curToken(parser))) { SYNTAX_ERROR(PARSE_ERROR_ID_NEEDED); }
 
-    // const char* id = curToken(parser)->data.id;
-    // if (getVarOffset(parser->curFunction, id) != -1) { SYNTAX_ERROR(PARSE_ERROR_VARIABLE_SECOND_DECLARATION); }
-    // pushVariable(parser->curFunction, id);
+    const char* id = curToken(parser)->data.id;
+    if (getVarOffset(parser->curFunction, id) != -1) { SYNTAX_ERROR(PARSE_ERROR_VARIABLE_SECOND_DECLARATION); }
+    pushVariable(parser->curFunction, id);
 
     Node* arrayDeclaration = newNode(ADECL_TYPE, {}, parseId(parser), nullptr);
     if (arrayDeclaration->left == nullptr)

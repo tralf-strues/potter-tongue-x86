@@ -1,7 +1,5 @@
 Godric's-Hollow stringsExample
 
-Chapter <<Message>> "Hello, World!"
-
 imperio love horcrux
 alohomora
     - flagrate-s <<Message>>

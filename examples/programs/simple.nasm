@@ -348,9 +348,9 @@ love:
                 push rbp
                 mov rbp, rsp
 
-                ; --- calling testFloatAccio() ---
+                ; --- calling testArrays() ---
 
-                call testFloatAccio
+                call testArrays
 
                 mov rax, 0
                 jmp .RETURN
@@ -811,6 +811,31 @@ testFloatAccio:
                 call flagrate_s
                 add rsp, 8
 
+.RETURN:
+                mov rsp, rbp
+                pop rbp
+                ret
+
+
+; ==================================================
+; testArrays
+;
+; params: 
+; vars:   TestArray
+; ==================================================
+testArrays:
+                push rbp
+                mov rbp, rsp
+                sub rsp, 8
+
+                ; --- declaring array TestArray ---
+                ; evaluating expression (array's size)
+                mov rax, 3
+                sal rax, 3 ; *8 to get array's size in bytes
+                sub rax, 8 ; to mitigate the next instruction
+                sub rsp, 8
+                mov [rbp - 8], rsp
+                sub rsp, rax
 .RETURN:
                 mov rsp, rbp
                 pop rbp

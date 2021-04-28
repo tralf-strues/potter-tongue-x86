@@ -11,36 +11,37 @@ const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
 const size_t IO_BUFFER_SIZE             = 256;
 
-void compileError        (Compiler* compiler, CompilerError error); 
+void compileError         (Compiler* compiler, CompilerError error); 
 
-void writeStdFunctions   (Compiler* compiler); 
-void writeStdData        (Compiler* compiler);
-void writeStringsData    (Compiler* compiler);
-void writeStdBSS         (Compiler* compiler);
+void writeStdFunctions     (Compiler* compiler); 
+void writeStdData          (Compiler* compiler);
+void writeStringsData      (Compiler* compiler);
+void writeStdBSS           (Compiler* compiler);
 
-void writeHorizontalLine (Compiler* compiler);
-void writeFileHeader     (Compiler* compiler);
-void writeFunctionHeader (Compiler* compiler);
+void writeHorizontalLine   (Compiler* compiler);
+void writeFileHeader       (Compiler* compiler);
+void writeFunctionHeader   (Compiler* compiler);
 
-void writeFunction       (Compiler* compiler, Node* node);
-void writeBlock          (Compiler* compiler, Node* node);
-void writeStatement      (Compiler* compiler, Node* node);
+void writeFunction         (Compiler* compiler, Node* node);
+void writeBlock            (Compiler* compiler, Node* node);
+void writeStatement        (Compiler* compiler, Node* node);
 
-void writeCondition      (Compiler* compiler, Node* node);
-void writeLoop           (Compiler* compiler, Node* node);
-void writeAssignment     (Compiler* compiler, Node* node);
-void writeReturn         (Compiler* compiler, Node* node);
+void writeCondition        (Compiler* compiler, Node* node);
+void writeLoop             (Compiler* compiler, Node* node);
+void writeAssignment       (Compiler* compiler, Node* node);
+void writeArrayDeclaration (Compiler* compiler, Node* node);
+void writeReturn           (Compiler* compiler, Node* node);
 
-void writeExpression     (Compiler* compiler, Node* node);
-void writeMath           (Compiler* compiler, Node* node);
-void writeCompare        (Compiler* compiler, Node* node);
-void writeString         (Compiler* compiler, Node* node);
-void writeNumber         (Compiler* compiler, Node* node);
-void writeVar            (Compiler* compiler, Node* node);
+void writeExpression       (Compiler* compiler, Node* node);
+void writeMath             (Compiler* compiler, Node* node);
+void writeCompare          (Compiler* compiler, Node* node);
+void writeString           (Compiler* compiler, Node* node);
+void writeNumber           (Compiler* compiler, Node* node);
+void writeVar              (Compiler* compiler, Node* node);
 
-void writeParamList      (Compiler* compiler, Node* node, const Function* function);
-void writeCall           (Compiler* compiler, Node* node);
-bool writeStdCall        (Compiler* compiler, Node* node);
+void writeParamList        (Compiler* compiler, Node* node, const Function* function);
+void writeCall             (Compiler* compiler, Node* node);
+bool writeStdCall          (Compiler* compiler, Node* node);
 
 void construct(Compiler* compiler, Node* tree, SymbolTable* table)
 {
@@ -361,12 +362,13 @@ void writeStatement(Compiler* compiler, Node* node)
 
     switch (node->left->type)
     {
-        case COND_TYPE:   { writeCondition  (compiler, node->left); break; }
-        case LOOP_TYPE:   { writeLoop       (compiler, node->left); break; }
-        case VDECL_TYPE:  { writeAssignment (compiler, node->left); break; }
-        case ASSIGN_TYPE: { writeAssignment (compiler, node->left); break; }
-        case JUMP_TYPE:   { writeReturn     (compiler, node->left); break; }
-        default:          { writeExpression (compiler, node->left); break; }
+        case COND_TYPE:   { writeCondition        (compiler, node->left); break; }
+        case LOOP_TYPE:   { writeLoop             (compiler, node->left); break; }
+        case VDECL_TYPE:  { writeAssignment       (compiler, node->left); break; }
+        case ASSIGN_TYPE: { writeAssignment       (compiler, node->left); break; }
+        case ADECL_TYPE:  { writeArrayDeclaration (compiler, node->left); break; }
+        case JUMP_TYPE:   { writeReturn           (compiler, node->left); break; }
+        default:          { writeExpression       (compiler, node->left); break; }
     }
 }
 
@@ -441,6 +443,26 @@ void writeAssignment(Compiler* compiler, Node* node)
 
     write_mov_m64_r64(compiler, varMemory, RAX); // mov [rbp + offset], rax
     writeIndented(compiler, "; --- assignment to %s ---\n\n", var);
+}
+
+void writeArrayDeclaration(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    const char* var       = node->left->data.id;
+    Mem64       varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, var)); 
+
+    writeIndented(compiler, "; --- declaring array %s ---\n", var);
+    
+    writeIndented(compiler, "; evaluating expression (array's size)\n");
+    writeExpression(compiler, node->right);     
+    write_sal_r64_imm8(compiler, RAX, 3, "*8 to get array's size in bytes");
+    write_sub_r64_imm32(compiler, RAX, 8, "to mitigate the next instruction");
+
+    write_sub_r64_imm32(compiler, RSP, 8);
+    write_mov_m64_r64(compiler, varMemory, RSP);
+    write_sub_r64_r64(compiler, RSP, RAX);
 }
 
 void writeReturn(Compiler* compiler, Node* node)

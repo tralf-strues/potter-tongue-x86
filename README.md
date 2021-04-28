@@ -78,12 +78,12 @@ In order to switch printing to the next line, you can just use the `circumrota` 
 ### 3. Arrays :link:
 Next, I decided to add arrays of integer numbers. They can be created in functions, but ***only inside the main scope*** of a function (i.e. you cannot declare them inside a conditional statement or loop!).
 ```
-- capacious-extremis <ArrayName>, <Expression> (oNo) creates array of size Exression
+- capacious <ArrayName>, <Expression> (oNo) creates array of size Exression
 ```
 
 Accessing elements of an array.
 ```
-- capacious-extremis array, 32 (oNo) creates array 'array' of size 32
+- capacious array, 32 (oNo) creates array 'array' of size 32
 
 - array~0~ carpe-retractum 22  (oNo) array[0] = 22
 - array~1~ carpe-retractum 02  (oNo) array[1] = 02

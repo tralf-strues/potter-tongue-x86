@@ -146,6 +146,14 @@ void write_idiv_r64(Compiler* compiler, Reg64 reg, const char* comment)
     writeIndented(compiler, "idiv %s", reg64ToString(reg));
     writeComment(compiler, comment);
 }
+
+void write_sal_r64_imm8(Compiler* compiler, Reg64 reg, int8_t number, const char* comment)
+{
+    ASSERT_COMPILER(compiler);
+
+    writeIndented(compiler, "sal %s, %" PRId8, reg64ToString(reg), number);
+    writeComment(compiler, comment);
+}
 //------------------------------NASM_ARITHMETIC---------------------------------
 
 
