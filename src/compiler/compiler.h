@@ -10,7 +10,7 @@
                                   assert(compiler->table);       \
                                   assert(compiler->tree);        \
                                   assert(compiler->file);        \
-
+ 
 enum CompilerError
 {
     COMPILER_NO_ERROR,

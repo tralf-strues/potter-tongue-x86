@@ -414,7 +414,7 @@ void writeLoop(Compiler* compiler, Node* node)
     size_t label = compiler->curLoopLabel++;
 
     writeIndented(compiler, "; ==== while ====\n");
-    write(compiler, ".WHILE_%zu:\n");
+    write(compiler, ".WHILE_%zu:\n", label);
 
     writeIndented(compiler, "; exit condition\n");
     writeExpression(compiler, node->left);          // (rax = condition)

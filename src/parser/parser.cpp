@@ -403,8 +403,8 @@ Node* parseStatement(Parser* parser)
     if (node == nullptr) { node = parseLoop(parser);      }
     if (node == nullptr) { return nullptr;                }
 
-    Node* statement = newNode(STATEMENT_TYPE, {}, nullptr, nullptr);
-    setLeft(statement, node);
+    Node* statement = newNode(STATEMENT_TYPE, {}, node, nullptr);
+    // setLeft(statement, node);
 
     return statement;
 }

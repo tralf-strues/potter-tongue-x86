@@ -9,7 +9,7 @@ alohomora
     (oNo) - depulso testAccio         protego protego
     
     (oNo) - depulso testFloatFlagrate protego protego
-    (oNo) - depulso testFloatAccio    protego protego
+    - depulso testFloatAccio    protego protego
 
     - depulso testArrays protego protego
         
@@ -99,15 +99,29 @@ alohomora
     - flagrate-s circumrota
     - flagrate-s circumrota
 
-    - flagrate-s "Enter number with a floating point: "
-    - avenseguim number carpe-retractum accio-bombarda protego legilimens precision protego
+    - flagrate-s "Enter numberOne with a floating point: "
+    - avenseguim numberOne carpe-retractum accio-bombarda protego legilimens precision protego
+
+    - flagrate-s "Number1 is (with    decimal point): "
+    - flagrate-bombarda legilimens precision, legilimens numberOne
+    - flagrate-s        circumrota
+
+    - flagrate-s "Number1 is (without decimal point): "
+    - flagrate   legilimens numberOne
+    - flagrate-s circumrota
+    - flagrate-s circumrota
+
+
+
+    - flagrate-s "Enter numberTwo with a floating point: "
+    - avenseguim numberTwo carpe-retractum accio-bombarda protego legilimens precision protego
 
     - flagrate-s "Number is (with    decimal point): "
-    - flagrate-bombarda legilimens precision, legilimens number
+    - flagrate-bombarda legilimens precision, legilimens numberTwo
     - flagrate-s        circumrota
 
     - flagrate-s "Number is (without decimal point): "
-    - flagrate   legilimens number
+    - flagrate   legilimens numberTwo
     - flagrate-s circumrota
 colloportus
 
@@ -124,7 +138,7 @@ alohomora
 
     - flagrate   TestArray~1~
     - flagrate-s circumrota
-    
+
     - flagrate   TestArray~2~
     - flagrate-s circumrota
 colloportus

@@ -348,6 +348,10 @@ love:
                 push rbp
                 mov rbp, rsp
 
+                ; --- calling testFloatAccio() ---
+
+                call testFloatAccio
+
                 ; --- calling testArrays() ---
 
                 call testArrays
@@ -683,12 +687,12 @@ testFloatFlagrate:
 ; testFloatAccio
 ;
 ; params: 
-; vars:   precision, number
+; vars:   precision, numberOne, numberTwo
 ; ==================================================
 testFloatAccio:
                 push rbp
                 mov rbp, rsp
-                sub rsp, 16
+                sub rsp, 24
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -747,7 +751,7 @@ testFloatAccio:
                 call flagrate_s
                 add rsp, 8
 
-                ; --- assignment to number ---
+                ; --- assignment to numberOne ---
                 ; evaluating expression
                 ; --- calling accio_bombarda() ---
                 ; param 1
@@ -758,7 +762,7 @@ testFloatAccio:
                 add rsp, 8
 
                 mov [rbp - 16], rax
-                ; --- assignment to number ---
+                ; --- assignment to numberOne ---
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -798,6 +802,86 @@ testFloatAccio:
                 ; --- calling flagrate() ---
                 ; param 1
                 mov rax, [rbp - 16]
+                push rax
+
+                call flagrate
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR6
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- assignment to numberTwo ---
+                ; evaluating expression
+                ; --- calling accio_bombarda() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call accio_bombarda
+                add rsp, 8
+
+                mov [rbp - 24], rax
+                ; --- assignment to numberTwo ---
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR7
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_bombarda() ---
+                ; param 2
+                mov rax, [rbp - 24]
+                push rax
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call flagrate_bombarda
+                add rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR8
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                ; param 1
+                mov rax, [rbp - 24]
                 push rax
 
                 call flagrate
@@ -951,10 +1035,16 @@ STR1:
 STR2:
                 db "Precision is ", 0
 STR3:
-                db "Enter number with a floating point: ", 0
+                db "Enter numberOne with a floating point: ", 0
 STR4:
-                db "Number is (with    decimal point): ", 0
+                db "Number1 is (with    decimal point): ", 0
 STR5:
+                db "Number1 is (without decimal point): ", 0
+STR6:
+                db "Enter numberTwo with a floating point: ", 0
+STR7:
+                db "Number is (with    decimal point): ", 0
+STR8:
                 db "Number is (without decimal point): ", 0
 
 section .bss
