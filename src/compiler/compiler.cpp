@@ -11,41 +11,51 @@ const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
 const size_t IO_BUFFER_SIZE             = 256;
 
-void compileError         (Compiler* compiler, CompilerError error); 
+void compileError(Compiler* compiler, CompilerError error); 
 
-void writeStdFunctions     (Compiler* compiler); 
-void writeStdData          (Compiler* compiler);
-void writeStringsData      (Compiler* compiler);
-void writeStdBSS           (Compiler* compiler);
+//==================================Write data==================================
+void writeFileHeader   (Compiler* compiler);
+void writeStdFunctions (Compiler* compiler); 
+void writeStdData      (Compiler* compiler);
+void writeStringsData  (Compiler* compiler);
+void writeStdBSS       (Compiler* compiler);
+//==================================Write data==================================
 
-void writeHorizontalLine   (Compiler* compiler);
-void writeFileHeader       (Compiler* compiler);
-void writeFunctionHeader   (Compiler* compiler);
 
-void writeFunction         (Compiler* compiler, Node* node);
-void writeBlock            (Compiler* compiler, Node* node);
-void writeStatement        (Compiler* compiler, Node* node);
+//==============================Write NASM comments==============================
+void writeHorizontalLine (Compiler* compiler);
+void writeFunctionHeader (Compiler* compiler);
+//==============================Write NASM comments==============================
 
-void writeCondition        (Compiler* compiler, Node* node);
-void writeLoop             (Compiler* compiler, Node* node);
-void writeAssignment       (Compiler* compiler, Node* node);
-void writeAssignmentVar    (Compiler* compiler, Node* node);
-void writeAssignmentArray  (Compiler* compiler, Node* node);
-void writeArrayDeclaration (Compiler* compiler, Node* node);
-void writeReturn           (Compiler* compiler, Node* node);
 
-void writeExpression       (Compiler* compiler, Node* node);
-void writeMath             (Compiler* compiler, Node* node);
-void writeCompare          (Compiler* compiler, Node* node);
-void writeMemAccess        (Compiler* compiler, Node* node);
-void writeString           (Compiler* compiler, Node* node);
-void writeNumber           (Compiler* compiler, Node* node);
-void writeVar              (Compiler* compiler, Node* node);
+//==================================Compilation==================================
+void compileFunction         (Compiler* compiler, Node* node);
+void compileBlock            (Compiler* compiler, Node* node);
+void compileStatement        (Compiler* compiler, Node* node);
 
-void writeParamList        (Compiler* compiler, Node* node, const Function* function);
-void writeCall             (Compiler* compiler, Node* node);
-bool writeStdCall          (Compiler* compiler, Node* node);
+void compileCondition        (Compiler* compiler, Node* node);
+void compileLoop             (Compiler* compiler, Node* node);
+void compileAssignment       (Compiler* compiler, Node* node);
+void compileAssignmentVar    (Compiler* compiler, Node* node);
+void compileAssignmentArray  (Compiler* compiler, Node* node);
+void compileArrayDeclaration (Compiler* compiler, Node* node);
+void compileReturn           (Compiler* compiler, Node* node);
 
+void compileExpression       (Compiler* compiler, Node* node);
+void compileMath             (Compiler* compiler, Node* node);
+void compileCompare          (Compiler* compiler, Node* node);
+void compileMemAccess        (Compiler* compiler, Node* node);
+void compileString           (Compiler* compiler, Node* node);
+void compileNumber           (Compiler* compiler, Node* node);
+void compileVar              (Compiler* compiler, Node* node);
+
+void compileParamList        (Compiler* compiler, Node* node, const Function* function);
+void compileCall             (Compiler* compiler, Node* node);
+bool compileStdCall          (Compiler* compiler, Node* node);
+//==================================Compilation=================================
+
+
+//===================================Compiler===================================
 void construct(Compiler* compiler, Node* tree, SymbolTable* table)
 {
     assert(compiler);
@@ -115,7 +125,7 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
 
     while (curDeclaration != nullptr)
     {
-        writeFunction(compiler, curDeclaration->right);
+        compileFunction(compiler, curDeclaration->right);
         curDeclaration = curDeclaration->left;
         CUR_FUNC++;
 
@@ -134,7 +144,10 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
 
     return compiler->status;
 }
+//===================================Compiler===================================
 
+
+//==============================Write NASM comments=============================
 void write(Compiler* compiler, const char* format, ...)
 {
     ASSERT_COMPILER(compiler);
@@ -153,14 +166,6 @@ void writeNewLine(Compiler* compiler)
     write(compiler, "\n");
 }
 
-//------------------------------------------------------------------------------
-//! Writes the formatted string with indentation. String INDENTATION is written
-//! before the string.
-//! 
-//! @param compiler
-//! @param format
-//! @param ...
-//------------------------------------------------------------------------------
 void writeIndented(Compiler* compiler, const char* format, ...)
 {
     ASSERT_COMPILER(compiler);
@@ -171,6 +176,74 @@ void writeIndented(Compiler* compiler, const char* format, ...)
 
     fprintf(compiler->file, INDENTATION);
     vfprintf(compiler->file, format, args);
+}
+
+void writeHorizontalLine(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "; ");
+
+    for (size_t i = 0; i < HORIZONTAL_LINE_LENGTH; i++)
+    {
+        write(compiler, "=");
+    }
+
+    write(compiler, "\n");
+}
+
+// TODO:
+// 1) for each variable write it's offset in the form [rbp - x]
+// 2)
+void writeFunctionHeader(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    writeHorizontalLine(compiler);
+    write(compiler, "; %s\n;\n; params: ", CUR_FUNC->name);
+
+    for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
+    {
+        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
+
+        if (i < CUR_FUNC->paramsCount - 1)
+        {
+            write(compiler, ", ");
+        }
+    }
+
+    write(compiler, "\n; vars:   ");
+
+    for (size_t i = CUR_FUNC->paramsCount; i < CUR_FUNC->varsData.count; i++)
+    {
+        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
+
+        if (i < CUR_FUNC->varsData.count - 1)
+        {
+            write(compiler, ", ");
+        }
+    }
+
+    write(compiler, "\n");
+    writeHorizontalLine(compiler);
+
+    write(compiler, "%s:\n", CUR_FUNC->name);
+}
+//==============================Write NASM comments=============================
+
+
+//==================================Write data==================================
+void writeFileHeader(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    write(compiler, "global _start   \n" 
+                    "section .text   \n\n"
+                    "_start:         \n"
+                    "\tcall love     \n"
+                    "\tmov rax, 0x3C \n"
+                    "\txor rdi, rdi  \n"
+                    "\tsyscall       \n\n");
 }
 
 // FIXME: rdi, rsi, rdx, rcx, r8, r9
@@ -253,73 +326,11 @@ void writeStdBSS(Compiler* compiler)
     writeIndented(compiler, "resb %zu\n", IO_BUFFER_SIZE);
     write(compiler, "IO_BUFFER_END:\n");
 }
+//==================================Write data==================================
 
-void writeHorizontalLine(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
 
-    write(compiler, "; ");
-
-    for (size_t i = 0; i < HORIZONTAL_LINE_LENGTH; i++)
-    {
-        write(compiler, "=");
-    }
-
-    write(compiler, "\n");
-}
-
-void writeFileHeader(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-
-    write(compiler, "global _start   \n" 
-                    "section .text   \n\n"
-                    "_start:         \n"
-                    "\tcall love     \n"
-                    "\tmov rax, 0x3C \n"
-                    "\txor rdi, rdi  \n"
-                    "\tsyscall       \n\n");
-}
-
-// TODO:
-// 1) for each variable write it's offset in the form [rbp - x]
-// 2)
-void writeFunctionHeader(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-
-    writeHorizontalLine(compiler);
-    write(compiler, "; %s\n;\n; params: ", CUR_FUNC->name);
-
-    for (size_t i = 0; i < CUR_FUNC->paramsCount; i++)
-    {
-        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
-
-        if (i < CUR_FUNC->paramsCount - 1)
-        {
-            write(compiler, ", ");
-        }
-    }
-
-    write(compiler, "\n; vars:   ");
-
-    for (size_t i = CUR_FUNC->paramsCount; i < CUR_FUNC->varsData.count; i++)
-    {
-        write(compiler, "%s", CUR_FUNC->varsData.vars[i]);
-
-        if (i < CUR_FUNC->varsData.count - 1)
-        {
-            write(compiler, ", ");
-        }
-    }
-
-    write(compiler, "\n");
-    writeHorizontalLine(compiler);
-
-    write(compiler, "%s:\n", CUR_FUNC->name);
-}
-
-void writeFunction(Compiler* compiler, Node* node)
+//==================================Compilation==================================
+void compileFunction(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -336,7 +347,7 @@ void writeFunction(Compiler* compiler, Node* node)
     }
 
     write(compiler, "\n");
-    writeBlock(compiler, node->left);
+    compileBlock(compiler, node->left);
 
     write(compiler, ".RETURN:\n");
     write_mov_r64_r64(compiler, RSP, RBP); // mov rsp, rbp
@@ -344,7 +355,7 @@ void writeFunction(Compiler* compiler, Node* node)
     write_ret(compiler);                   // ret
 }
 
-void writeBlock(Compiler* compiler, Node* node)
+void compileBlock(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -352,12 +363,12 @@ void writeBlock(Compiler* compiler, Node* node)
     Node* curStatement = node->right;
     while (curStatement != nullptr)
     {
-        writeStatement(compiler, curStatement);
+        compileStatement(compiler, curStatement);
         curStatement = curStatement->right;
     }
 }
 
-void writeStatement(Compiler* compiler, Node* node)
+void compileStatement(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -365,17 +376,17 @@ void writeStatement(Compiler* compiler, Node* node)
 
     switch (node->left->type)
     {
-        case COND_TYPE:   { writeCondition        (compiler, node->left); break; }
-        case LOOP_TYPE:   { writeLoop             (compiler, node->left); break; }
-        case VDECL_TYPE:  { writeAssignment       (compiler, node->left); break; }
-        case ASSIGN_TYPE: { writeAssignment       (compiler, node->left); break; }
-        case ADECL_TYPE:  { writeArrayDeclaration (compiler, node->left); break; }
-        case JUMP_TYPE:   { writeReturn           (compiler, node->left); break; }
-        default:          { writeExpression       (compiler, node->left); break; }
+        case COND_TYPE:   { compileCondition        (compiler, node->left); break; }
+        case LOOP_TYPE:   { compileLoop             (compiler, node->left); break; }
+        case VDECL_TYPE:  { compileAssignment       (compiler, node->left); break; }
+        case ASSIGN_TYPE: { compileAssignment       (compiler, node->left); break; }
+        case ADECL_TYPE:  { compileArrayDeclaration (compiler, node->left); break; }
+        case JUMP_TYPE:   { compileReturn           (compiler, node->left); break; }
+        default:          { compileExpression       (compiler, node->left); break; }
     }
 }
 
-void writeCondition(Compiler* compiler, Node* node)
+void compileCondition(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -383,7 +394,7 @@ void writeCondition(Compiler* compiler, Node* node)
     writeIndented(compiler, "; ==== if-else statement ====\n");
 
     writeIndented(compiler, "; condition's expression\n");
-    writeExpression(compiler, node->left);             // (rax = condition)
+    compileExpression(compiler, node->left);             // (rax = condition)
 
     size_t label = compiler->curCondLabel++;
     write_test_r64_r64(compiler, RAX, RAX);            // test rax, rax 
@@ -392,7 +403,7 @@ void writeCondition(Compiler* compiler, Node* node)
     writeNewLine(compiler);
 
     writeIndented(compiler, "; if true\n");
-    writeBlock(compiler, node->right->left);    
+    compileBlock(compiler, node->right->left);    
     write_jmp_rel32(compiler, ".END_IF_ELSE_", label); // jmp .END_IF_ELSE_x
     
     writeNewLine(compiler);
@@ -400,13 +411,13 @@ void writeCondition(Compiler* compiler, Node* node)
 
     if (node->right->right != nullptr)
     {
-        writeBlock(compiler, node->right->right);
+        compileBlock(compiler, node->right->right);
     }
 
     write(compiler, ".END_IF_ELSE_%zu:\n\n", label);
 }
 
-void writeLoop(Compiler* compiler, Node* node)
+void compileLoop(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -417,36 +428,36 @@ void writeLoop(Compiler* compiler, Node* node)
     write(compiler, ".WHILE_%zu:\n", label);
 
     writeIndented(compiler, "; exit condition\n");
-    writeExpression(compiler, node->left);          // (rax = condition)
+    compileExpression(compiler, node->left);          // (rax = condition)
     
     write_test_r64_r64(compiler, RAX, RAX);         // test rax, rax 
     write_jz_rel32(compiler, ".END_WHILE_", label); // jz .END_WHILE_x
     writeNewLine(compiler);
 
     writeIndented(compiler, "; loop body\n");
-    writeBlock(compiler, node->right);
+    compileBlock(compiler, node->right);
 
     write_jmp_rel32(compiler, ".WHILE_", label);    // jmp .END_WHILE_x
 
     write(compiler, ".END_WHILE_%zu:\n\n", label);
 }
 
-void writeAssignment(Compiler* compiler, Node* node)
+void compileAssignment(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
 
     if (node->left->type == ID_TYPE)
     {
-        writeAssignmentVar(compiler, node);
+        compileAssignmentVar(compiler, node);
     }
     else
     {
-        writeAssignmentArray(compiler, node);
+        compileAssignmentArray(compiler, node);
     }
 }
 
-void writeAssignmentVar(Compiler* compiler, Node* node)
+void compileAssignmentVar(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -457,13 +468,13 @@ void writeAssignmentVar(Compiler* compiler, Node* node)
     writeIndented(compiler, "; --- assignment to %s ---\n", var);
 
     writeIndented(compiler, "; evaluating expression\n");
-    writeExpression(compiler, node->right);      
+    compileExpression(compiler, node->right);      
 
     write_mov_m64_r64(compiler, varMemory, RAX); 
     writeIndented(compiler, "; --- assignment to %s ---\n\n", var);
 }
 
-void writeAssignmentArray(Compiler* compiler, Node* node)
+void compileAssignmentArray(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -475,11 +486,11 @@ void writeAssignmentArray(Compiler* compiler, Node* node)
     write_mov_r64_m64(compiler, RAX, varMemory);             
 
     write_push_r64(compiler, RAX, "save variable");          
-    writeExpression(compiler, node->left->right);                  
+    compileExpression(compiler, node->left->right);                  
     write_neg_r64(compiler, RAX, "addressing in memory is from right to left");
 
     write_push_r64(compiler, RAX, "save index");
-    writeExpression(compiler, node->right);
+    compileExpression(compiler, node->right);
 
     write_pop_r64(compiler, RCX, "restore index to rcx");
     write_pop_r64(compiler, RBX, "restore variable to rbx"); 
@@ -494,7 +505,7 @@ void writeAssignmentArray(Compiler* compiler, Node* node)
     writeNewLine(compiler);
 }
 
-void writeArrayDeclaration(Compiler* compiler, Node* node)
+void compileArrayDeclaration(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -505,7 +516,7 @@ void writeArrayDeclaration(Compiler* compiler, Node* node)
     writeIndented(compiler, "; --- declaring array %s ---\n", var);
     
     writeIndented(compiler, "; evaluating expression (array's size)\n");
-    writeExpression(compiler, node->right);     
+    compileExpression(compiler, node->right);     
     write_sal_r64_imm8(compiler, RAX, 3, "*8 to get array's size in bytes");
     write_sub_r64_imm32(compiler, RAX, 8, "to mitigate the next instruction");
 
@@ -516,47 +527,47 @@ void writeArrayDeclaration(Compiler* compiler, Node* node)
     writeNewLine(compiler);
 }
 
-void writeReturn(Compiler* compiler, Node* node)
+void compileReturn(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    writeExpression(compiler, node->right);   // (rax = expression)
+    compileExpression(compiler, node->right);   // (rax = expression)
     write_jmp_rel32(compiler, ".RETURN", -1); // jmp .RETURN
 }
 
-void writeExpression(Compiler* compiler, Node* node)
+void compileExpression(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
 
     switch (node->type)
     {
-        case MATH_TYPE:       { writeMath      (compiler, node); break; }
-        case MEM_ACCESS_TYPE: { writeMemAccess (compiler, node); break; }
-        case STRING_TYPE:     { writeString    (compiler, node); break; }
-        case NUMBER_TYPE:     { writeNumber    (compiler, node); break; }
-        case ID_TYPE:         { writeVar       (compiler, node); break; }
-        case CALL_TYPE:       { writeCall      (compiler, node); break; }
+        case MATH_TYPE:       { compileMath      (compiler, node); break; }
+        case MEM_ACCESS_TYPE: { compileMemAccess (compiler, node); break; }
+        case STRING_TYPE:     { compileString    (compiler, node); break; }
+        case NUMBER_TYPE:     { compileNumber    (compiler, node); break; }
+        case ID_TYPE:         { compileVar       (compiler, node); break; }
+        case CALL_TYPE:       { compileCall      (compiler, node); break; }
 
         default:              { assert(!"Valid node type");   break; }
     }
 }
 
-void writeMath(Compiler* compiler, Node* node)
+void compileMath(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
 
     MathOp operation = node->data.operation;
 
-    writeExpression(compiler, node->left);       // (rax = expression1)
+    compileExpression(compiler, node->left);       // (rax = expression1)
     
     writeNewLine(compiler);
     write_push_r64(compiler, RAX, "save rax");   // push rax
     writeNewLine(compiler);
 
-    writeExpression(compiler, node->right);      // (rax = expression2)
+    compileExpression(compiler, node->right);      // (rax = expression2)
 
     write_mov_r64_r64(compiler, RBX, RAX);       // rbx = rax = expression2
     write_pop_r64(compiler, RAX, "restore rax"); // pop rax 
@@ -566,7 +577,7 @@ void writeMath(Compiler* compiler, Node* node)
     // FIXME: add isBinaryOperation function
     if (operation > DIV_OP)
     {
-        writeCompare(compiler, node);
+        compileCompare(compiler, node);
         return;
     }
 
@@ -587,7 +598,7 @@ void writeMath(Compiler* compiler, Node* node)
     }
 }
 
-void writeCompare(Compiler* compiler, Node* node)
+void compileCompare(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -618,7 +629,7 @@ void writeCompare(Compiler* compiler, Node* node)
     write(compiler, ".COMPARISON_END_%zu:\n", label);
 }
 
-void writeMemAccess(Compiler* compiler, Node* node)
+void compileMemAccess(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -627,7 +638,7 @@ void writeMemAccess(Compiler* compiler, Node* node)
     write_mov_r64_m64(compiler, RAX, varMemory);             
 
     write_push_r64(compiler, RAX, "save variable");          
-    writeExpression(compiler, node->right);                  
+    compileExpression(compiler, node->right);                  
     write_neg_r64(compiler, RAX, "addressing in memory is from right to left");
     write_pop_r64(compiler, RBX, "restore variable to rbx"); 
 
@@ -638,7 +649,7 @@ void writeMemAccess(Compiler* compiler, Node* node)
     write_mov_r64_m64(compiler, RAX, arrayElementMemory);    
 }
 
-void writeString(Compiler* compiler, Node* node)
+void compileString(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -647,7 +658,7 @@ void writeString(Compiler* compiler, Node* node)
     write_mov_r64_imm64(compiler, RAX, "STR", getStringNumber(compiler->table, string));
 }
 
-void writeNumber(Compiler* compiler, Node* node)
+void compileNumber(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -655,7 +666,7 @@ void writeNumber(Compiler* compiler, Node* node)
     write_mov_r64_imm64(compiler, RAX, node->data.number);
 }
 
-void writeVar(Compiler* compiler, Node* node)
+void compileVar(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -673,7 +684,7 @@ void writeVar(Compiler* compiler, Node* node)
     }
 }
 
-void writeParamList(Compiler* compiler, Node* node, const Function* function)
+void compileParamList(Compiler* compiler, Node* node, const Function* function)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -684,7 +695,7 @@ void writeParamList(Compiler* compiler, Node* node, const Function* function)
     {
         writeIndented(compiler, "; param %zu\n", paramNumber);
 
-        writeExpression(compiler, curParamExpr->left); // (rax = expression)
+        compileExpression(compiler, curParamExpr->left); // (rax = expression)
         write_push_r64(compiler, RAX);                 // push rax
 
         curParamExpr = curParamExpr->right;
@@ -692,14 +703,14 @@ void writeParamList(Compiler* compiler, Node* node, const Function* function)
     }
 }
 
-void writeCall(Compiler* compiler, Node* node)
+void compileCall(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler); 
     assert(node);
 
     writeIndented(compiler, "; --- calling %s() ---\n", node->left->data.id);
 
-    // if (writeStdCall(compiler, node)) { return; } // FIXME: 
+    // if (compileStdCall(compiler, node)) { return; } // FIXME: 
 
     Function* function = getFunction(compiler->table, node->left->data.id);
     if (function == nullptr) 
@@ -708,7 +719,7 @@ void writeCall(Compiler* compiler, Node* node)
         return; 
     }
 
-    writeParamList(compiler, node, function);
+    compileParamList(compiler, node, function);
     writeNewLine(compiler);
 
     write_call_rel32(compiler, function->name, -1);
@@ -721,7 +732,7 @@ void writeCall(Compiler* compiler, Node* node)
     writeNewLine(compiler);
 }
 
-bool writeStdCall(Compiler* compiler, Node* node)
+bool compileStdCall(Compiler* compiler, Node* node)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -729,8 +740,8 @@ bool writeStdCall(Compiler* compiler, Node* node)
     const char* name = node->left->data.id;
     if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
     {
-        writeParamList(compiler, node, getFunction(compiler->table, "flagrate"));
-        // writeExpression(compiler, node->right->left);
+        compileParamList(compiler, node, getFunction(compiler->table, "flagrate"));
+        // compileExpression(compiler, node->right->left);
         
     } 
     // else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
@@ -739,12 +750,12 @@ bool writeStdCall(Compiler* compiler, Node* node)
     // } 
     // else if (strcmp(name, KEYWORDS[FLOOR_KEYWORD].string) == 0)
     // {
-    //     writeExpression(compiler, node->right->left);
+    //     compileExpression(compiler, node->right->left);
     //     fprintf(OUTPUT, "flr\n");
     // }
     // else if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
     // {
-    //     writeExpression(compiler, node->right->left);
+    //     compileExpression(compiler, node->right->left);
     //     fprintf(OUTPUT, "sqrt\n");
     // }  
     // else if (strcmp(name, KEYWORDS[RAND_JUMP_KEYWORD].string) == 0)
@@ -758,3 +769,4 @@ bool writeStdCall(Compiler* compiler, Node* node)
 
     return true; // FIXME: switch back to true
 }
+//==================================Compilation==================================

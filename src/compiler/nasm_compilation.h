@@ -4,6 +4,9 @@
 #include "compiler.h"
 #include "x86_64_specification.h"
 
+// TODO: add operations depending on a constant's size (e.g. add_r64_imm8)
+// TODO: add add_rax_imm32, sub_rax_imm32
+
 //---------------------------------NASM_STACK-----------------------------------
 //! @defgroup NASM_STACK Stack instructions in NASM
 //! @addtogroup NASM_STACK
