@@ -169,6 +169,8 @@ const FlagSpecification FLAG_SPECIFICATIONS[TOTAL_FLAGS] =
       FLAGS_HELP_MESSAGES[FLAG_OUTPUT] },      
 };
 
+#include "compiler/x86_64_specification.h"
+
 int main(int argc, const char* argv[])
 {
     FlagManager flagManager = {};
@@ -410,6 +412,13 @@ Error compile(const FlagManager* flagManager)
         printf("Couldn't compile the program.\n");
         return COMPILATION_FAILED;
     }
+
+    // FIXME: get rid of
+    // FILE* dumpedTreeFile = fopen("dumped_insertion_sort.txt", "w");
+    // assert(dumpedTreeFile);
+    // dumpToFile(dumpedTreeFile, tree);
+
+    // fclose(dumpedTreeFile);
 
     destroy(&table);
     destroy(&tokenizer);

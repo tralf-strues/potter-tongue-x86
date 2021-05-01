@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include "label_manager.h"
 #include "../symbol_table/symbol_table.h"
 #include "../parser/expression_tree.h"
       
@@ -30,16 +31,17 @@ static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
     "could find io.nasm with standard I/O functions"
 };
 
+static const uint8_t COMPILER_FIRST_PASS   = 0;
+static const uint8_t COMPILER_TOTAL_PASSES = 2;
+
 struct Compiler
 {
     SymbolTable*  table;
     Node*         tree;
     FILE*         file;
     Function*     curFunction;
-
-    size_t        curCondLabel;
-    size_t        curLoopLabel;
-    size_t        curCmpLabel;
+    uint8_t       passNumber;
+    LabelManager  labelManager;
 
     CompilerError status;
 };

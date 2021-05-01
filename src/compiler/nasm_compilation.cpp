@@ -57,6 +57,8 @@ void write_push_r64(Compiler* compiler, Reg64 reg, const char* comment)
 {
     ASSERT_COMPILER(compiler);
 
+    
+
     writeIndented(compiler, "push %s", reg64ToString(reg));
     writeComment(compiler, comment);
 }
@@ -166,14 +168,14 @@ void write_sal_r64_imm8(Compiler* compiler, Reg64 reg, int8_t number, const char
 
 
 //-----------------------------NASM_CONTROL_FLOW--------------------------------
-void write_call_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_call_rel32(Compiler* compiler, Label label, const char* comment)
 {
     ASSERT_COMPILER(compiler);
 
-    writeIndented(compiler, "call %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "call %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
@@ -187,93 +189,93 @@ void write_ret(Compiler* compiler, const char* comment)
     writeComment(compiler, comment);
 }
 
-void write_jmp_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jmp_rel32(Compiler* compiler, Label label, const char* comment)
 {
     ASSERT_COMPILER(compiler);
 
-    writeIndented(compiler, "jmp %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jmp %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jz_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jz_rel32(Compiler* compiler, Label label, const char* comment)
 {
     ASSERT_COMPILER(compiler);
 
-    writeIndented(compiler, "jz %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jz %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_je_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_je_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "je %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "je %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jne_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jne_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "jne %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jne %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jl_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jl_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "jl %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jl %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jg_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jg_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "jg %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jg %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jle_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jle_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "jle %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jle %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
 }
 
-void write_jge_rel32(Compiler* compiler, const char* label, int labelNum, const char* comment)
+void write_jge_rel32(Compiler* compiler, Label label, const char* comment)
 {
-    writeIndented(compiler, "jge %s", label);
-    if (labelNum != -1)
+    writeIndented(compiler, "jge %s", label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);
@@ -298,14 +300,14 @@ void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, int64_t number, const c
     writeComment(compiler, comment);
 }
 
-void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, const char* label, int labelNum, const char* comment)
+void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, Label label, const char* comment)
 {
     ASSERT_COMPILER(compiler);
 
-    writeIndented(compiler, "mov %s, %s", reg64ToString(dest), label);
-    if (labelNum != -1)
+    writeIndented(compiler, "mov %s, %s", reg64ToString(dest), label.name);
+    if (label.number != -1)
     {
-        write(compiler, "%d", labelNum);
+        write(compiler, "%d", label.number);
     }
 
     writeComment(compiler, comment);

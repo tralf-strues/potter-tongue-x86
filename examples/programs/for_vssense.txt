@@ -1,0 +1,67 @@
+Godric's-Hollow Hogwarts
+
+imperio love horcrux
+alohomora
+    
+    - avenseguim count carpe-retractum 8
+
+    - capacious array, legilimens count
+    - avenseguim curIndex carpe-retractum horcrux
+
+    while protego legilimens curIndex less legilimens count protego
+    alohomora
+        - array~legilimens curIndex~ carpe-retractum accio 
+        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+    colloportus
+
+    - depulso insertionSort protego legilimens array, legilimens count protego
+    - depulso printArray    protego legilimens array, legilimens count protego
+
+    - reverte horcrux
+
+colloportus    
+
+imperio horcrux insertionSort array, count
+alohomora
+
+    - avenseguim i carpe-retractum tria flipendo duo
+    
+    while protego legilimens i less legilimens count protego
+    alohomora
+        
+        - avenseguim element carpe-retractum array~legilimens i~
+        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+
+        while protego legilimens j greater-equal horcrux protego
+        alohomora
+
+            revelio protego legilimens element less array~legilimens j~ protego
+            alohomora
+                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+                - j carpe-retractum legilimens j flipendo tria epoximise duo
+
+                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+            colloportus
+            otherwise
+            alohomora
+                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+            colloportus 
+        colloportus
+
+        - i carpe-retractum legilimens i epoximise tria flipendo duo
+    colloportus
+colloportus
+
+imperio horcrux printArray array, count, precision
+alohomora
+    - avenseguim i carpe-retractum horcrux
+
+    while protego legilimens i less legilimens count protego
+    alohomora
+        - flagrate array~legilimens i~
+
+        - i carpe-retractum legilimens i epoximise tria flipendo duo
+    colloportus
+colloportus
+
+Privet-Drive 

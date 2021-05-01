@@ -342,129 +342,65 @@ accio_bombarda:
 ; love
 ;
 ; params: 
-; vars:   precision, count, array, curIndex, swaps
+; vars:   count, array, curIndex
 ; ==================================================
 love:
                 push rbp
                 mov rbp, rsp
-                sub rsp, 40
+                sub rsp, 24
 
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, AskPrecision
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- assignment to precision ---
+                ; --- assignment to count ---
                 ; evaluating expression
-                ; --- calling accio() ---
-
-                call accio
-
+                mov rax, 8
                 mov [rbp - 8], rax
-                ; --- assignment to precision ---
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, AskCount
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
                 ; --- assignment to count ---
-                ; evaluating expression
-                ; --- calling accio() ---
-
-                call accio
-
-                mov [rbp - 16], rax
-                ; --- assignment to count ---
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, AskNumbers
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
-                add rsp, 8
 
                 ; --- declaring array array ---
                 ; evaluating expression (array's size)
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
                 sal rax, 3 ; *8 to get array's size in bytes
                 sub rax, 8 ; to mitigate the next instruction
                 sub rsp, 8
-                mov [rbp - 24], rsp
+                mov [rbp - 16], rsp
                 sub rsp, rax
 
                 ; --- assignment to curIndex ---
                 ; evaluating expression
                 mov rax, 0
-                mov [rbp - 32], rax
+                mov [rbp - 24], rax
                 ; --- assignment to curIndex ---
 
                 ; ==== while ====
 .WHILE_0:
                 ; exit condition
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
 
                 push rax ; save rax
 
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
                 mov rbx, rax
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jl .CMP_TRUE_0
+                jl .COMPARISON_TRUE_0
                 xor rax, rax ; false
-                jmp .CMP_END_0
-.CMP_TRUE_0:
+                jmp .COMPARISON_END_0
+.COMPARISON_TRUE_0:
                 mov rax, 1 ; true
-.CMP_END_0:
+.COMPARISON_END_0:
                 test rax, rax
                 jz .END_WHILE_0
 
                 ; loop body
                 ; --- assignment to array ---
-                mov rax, [rbp - 24]
+                mov rax, [rbp - 16]
                 push rax ; save variable
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
                 neg rax ; addressing in memory is from right to left
                 push rax ; save index
-                ; --- calling accio_bombarda() ---
-                ; param 1
-                mov rax, [rbp - 8]
-                push rax
+                ; --- calling accio() ---
 
-                call accio_bombarda
-                add rsp, 8
+                call accio
 
                 pop rcx ; restore index to rcx
                 pop rbx ; restore variable to rbx
@@ -473,7 +409,7 @@ love:
 
                 ; --- assignment to curIndex ---
                 ; evaluating expression
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
 
                 push rax ; save rax
 
@@ -490,66 +426,22 @@ love:
                 pop rax ; restore rax
 
                 sub rax, rbx
-                mov [rbp - 32], rax
+                mov [rbp - 24], rax
                 ; --- assignment to curIndex ---
 
                 jmp .WHILE_0
 .END_WHILE_0:
-                ; --- assignment to swaps ---
-                ; evaluating expression
+
                 ; --- calling insertionSort() ---
                 ; param 2
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
                 push rax
                 ; param 1
-                mov rax, [rbp - 24]
+                mov rax, [rbp - 16]
                 push rax
 
                 call insertionSort
                 add rsp, 16
-
-                mov [rbp - 40], rax
-                ; --- assignment to swaps ---
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, SortingFinished
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate() ---
-                ; param 1
-                mov rax, [rbp - 40]
-                push rax
-
-                call flagrate
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR5
-                push rax
-
-                call flagrate_s
-                add rsp, 8
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
-                add rsp, 8
 
                 ; --- calling printArray() ---
                 ; param 3
@@ -557,9 +449,6 @@ love:
                 push rax
                 ; param 2
                 mov rax, [rbp - 16]
-                push rax
-                ; param 1
-                mov rax, [rbp - 24]
                 push rax
 
                 call printArray
@@ -577,18 +466,12 @@ love:
 ; insertionSort
 ;
 ; params: array, count
-; vars:   swaps, i, element, j
+; vars:   i, element, j
 ; ==================================================
 insertionSort:
                 push rbp
                 mov rbp, rsp
-                sub rsp, 32
-
-                ; --- assignment to swaps ---
-                ; evaluating expression
-                mov rax, 0
-                mov [rbp - 8], rax
-                ; --- assignment to swaps ---
+                sub rsp, 24
 
                 ; --- assignment to i ---
                 ; evaluating expression
@@ -601,13 +484,13 @@ insertionSort:
                 pop rax ; restore rax
 
                 sub rax, rbx
-                mov [rbp - 16], rax
+                mov [rbp - 8], rax
                 ; --- assignment to i ---
 
                 ; ==== while ====
 .WHILE_1:
                 ; exit condition
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
 
                 push rax ; save rax
 
@@ -616,12 +499,12 @@ insertionSort:
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jl .CMP_TRUE_1
+                jl .COMPARISON_TRUE_1
                 xor rax, rax ; false
-                jmp .CMP_END_1
-.CMP_TRUE_1:
+                jmp .COMPARISON_END_1
+.COMPARISON_TRUE_1:
                 mov rax, 1 ; true
-.CMP_END_1:
+.COMPARISON_END_1:
                 test rax, rax
                 jz .END_WHILE_1
 
@@ -630,16 +513,16 @@ insertionSort:
                 ; evaluating expression
                 mov rax, [rbp + 16]
                 push rax ; save variable
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
                 neg rax ; addressing in memory is from right to left
                 pop rbx ; restore variable to rbx
                 mov rax, [rbx + rax * 8]
-                mov [rbp - 24], rax
+                mov [rbp - 16], rax
                 ; --- assignment to element ---
 
                 ; --- assignment to j ---
                 ; evaluating expression
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
 
                 push rax ; save rax
 
@@ -656,13 +539,13 @@ insertionSort:
                 pop rax ; restore rax
 
                 add rax, rbx
-                mov [rbp - 32], rax
+                mov [rbp - 24], rax
                 ; --- assignment to j ---
 
                 ; ==== while ====
 .WHILE_2:
                 ; exit condition
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
 
                 push rax ; save rax
 
@@ -671,25 +554,25 @@ insertionSort:
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jge .CMP_TRUE_2
+                jge .COMPARISON_TRUE_2
                 xor rax, rax ; false
-                jmp .CMP_END_2
-.CMP_TRUE_2:
+                jmp .COMPARISON_END_2
+.COMPARISON_TRUE_2:
                 mov rax, 1 ; true
-.CMP_END_2:
+.COMPARISON_END_2:
                 test rax, rax
                 jz .END_WHILE_2
 
                 ; loop body
                 ; ==== if-else statement ====
                 ; condition's expression
-                mov rax, [rbp - 24]
+                mov rax, [rbp - 16]
 
                 push rax ; save rax
 
                 mov rax, [rbp + 16]
                 push rax ; save variable
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
                 neg rax ; addressing in memory is from right to left
                 pop rbx ; restore variable to rbx
                 mov rax, [rbx + rax * 8]
@@ -697,12 +580,12 @@ insertionSort:
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jl .CMP_TRUE_3
+                jl .COMPARISON_TRUE_3
                 xor rax, rax ; false
-                jmp .CMP_END_3
-.CMP_TRUE_3:
+                jmp .COMPARISON_END_3
+.COMPARISON_TRUE_3:
                 mov rax, 1 ; true
-.CMP_END_3:
+.COMPARISON_END_3:
                 test rax, rax
                 jz .ELSE_0
 
@@ -710,7 +593,7 @@ insertionSort:
                 ; --- assignment to array ---
                 mov rax, [rbp + 16]
                 push rax ; save variable
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
 
                 push rax ; save rax
 
@@ -731,7 +614,7 @@ insertionSort:
                 push rax ; save index
                 mov rax, [rbp + 16]
                 push rax ; save variable
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
                 neg rax ; addressing in memory is from right to left
                 pop rbx ; restore variable to rbx
                 mov rax, [rbx + rax * 8]
@@ -742,7 +625,7 @@ insertionSort:
 
                 ; --- assignment to j ---
                 ; evaluating expression
-                mov rax, [rbp - 32]
+                mov rax, [rbp - 24]
 
                 push rax ; save rax
 
@@ -759,10 +642,61 @@ insertionSort:
                 pop rax ; restore rax
 
                 add rax, rbx
-                mov [rbp - 32], rax
+                mov [rbp - 24], rax
                 ; --- assignment to j ---
 
-                ; --- assignment to swaps ---
+                ; --- assignment to array ---
+                mov rax, [rbp + 16]
+                push rax ; save variable
+                mov rax, [rbp - 24]
+
+                push rax ; save rax
+
+                mov rax, 3
+                mov rbx, rax
+                pop rax ; restore rax
+
+                add rax, rbx
+
+                push rax ; save rax
+
+                mov rax, 2
+                mov rbx, rax
+                pop rax ; restore rax
+
+                sub rax, rbx
+                neg rax ; addressing in memory is from right to left
+                push rax ; save index
+                mov rax, [rbp - 16]
+                pop rcx ; restore index to rcx
+                pop rbx ; restore variable to rbx
+                mov [rbx + rcx * 8], rax
+                ; --- assignment to array ---
+
+                jmp .END_IF_ELSE_0
+
+.ELSE_0:
+
+                ; --- assignment to j ---
+                ; evaluating expression
+                mov rax, 2
+
+                push rax ; save rax
+
+                mov rax, 3
+                mov rbx, rax
+                pop rax ; restore rax
+
+                sub rax, rbx
+                mov [rbp - 24], rax
+                ; --- assignment to j ---
+
+.END_IF_ELSE_0:
+
+                jmp .WHILE_2
+.END_WHILE_2:
+
+                ; --- assignment to i ---
                 ; evaluating expression
                 mov rax, [rbp - 8]
 
@@ -782,82 +716,11 @@ insertionSort:
 
                 sub rax, rbx
                 mov [rbp - 8], rax
-                ; --- assignment to swaps ---
-
-                ; --- assignment to array ---
-                mov rax, [rbp + 16]
-                push rax ; save variable
-                mov rax, [rbp - 32]
-
-                push rax ; save rax
-
-                mov rax, 3
-                mov rbx, rax
-                pop rax ; restore rax
-
-                add rax, rbx
-
-                push rax ; save rax
-
-                mov rax, 2
-                mov rbx, rax
-                pop rax ; restore rax
-
-                sub rax, rbx
-                neg rax ; addressing in memory is from right to left
-                push rax ; save index
-                mov rax, [rbp - 24]
-                pop rcx ; restore index to rcx
-                pop rbx ; restore variable to rbx
-                mov [rbx + rcx * 8], rax
-                ; --- assignment to array ---
-
-                jmp .END_IF_ELSE0
-
-.ELSE_0:
-                ; --- assignment to j ---
-                ; evaluating expression
-                mov rax, 2
-
-                push rax ; save rax
-
-                mov rax, 3
-                mov rbx, rax
-                pop rax ; restore rax
-
-                sub rax, rbx
-                mov [rbp - 32], rax
-                ; --- assignment to j ---
-
-.END_IF_ELSE0:
-                jmp .WHILE_2
-.END_WHILE_2:
-                ; --- assignment to i ---
-                ; evaluating expression
-                mov rax, [rbp - 16]
-
-                push rax ; save rax
-
-                mov rax, 3
-                mov rbx, rax
-                pop rax ; restore rax
-
-                add rax, rbx
-
-                push rax ; save rax
-
-                mov rax, 2
-                mov rbx, rax
-                pop rax ; restore rax
-
-                sub rax, rbx
-                mov [rbp - 16], rax
                 ; --- assignment to i ---
 
                 jmp .WHILE_1
 .END_WHILE_1:
-                mov rax, [rbp - 8]
-                jmp .RETURN
+
 .RETURN:
                 mov rsp, rbp
                 pop rbp
@@ -893,18 +756,18 @@ printArray:
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jl .CMP_TRUE_4
+                jl .COMPARISON_TRUE_4
                 xor rax, rax ; false
-                jmp .CMP_END_4
-.CMP_TRUE_4:
+                jmp .COMPARISON_END_4
+.COMPARISON_TRUE_4:
                 mov rax, 1 ; true
-.CMP_END_4:
+.COMPARISON_END_4:
                 test rax, rax
                 jz .END_WHILE_3
 
                 ; loop body
-                ; --- calling flagrate_bombarda() ---
-                ; param 2
+                ; --- calling flagrate() ---
+                ; param 1
                 mov rax, [rbp + 16]
                 push rax ; save variable
                 mov rax, [rbp - 8]
@@ -912,19 +775,8 @@ printArray:
                 pop rbx ; restore variable to rbx
                 mov rax, [rbx + rax * 8]
                 push rax
-                ; param 1
-                mov rax, [rbp + 32]
-                push rax
 
-                call flagrate_bombarda
-                add rsp, 16
-
-                ; --- calling flagrate_s() ---
-                ; param 1
-                mov rax, STR4
-                push rax
-
-                call flagrate_s
+                call flagrate
                 add rsp, 8
 
                 ; --- assignment to i ---
@@ -951,6 +803,7 @@ printArray:
 
                 jmp .WHILE_3
 .END_WHILE_3:
+
 .RETURN:
                 mov rsp, rbp
                 pop rbp
@@ -959,18 +812,6 @@ printArray:
 
 section .data
 IO_BUFFER_SIZE equ 256
-AskPrecision:
-                db "Enter the precision of numbers: ", 0
-AskCount:
-                db "Enter the number of elements in the array: ", 0
-AskNumbers:
-                db "Enter the elements of the array: ", 0
-SortingFinished:
-                db "The array has been sorted with the total of ", 0
-STR4:
-                db `\n`, 0
-STR5:
-                db " swaps:", 0
 
 section .bss
 IO_BUFFER:

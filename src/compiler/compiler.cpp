@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "nasm_compilation.h"
 #include "../../libs/file_manager.h"
@@ -11,7 +12,12 @@ const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
 const size_t IO_BUFFER_SIZE             = 256;
 
-void compileError(Compiler* compiler, CompilerError error); 
+//===================================Compiler===================================
+int32_t nextLabelNumber  (Compiler* compiler, LabelPurposeType labelType);
+Label   getExistingLabel (Compiler* compiler, Label label);
+void    writeLabel       (Compiler* compiler, Label label);
+void    compileError     (Compiler* compiler, CompilerError error); 
+//===================================Compiler===================================
 
 //==================================Write data==================================
 void writeFileHeader   (Compiler* compiler);
@@ -21,12 +27,10 @@ void writeStringsData  (Compiler* compiler);
 void writeStdBSS       (Compiler* compiler);
 //==================================Write data==================================
 
-
 //==============================Write NASM comments==============================
 void writeHorizontalLine (Compiler* compiler);
 void writeFunctionHeader (Compiler* compiler);
 //==============================Write NASM comments==============================
-
 
 //==================================Compilation==================================
 void compileFunction         (Compiler* compiler, Node* node);
@@ -64,6 +68,7 @@ void construct(Compiler* compiler, Node* tree, SymbolTable* table)
 
     compiler->table = table; 
     compiler->tree  = tree;
+    construct(&compiler->labelManager);
 }
 
 void destroy(Compiler* compiler)
@@ -72,6 +77,7 @@ void destroy(Compiler* compiler)
 
     compiler->table = nullptr;
     compiler->tree  = nullptr;
+    destroy(&compiler->labelManager);
 }
 
 const char* errorString(CompilerError error)
@@ -82,6 +88,56 @@ const char* errorString(CompilerError error)
     }
 
     return "UNDEFINED error";
+}
+
+int32_t nextLabelNumber(Compiler* compiler, LabelPurposeType labelType)
+{
+    ASSERT_COMPILER(compiler);
+
+    return compiler->labelManager.curLabelNumbers[labelType]++;
+}
+
+//------------------------------------------------------------------------------
+//! If a label with the same (optionally) functionName name and (optionally) 
+//! number already contains in the compiler's LabelManager, then return it, 
+//! otherwise return the same label without any changes. This is needed to get 
+//! the valid offset of the label (which is not always possible on the first 
+//! pass of the compiler), based on its (optionally) functionName, name and 
+//! (optionally) number. 
+//! 
+//! @param compiler
+//! @param label
+//! 
+//! @return Label with a changed offset, if the label already exists, or the 
+//!         same label. 
+//------------------------------------------------------------------------------
+Label getExistingLabel(Compiler* compiler, Label label)
+{
+    ASSERT_COMPILER(compiler);
+
+    int idx = findLabel(&compiler->labelManager.labelArray, label);
+
+    if (idx != -1) { return compiler->labelManager.labelArray.labels[idx]; }
+    else           { return label; }
+}
+
+void writeLabel(Compiler* compiler, Label label)
+{
+    ASSERT_COMPILER(compiler);
+
+    if (findLabel(&compiler->labelManager.labelArray, label) == -1)
+    {
+        insertLabel(&compiler->labelManager.labelArray, label);
+    }
+
+    if (label.number >= 0)
+    {
+        write(compiler, "%s%" PRId32 ":\n", label.name, label.number);
+    }
+    else 
+    {
+        write(compiler, "%s:\n", label.name);
+    }
 }
 
 void compileError(Compiler* compiler, CompilerError error)
@@ -267,12 +323,14 @@ void writeStdFunctions(Compiler* compiler)
 
     free(stdioNasm);
 
-    // Adding standard functions to the compiler's symbol table
+    // Adding standard functions to the compiler's SymbolTable and LabelManager
     for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
     {
         const StdFunctionInfo* functionInfo = &STANDARD_FUNCTIONS[i];
-        
         Function* function = pushFunction(compiler->table, functionInfo->workingName);
+
+        Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
+        insertLabel(&compiler->labelManager.labelArray, label);
 
         for (size_t param = 0; param < functionInfo->parametersCount; param++)
         {
@@ -299,12 +357,14 @@ void writeStringsData(Compiler* compiler)
     {
         if (stringsData->strings[i].name != nullptr)
         {
-            write(compiler, "%s:\n", stringsData->strings[i].name);
+            writeLabel(compiler, {0, nullptr, stringsData->strings[i].name, -1});
         } 
         else 
         {
-            write(compiler, "STR%zu:\n", getStringNumber(compiler->table, 
-                                                         stringsData->strings + i));
+            writeLabel(compiler, {0, 
+                                  nullptr, 
+                                  "STR", 
+                                  getStringNumber(compiler->table, stringsData->strings + i)});
         }
 
         if (stringsData->strings[i].content[0] == '\n')
@@ -337,8 +397,8 @@ void compileFunction(Compiler* compiler, Node* node)
 
     writeFunctionHeader(compiler);
 
-    write_push_r64(compiler, RBP);          // push rbp
-    write_mov_r64_r64(compiler, RBP, RSP) ; // mov  rbp, rsp
+    write_push_r64(compiler, RBP);
+    write_mov_r64_r64(compiler, RBP, RSP);
     
     // FIXME: local vars change
     if (CUR_FUNC->varsData.count != CUR_FUNC->paramsCount)
@@ -350,9 +410,9 @@ void compileFunction(Compiler* compiler, Node* node)
     compileBlock(compiler, node->left);
 
     write(compiler, ".RETURN:\n");
-    write_mov_r64_r64(compiler, RSP, RBP); // mov rsp, rbp
-    write_pop_r64(compiler, RBP);          // pop rbp
-    write_ret(compiler);                   // ret
+    write_mov_r64_r64(compiler, RSP, RBP);
+    write_pop_r64(compiler, RBP);
+    write_ret(compiler);
 }
 
 void compileBlock(Compiler* compiler, Node* node)
@@ -394,27 +454,31 @@ void compileCondition(Compiler* compiler, Node* node)
     writeIndented(compiler, "; ==== if-else statement ====\n");
 
     writeIndented(compiler, "; condition's expression\n");
-    compileExpression(compiler, node->left);             // (rax = condition)
+    compileExpression(compiler, node->left);             
 
-    size_t label = compiler->curCondLabel++;
-    write_test_r64_r64(compiler, RAX, RAX);            // test rax, rax 
-    write_jz_rel32(compiler, ".ELSE_", label);         // jz .ELSE_x
+    int32_t labelNum  = nextLabelNumber(compiler, LABEL_COND);
+    Label   elseLabel = getExistingLabel(compiler, {0, CUR_FUNC->name, ".ELSE_",       labelNum});
+    Label   endLabel  = getExistingLabel(compiler, {0, CUR_FUNC->name, ".END_IF_ELSE", labelNum});
+    
+    write_test_r64_r64(compiler, RAX, RAX);            
+    write_jz_rel32(compiler, elseLabel);
 
     writeNewLine(compiler);
 
     writeIndented(compiler, "; if true\n");
     compileBlock(compiler, node->right->left);    
-    write_jmp_rel32(compiler, ".END_IF_ELSE_", label); // jmp .END_IF_ELSE_x
-    
+
+    write_jmp_rel32(compiler, endLabel);
     writeNewLine(compiler);
-    write(compiler, ".ELSE_%zu:\n\n",label); 
+
+    writeLabel(compiler, elseLabel);
 
     if (node->right->right != nullptr)
     {
         compileBlock(compiler, node->right->right);
     }
 
-    write(compiler, ".END_IF_ELSE_%zu:\n\n", label);
+    writeLabel(compiler, endLabel);
 }
 
 void compileLoop(Compiler* compiler, Node* node)
@@ -422,24 +486,26 @@ void compileLoop(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    size_t label = compiler->curLoopLabel++;
+    int32_t labelNum   = nextLabelNumber(compiler, LABEL_LOOP);
+    Label   whileLabel = getExistingLabel(compiler, {0, CUR_FUNC->name, ".WHILE_",     labelNum});
+    Label   endLabel   = getExistingLabel(compiler, {0, CUR_FUNC->name, ".END_WHILE_", labelNum});
 
     writeIndented(compiler, "; ==== while ====\n");
-    write(compiler, ".WHILE_%zu:\n", label);
+    writeLabel(compiler, whileLabel);
 
     writeIndented(compiler, "; exit condition\n");
-    compileExpression(compiler, node->left);          // (rax = condition)
+    compileExpression(compiler, node->left);
     
-    write_test_r64_r64(compiler, RAX, RAX);         // test rax, rax 
-    write_jz_rel32(compiler, ".END_WHILE_", label); // jz .END_WHILE_x
+    write_test_r64_r64(compiler, RAX, RAX);
+
+    write_jz_rel32(compiler, endLabel);
     writeNewLine(compiler);
 
     writeIndented(compiler, "; loop body\n");
     compileBlock(compiler, node->right);
 
-    write_jmp_rel32(compiler, ".WHILE_", label);    // jmp .END_WHILE_x
-
-    write(compiler, ".END_WHILE_%zu:\n\n", label);
+    write_jmp_rel32(compiler, whileLabel);
+    writeLabel(compiler, endLabel);
 }
 
 void compileAssignment(Compiler* compiler, Node* node)
@@ -532,8 +598,10 @@ void compileReturn(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    compileExpression(compiler, node->right);   // (rax = expression)
-    write_jmp_rel32(compiler, ".RETURN", -1); // jmp .RETURN
+    compileExpression(compiler, node->right);
+    
+    Label label = getExistingLabel(compiler, {0, CUR_FUNC->name, ".RETURN", -1});
+    write_jmp_rel32(compiler, label);
 }
 
 void compileExpression(Compiler* compiler, Node* node)
@@ -561,16 +629,16 @@ void compileMath(Compiler* compiler, Node* node)
 
     MathOp operation = node->data.operation;
 
-    compileExpression(compiler, node->left);       // (rax = expression1)
+    compileExpression(compiler, node->left);
     
     writeNewLine(compiler);
-    write_push_r64(compiler, RAX, "save rax");   // push rax
+    write_push_r64(compiler, RAX, "save rax");
     writeNewLine(compiler);
 
-    compileExpression(compiler, node->right);      // (rax = expression2)
+    compileExpression(compiler, node->right);
 
-    write_mov_r64_r64(compiler, RBX, RAX);       // rbx = rax = expression2
-    write_pop_r64(compiler, RAX, "restore rax"); // pop rax 
+    write_mov_r64_r64(compiler, RBX, RAX);
+    write_pop_r64(compiler, RAX, "restore rax");
 
     writeNewLine(compiler);
 
@@ -583,9 +651,9 @@ void compileMath(Compiler* compiler, Node* node)
 
     switch (node->data.operation)
     {
-        case ADD_OP: { write_add_r64_r64  (compiler, RAX, RBX); break; } // add  rax, rbx
-        case SUB_OP: { write_sub_r64_r64  (compiler, RAX, RBX); break; } // sub  rax, rbx
-        case MUL_OP: { write_imul_r64_r64 (compiler, RAX, RBX); break; } // imul rax, rbx
+        case ADD_OP: { write_add_r64_r64  (compiler, RAX, RBX); break; }
+        case SUB_OP: { write_sub_r64_r64  (compiler, RAX, RBX); break; }
+        case MUL_OP: { write_imul_r64_r64 (compiler, RAX, RBX); break; }
         
         case DIV_OP: 
         { 
@@ -603,30 +671,33 @@ void compileCompare(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    size_t label = compiler->curCmpLabel++;
+    int32_t     labelNum  = nextLabelNumber(compiler, LABEL_CMP);
+    const char* funcName  = CUR_FUNC->name; 
+    Label       labelTrue = getExistingLabel(compiler, {0, funcName, ".CMP_TRUE_", labelNum});
+    Label       labelEnd  = getExistingLabel(compiler, {0, funcName, ".CMP_END_",  labelNum});
 
     write_cmp_r64_r64(compiler, RAX, RBX);
 
     switch (node->data.operation)
     {
-        case EQUAL_OP:         { write_je_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
-        case NOT_EQUAL_OP:     { write_jne_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
-        case LESS_OP:          { write_jl_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
-        case GREATER_OP:       { write_jg_rel32  (compiler, ".COMPARISON_TRUE_", label); break; }
-        case LESS_EQUAL_OP:    { write_jle_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
-        case GREATER_EQUAL_OP: { write_jge_rel32 (compiler, ".COMPARISON_TRUE_", label); break; }
+        case EQUAL_OP:         { write_je_rel32  (compiler, labelTrue); break; }
+        case NOT_EQUAL_OP:     { write_jne_rel32 (compiler, labelTrue); break; }
+        case LESS_OP:          { write_jl_rel32  (compiler, labelTrue); break; }
+        case GREATER_OP:       { write_jg_rel32  (compiler, labelTrue); break; }
+        case LESS_EQUAL_OP:    { write_jle_rel32 (compiler, labelTrue); break; }
+        case GREATER_EQUAL_OP: { write_jge_rel32 (compiler, labelTrue); break; }
 
         default:               { assert(!"Invalid cmp op"); break; }
     }
 
     write_xor_r64_r64(compiler, RAX, RAX, "false");
-    write_jmp_rel32(compiler, ".COMPARISON_END_", label);
+    write_jmp_rel32(compiler, labelEnd);
 
-    write(compiler, ".COMPARISON_TRUE_%zu:\n", label);
+    writeLabel(compiler, labelTrue);
 
     write_mov_r64_imm64(compiler, RAX, 1, "true");
 
-    write(compiler, ".COMPARISON_END_%zu:\n", label);
+    writeLabel(compiler, labelEnd);
 }
 
 void compileMemAccess(Compiler* compiler, Node* node)
@@ -655,7 +726,12 @@ void compileString(Compiler* compiler, Node* node)
     assert(node);
 
     String* string = getStringByContent(compiler->table, node->data.string);
-    write_mov_r64_imm64(compiler, RAX, "STR", getStringNumber(compiler->table, string));
+
+    Label label = getExistingLabel(compiler, {0, 
+                                              nullptr, 
+                                              "STR", 
+                                              getStringNumber(compiler->table, string)});
+    write_mov_r64_imm64(compiler, RAX, label);
 }
 
 void compileNumber(Compiler* compiler, Node* node)
@@ -679,8 +755,8 @@ void compileVar(Compiler* compiler, Node* node)
     }
     else
     {   
-        String* string = getStringByName(compiler->table, node->data.id);
-        write_mov_r64_imm64(compiler, RAX, node->data.id, -1);
+        Label label = getExistingLabel(compiler, {0, nullptr, node->data.id, -1});
+        write_mov_r64_imm64(compiler, RAX, label);
     }
 }
 
@@ -722,7 +798,8 @@ void compileCall(Compiler* compiler, Node* node)
     compileParamList(compiler, node, function);
     writeNewLine(compiler);
 
-    write_call_rel32(compiler, function->name, -1);
+    Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
+    write_call_rel32(compiler, label);
 
     if (function->paramsCount > 0)
     {

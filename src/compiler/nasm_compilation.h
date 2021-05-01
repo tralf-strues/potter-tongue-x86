@@ -5,7 +5,7 @@
 #include "x86_64_specification.h"
 
 // TODO: add operations depending on a constant's size (e.g. add_r64_imm8)
-// TODO: add add_rax_imm32, sub_rax_imm32
+// TODO: add add_rax_imm32, sub_rax_imm32, sal_r64_1
 
 //---------------------------------NASM_STACK-----------------------------------
 //! @defgroup NASM_STACK Stack instructions in NASM
@@ -55,16 +55,16 @@ void write_sal_r64_imm8  (Compiler* compiler, Reg64 reg,      int8_t number,   c
 //! @addtogroup NASM_CONTROL_FLOW
 //! @{
  
-void write_call_rel32 (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_ret        (Compiler* compiler, const char* comment = nullptr);
-void write_jmp_rel32  (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jz_rel32   (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_je_rel32   (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jne_rel32  (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jl_rel32   (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jg_rel32   (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jle_rel32  (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
-void write_jge_rel32  (Compiler* compiler, const char* label, int labelNum, const char* comment = nullptr);
+void write_call_rel32 (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_ret        (Compiler* compiler,              const char* comment = nullptr);
+void write_jmp_rel32  (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jz_rel32   (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_je_rel32   (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jne_rel32  (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jl_rel32   (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jg_rel32   (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jle_rel32  (Compiler* compiler, Label label, const char* comment = nullptr);
+void write_jge_rel32  (Compiler* compiler, Label label, const char* comment = nullptr);
 
 //! @}
 //-----------------------------NASM_CONTROL_FLOW--------------------------------
@@ -77,7 +77,7 @@ void write_jge_rel32  (Compiler* compiler, const char* label, int labelNum, cons
 
 void write_mov_r64_r64   (Compiler* compiler, Reg64 dest, Reg64 src,      const char* comment = nullptr);
 void write_mov_r64_imm64 (Compiler* compiler, Reg64 dest, int64_t number, const char* comment = nullptr);
-void write_mov_r64_imm64 (Compiler* compiler, Reg64 dest, const char* label, int labelNum, const char* comment = nullptr);
+void write_mov_r64_imm64 (Compiler* compiler, Reg64 dest, Label label,    const char* comment = nullptr);
 void write_mov_m64_r64   (Compiler* compiler, Mem64 dest, Reg64 src,      const char* comment = nullptr);
 void write_mov_r64_m64   (Compiler* compiler, Reg64 dest, Mem64 src,      const char* comment = nullptr);
 
