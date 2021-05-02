@@ -5,13 +5,33 @@ Chapter <<MessageTwo>> "Hello, Hell!"
 
 imperio love horcrux
 alohomora
-    - flagrate-s " The real question is how long you are going to live... "
-    - flagrate-s circumrota
-    - flagrate-s <<MessageOne>>
-    - flagrate-s circumrota
-    - flagrate-s <<MessageTwo>>
-    - flagrate-s circumrota
+    
+    revelio protego 0 protego
+    alohomora
+        - reverte -1
+    colloportus
+
+    - avenseguim number carpe-retractum 2
+    - avenseguim power  carpe-retractum 12
+    - depulso arithmetic protego legilimens number, legilimens power protego
+
     - reverte horcrux
+colloportus
+
+imperio arithmetic number, power
+alohomora
+    - avenseguim curPower carpe-retractum 0
+    - avenseguim result   carpe-retractum 1
+    
+    while protego legilimens curPower less legilimens power protego 
+    alohomora
+
+        - result   carpe-retractum legilimens result geminio legilimens number
+        - curPower carpe-retractum legilimens curPower epoximise 1
+
+    colloportus
+
+    - reverte legilimens result
 colloportus
 
 Privet-Drive 

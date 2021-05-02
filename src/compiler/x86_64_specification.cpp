@@ -7,6 +7,35 @@ uint8_t regSpecifier(Reg64 reg)
     return RDI & reg;
 }
 
+uint8_t rexToByte(Rex rex)
+{
+    uint8_t byte = DEFAULT_REX.id << 4;
+    byte |= rex.w << 3;
+    byte |= rex.r << 2;
+    byte |= rex.x << 1;
+    byte |= rex.b;
+
+    return byte;
+}
+
+uint8_t modrmToByte(Modrm modrm)
+{
+    uint8_t byte = modrm.mod << 6;
+    byte |= modrm.reg << 3;
+    byte |= modrm.rm;
+
+    return byte;
+}
+
+uint8_t sibToByte(Sib sib)
+{
+    uint8_t byte = sib.scale << 6;
+    byte |= sib.index << 3;
+    byte |= sib.base;
+
+    return byte;
+}
+
 void addRex(Instruction_x86_64* instruction)
 {
     assert(instruction);

@@ -8,15 +8,13 @@
 #include "../symbol_table/symbol_table.h"
 #include "../parser/expression_tree.h"
       
-#define ASSERT_COMPILER(compiler) assert(compiler);              \
-                                  assert(compiler->table);       \
-                                  assert(compiler->tree);        \
-                                  assert(compiler->nasmFile);    \
+#define ASSERT_COMPILER(compiler) assert(compiler);        \
+                                  assert(compiler->table); \
+                                  assert(compiler->tree);  \
  
 enum CompilerError
 {
     COMPILER_NO_ERROR,
-    COMPILER_ERROR_FILE_OPEN_FAILURE,
     COMPILER_ERROR_NO_MAIN_FUNCTION,
     COMPILER_ERROR_CALL_UNDEFINED_FUNCTION,
     COMPILER_ERROR_NO_STDIO_NASM_CODE,
@@ -26,7 +24,6 @@ enum CompilerError
 
 static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
     "no error",
-    "couldn't open file to write output to",
     "main function ('love') wasn't found",
     "calling undefined function",
     "could find io.nasm with standard I/O functions"
@@ -43,8 +40,6 @@ struct Compiler
     Function*     curFunction;
     uint8_t       passNumber;
     LabelManager  labelManager;
-
-    bool          isElfNeeded;
     ElfBuilder    builder;
 
     bool          isNasmNeeded;
@@ -55,8 +50,10 @@ struct Compiler
 
 void          construct     (Compiler* compiler, Node* tree, SymbolTable* table);
 void          destroy       (Compiler* compiler);
+void          addElfFile    (Compiler* compiler, FILE* elfFile);
+void          addNasmFile   (Compiler* compiler, FILE* nasmFile);
 const char*   errorString   (CompilerError error);
-CompilerError compile       (Compiler* compiler, const char* outputFile);
+CompilerError compile       (Compiler* compiler);
 
 void          write         (Compiler* compiler, const char* format, ...);
 void          writeNewLine  (Compiler* compiler);

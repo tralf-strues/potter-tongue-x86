@@ -70,7 +70,7 @@ static const uint8_t OPCODE_IDIV_EXTENSION = 0b111;
 static const Opcode  OPCODE_NEG_R64        = {.size = 1, .bytes = {0xF7}      };
 static const uint8_t OPCODE_NEG_EXTENSION  = 0b011;
 static const Opcode  OPCODE_SAL_R64_IMM8   = {.size = 1, .bytes = {0xC1}      };
-static const uint8_t OPCODE_SAL_EXTENSION  = 0b111;
+static const uint8_t OPCODE_SAL_EXTENSION  = 0b100;
 
 void write_add_r64_r64   (Compiler* compiler, Reg64 reg1, Reg64   reg2, Comment comment = nullptr);
 void write_add_r64_imm32 (Compiler* compiler, Reg64 reg,  int32_t imm,  Comment comment = nullptr);

@@ -14,19 +14,19 @@ void writeInstruction(Compiler* compiler, const Instruction_x86_64* instruction)
 
     if (instruction->isRexUsed)
     {
-        writeByte(builder, *(uint8_t*) &instruction->rex);
+        writeByte(builder, rexToByte(instruction->rex));
     }
 
     writeBytes(builder, instruction->opcode.bytes, instruction->opcode.size);
 
     if (instruction->isModrmUsed)
     {
-        writeByte(builder, *(uint8_t*) &instruction->modrm);
+        writeByte(builder, modrmToByte(instruction->modrm));
     }
 
     if (instruction->isSibUsed)
     {
-        writeByte(builder, *(uint8_t*) &instruction->sib);
+        writeByte(builder, sibToByte(instruction->sib));
     }
 
     switch (instruction->dispSize)
@@ -122,14 +122,18 @@ void write_instruction_r64_r64(Compiler* compiler, Opcode opcode, Reg64 reg1, Re
     writeInstruction(compiler, &instruction);
 }
 
-void write_jump_rel32(Compiler* compiler, Opcode opcode, int32_t rel)
+void write_jump_rel32(Compiler* compiler, Opcode opcode, int32_t labelAddress)
 {
     ASSERT_COMPILER(compiler);
 
     Instruction_x86_64 instruction = {};
     instruction.opcode    = opcode;
     instruction.immSize   = 4;
-    instruction.imm.imm32 = rel;
+    
+    int32_t instructionLength = opcode.size + 4;
+    instruction.imm.imm32 = labelAddress - compiler->builder.offset - instructionLength;
+
+    writeInstruction(compiler, &instruction);
 }
 //===================================GENERAL====================================
 
@@ -300,7 +304,7 @@ void write_imul_r64_r64(Compiler* compiler, Reg64 reg1, Reg64 reg2, Comment comm
     ASSERT_COMPILER(compiler);
 
     /* ----------------BYTECODE---------------- */
-    write_instruction_r64_r64(compiler, OPCODE_IMUL_R64_R64, reg1, reg2);
+    write_instruction_r64_r64(compiler, OPCODE_IMUL_R64_R64, reg2, reg1);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "imul %s, %s", reg64ToString(reg1), reg64ToString(reg2));
@@ -375,7 +379,7 @@ void write_sal_r64_imm8(Compiler* compiler, Reg64 reg, int8_t imm, Comment comme
     instruction.opcode = OPCODE_SAL_R64_IMM8;
 
     addModrm(&instruction, 0b11);
-    instruction.modrm.reg = OPCODE_SUB_EXTENSION;
+    instruction.modrm.reg = OPCODE_SAL_EXTENSION;
     updateModrmRm(&instruction, reg);
 
     instruction.dispSize   = 1;
@@ -396,7 +400,7 @@ void write_call_rel32(Compiler* compiler, Label label, Comment comment)
     ASSERT_COMPILER(compiler);
 
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_CALL_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_CALL_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "call %s", label.name);
@@ -415,6 +419,7 @@ void write_ret(Compiler* compiler, Comment comment)
     /* ----------------BYTECODE---------------- */
     Instruction_x86_64 instruction = {};
     instruction.opcode = OPCODE_RET;
+    writeInstruction(compiler, &instruction);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "ret");
@@ -426,7 +431,7 @@ void write_jmp_rel32(Compiler* compiler, Label label, Comment comment)
     ASSERT_COMPILER(compiler);
 
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JMP_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JMP_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jmp %s", label.name);
@@ -443,7 +448,7 @@ void write_jz_rel32(Compiler* compiler, Label label, Comment comment)
     ASSERT_COMPILER(compiler);
 
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JZ_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JZ_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jz %s", label.name);
@@ -458,7 +463,7 @@ void write_jz_rel32(Compiler* compiler, Label label, Comment comment)
 void write_je_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JE_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JE_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "je %s", label.name);
@@ -473,7 +478,7 @@ void write_je_rel32(Compiler* compiler, Label label, Comment comment)
 void write_jne_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JNE_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JNE_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jne %s", label.name);
@@ -488,7 +493,7 @@ void write_jne_rel32(Compiler* compiler, Label label, Comment comment)
 void write_jl_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JL_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JL_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jl %s", label.name);
@@ -503,7 +508,7 @@ void write_jl_rel32(Compiler* compiler, Label label, Comment comment)
 void write_jg_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JG_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JG_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jg %s", label.name);
@@ -518,7 +523,7 @@ void write_jg_rel32(Compiler* compiler, Label label, Comment comment)
 void write_jle_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JLE_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JLE_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jle %s", label.name);
@@ -533,7 +538,7 @@ void write_jle_rel32(Compiler* compiler, Label label, Comment comment)
 void write_jge_rel32(Compiler* compiler, Label label, Comment comment)
 {
     /* ----------------BYTECODE---------------- */
-    write_jump_rel32(compiler, OPCODE_JGE_REL32, label.offset - compiler->builder.offset);
+    write_jump_rel32(compiler, OPCODE_JGE_REL32, label.offset);
 
     /* ------------------NASM------------------ */
     writeIndented(compiler, "jge %s", label.name);

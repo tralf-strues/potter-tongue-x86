@@ -7,24 +7,26 @@
 
 #define CUR_FUNC compiler->curFunction
 
+const size_t ELF_INITIAL_SIZE           = 1024;
 const size_t HORIZONTAL_LINE_LENGTH     = 50;
 const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
 const size_t IO_BUFFER_SIZE             = 512;
 
 //===================================Compiler===================================
-int32_t nextLabelNumber  (Compiler* compiler, LabelPurposeType labelType);
-Label   getExistingLabel (Compiler* compiler, Label label);
-void    writeLabel       (Compiler* compiler, Label label);
-void    compileError     (Compiler* compiler, CompilerError error); 
+int32_t       nextLabelNumber     (Compiler* compiler, LabelPurposeType labelType);
+Label         getExistingLabel    (Compiler* compiler, Label label);
+void          writeLabel          (Compiler* compiler, Label label);
+void          compileError        (Compiler* compiler, CompilerError error); 
+CompilerError makeCompilationPass (Compiler* compiler);
 //===================================Compiler===================================
 
 //==================================Write data==================================
 void writeFileHeader   (Compiler* compiler);
-void writeStdFunctions (Compiler* compiler); 
-void writeStdData      (Compiler* compiler);
+void writeStdFunctions (Compiler* compiler);
+void writeBSS          (Compiler* compiler);
+void writeData         (Compiler* compiler);
 void writeStringsData  (Compiler* compiler);
-void writeStdBSS       (Compiler* compiler);
 //==================================Write data==================================
 
 //==============================Write NASM comments==============================
@@ -78,6 +80,24 @@ void destroy(Compiler* compiler)
     compiler->table = nullptr;
     compiler->tree  = nullptr;
     destroy(&compiler->labelManager);
+    destroy(&compiler->builder);
+}
+
+void addElfFile(Compiler* compiler, FILE* elfFile)
+{
+    assert(compiler);
+    assert(elfFile);
+
+    construct(&compiler->builder, elfFile, ELF_INITIAL_SIZE);
+}
+
+void addNasmFile(Compiler* compiler, FILE* nasmFile)
+{
+    assert(compiler);
+    assert(nasmFile);
+
+    compiler->isNasmNeeded = true;
+    compiler->nasmFile     = nasmFile;
 }
 
 const char* errorString(CompilerError error)
@@ -125,9 +145,16 @@ void writeLabel(Compiler* compiler, Label label)
 {
     ASSERT_COMPILER(compiler);
 
-    if (findLabel(&compiler->labelManager.labelArray, label) == -1)
+    int existingLabelIdx = findLabel(&compiler->labelManager.labelArray, label); 
+    label.offset = compiler->builder.offset;
+
+    if (existingLabelIdx == -1)
     {
         insertLabel(&compiler->labelManager.labelArray, label);
+    }
+    else
+    {
+        compiler->labelManager.labelArray.labels[existingLabelIdx] = label;
     }
 
     if (label.number >= 0)
@@ -149,23 +176,40 @@ void compileError(Compiler* compiler, CompilerError error)
     printf("COMPILATION ERROR: %s\n", errorString(error));
 }
 
-CompilerError compile(Compiler* compiler, const char* outputFile)
+CompilerError compile(Compiler* compiler)
 {
     assert(compiler);
-    assert(outputFile);
-
-    compiler->nasmFile = fopen(outputFile, "w");
-    if (compiler->nasmFile == nullptr)
-    {
-        compileError(compiler, COMPILER_ERROR_FILE_OPEN_FAILURE);
-        return compiler->status;
-    }
 
     if (getFunction(compiler->table, MAIN_FUNCTION_NAME) == nullptr)
     {
         compileError(compiler, COMPILER_ERROR_NO_MAIN_FUNCTION);
         return compiler->status;
     }
+
+    uint8_t passes = COMPILER_TOTAL_PASSES_ELF;
+    if (compiler->isNasmNeeded && passes < COMPILER_TOTAL_PASSES_NASM)
+    {
+        passes = COMPILER_TOTAL_PASSES_NASM;
+    }
+
+    for (uint8_t pass = 0; pass < passes; pass++)
+    {
+        compiler->passNumber = pass;
+        makeCompilationPass(compiler);
+    }
+    
+    writeElfFile(&compiler->builder.elfFile, compiler->builder.offset);
+
+    return compiler->status;
+}
+
+CompilerError makeCompilationPass(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    setBuilderToStart(&compiler->builder);
+    resetLabelNumbers(&compiler->labelManager);
+    startTextSegment(&compiler->builder);
 
     writeFileHeader(compiler);
     writeStdFunctions(compiler);
@@ -188,17 +232,11 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
         write(compiler, "\n\n");
     }
 
-    write(compiler, "section .data\n");
-    writeStdData(compiler);
-    writeStringsData(compiler);
-    writeNewLine(compiler);
+    endTextSegment(&compiler->builder);
+    writeBSS(compiler);
+    writeData(compiler);
 
-    write(compiler, "section .bss\n");
-    writeStdBSS(compiler);
-
-    fclose(compiler->nasmFile);
-
-    return compiler->status;
+    return COMPILER_NO_ERROR;
 }
 //===================================Compiler===================================
 
@@ -209,10 +247,13 @@ void write(Compiler* compiler, const char* format, ...)
     ASSERT_COMPILER(compiler);
     assert(format);
 
-    va_list args;
-    va_start(args, format);
+    if (compiler->isNasmNeeded)
+    {
+        va_list args;
+        va_start(args, format);
 
-    vfprintf(compiler->nasmFile, format, args);
+        vfprintf(compiler->nasmFile, format, args);
+    }
 }
 
 void writeNewLine(Compiler* compiler)
@@ -227,11 +268,14 @@ void writeIndented(Compiler* compiler, const char* format, ...)
     ASSERT_COMPILER(compiler);
     assert(format);
 
-    va_list args;
-    va_start(args, format);
+    if (compiler->isNasmNeeded)
+    {
+        va_list args;
+        va_start(args, format);
 
-    fprintf(compiler->nasmFile, INDENTATION);
-    vfprintf(compiler->nasmFile, format, args);
+        fprintf(compiler->nasmFile, INDENTATION);
+        vfprintf(compiler->nasmFile, format, args);
+    }
 }
 
 void writeHorizontalLine(Compiler* compiler)
@@ -282,8 +326,6 @@ void writeFunctionHeader(Compiler* compiler)
 
     write(compiler, "\n");
     writeHorizontalLine(compiler);
-
-    write(compiler, "%s:\n", CUR_FUNC->name);
 }
 //==============================Write NASM comments=============================
 
@@ -339,12 +381,27 @@ void writeStdFunctions(Compiler* compiler)
     }
 }
 
-void writeStdData(Compiler* compiler)
+void writeBSS(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
 
-    write(compiler, "IO_BUFFER_SIZE equ %zu\n",
-                    IO_BUFFER_SIZE);
+    startBssSegment(&compiler->builder);
+    compiler->builder.offset += IO_BUFFER_SIZE;
+    endBssSegment(&compiler->builder);
+
+    write(compiler, "section .bss\n");
+    write(compiler, "IO_BUFFER:\n");
+    writeIndented(compiler, "resb %zu\n", IO_BUFFER_SIZE);
+    write(compiler, "IO_BUFFER_END:\n");
+}
+
+void writeData(Compiler* compiler)
+{
+    ASSERT_COMPILER(compiler);
+
+    startDataSegment(&compiler->builder);
+    writeStringsData(compiler);
+    endDataSegment(&compiler->builder);
 }
 
 void writeStringsData(Compiler* compiler)
@@ -355,9 +412,11 @@ void writeStringsData(Compiler* compiler)
 
     for (size_t i = 0; i < stringsData->count; i++)
     {
-        if (stringsData->strings[i].name != nullptr)
+        String curString = stringsData->strings[i]; 
+
+        if (curString.name != nullptr)
         {
-            writeLabel(compiler, {0, nullptr, stringsData->strings[i].name, -1});
+            writeLabel(compiler, {0, nullptr, curString.name, -1});
         } 
         else 
         {
@@ -366,6 +425,10 @@ void writeStringsData(Compiler* compiler)
                                   "STR", 
                                   getStringNumber(compiler->table, stringsData->strings + i)});
         }
+
+        writeBytes(&compiler->builder, 
+                   (const uint8_t*) curString.content, 
+                   strlen(curString.content) + 1);
 
         if (stringsData->strings[i].content[0] == '\n')
         {
@@ -377,15 +440,6 @@ void writeStringsData(Compiler* compiler)
         }
     }
 }
-
-void writeStdBSS(Compiler* compiler)
-{
-    ASSERT_COMPILER(compiler);
-
-    write(compiler, "IO_BUFFER:\n");
-    writeIndented(compiler, "resb %zu\n", IO_BUFFER_SIZE);
-    write(compiler, "IO_BUFFER_END:\n");
-}
 //==================================Write data==================================
 
 
@@ -396,6 +450,11 @@ void compileFunction(Compiler* compiler, Node* node)
     assert(node);
 
     writeFunctionHeader(compiler);
+
+    Label label  = {};
+    label.name   = CUR_FUNC->name;
+    label.number = -1;
+    writeLabel(compiler, label);
 
     write_push_r64(compiler, RBP);
     write_mov_r64_r64(compiler, RBP, RSP);
@@ -409,7 +468,12 @@ void compileFunction(Compiler* compiler, Node* node)
     write(compiler, "\n");
     compileBlock(compiler, node->left);
 
-    write(compiler, ".RETURN:\n");
+    Label retLabel = {};
+    retLabel.functionName = CUR_FUNC->name;
+    retLabel.name         = ".RETURN";
+    retLabel.number       = -1;
+    writeLabel(compiler, retLabel);
+    
     write_mov_r64_r64(compiler, RSP, RBP);
     write_pop_r64(compiler, RBP);
     write_ret(compiler);

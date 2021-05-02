@@ -46,12 +46,8 @@ int cmpLabels(Label firstLabel, Label secondLabel)
 void construct(LabelManager* labelManager)
 {
     assert(labelManager);
-
-    for (uint32_t i = 0; i < TOTAL_LABELS; i++)
-    {
-        labelManager->curLabelNumbers[i] = 0;
-    }
-
+    
+    resetLabelNumbers(labelManager);
     construct(&labelManager->labelArray, cmpLabels);
 }
 
@@ -60,4 +56,14 @@ void destroy(LabelManager* labelManager)
     assert(labelManager);
 
     destroy(&labelManager->labelArray, nullptr);
+}
+
+void resetLabelNumbers(LabelManager* labelManager)
+{
+    assert(labelManager);
+
+    for (uint32_t i = 0; i < TOTAL_LABELS; i++)
+    {
+        labelManager->curLabelNumbers[i] = 0;
+    }
 }

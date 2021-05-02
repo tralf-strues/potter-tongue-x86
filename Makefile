@@ -9,7 +9,7 @@ Mode = DEBUG_MODE
 # ----------------------------------Debug-mode----------------------------------
 ifeq ($(Mode), DEBUG_MODE)
 	ModeLinkerOptions   = -g
-	ModeCompilerOptions = -O1 -g
+	ModeCompilerOptions = -g
 endif
 # ----------------------------------Debug-mode----------------------------------
 

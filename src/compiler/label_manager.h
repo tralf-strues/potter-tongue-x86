@@ -8,7 +8,6 @@ enum LabelPurposeType
     LABEL_COND,
     LABEL_LOOP,
     LABEL_CMP,
-    LABEL_RET,
 
     TOTAL_LABELS
 };
@@ -46,8 +45,9 @@ struct LabelManager
     int32_t    curLabelNumbers[TOTAL_LABELS];
 };
 
-int  cmpLabels (Label firstLabel, Label secondLabel);
-void construct (LabelManager* labelManager);
-void destroy   (LabelManager* labelManager);
+int  cmpLabels         (Label firstLabel, Label secondLabel);
+void construct         (LabelManager* labelManager);
+void destroy           (LabelManager* labelManager);
+void resetLabelNumbers (LabelManager* labelManager);
 
 #endif

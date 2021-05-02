@@ -16,12 +16,16 @@ enum Error
     NO_ERROR,
     INPUT_UNSPECIFIED,
     OUTPUT_UNSPECIFIED,
+    NASM_OUTPUT_UNSPECIFIED,
     INPUT_LOAD_FAILED,
+    OUTPUT_LOAD_FAILED,
+    NASM_OUTPUT_LOAD_FAILED,
     COMPILATION_FAILED
 };
 
 enum Flag
 {
+    FLAG_NASM_DUMP,
     FLAG_TOKEN_DUMP,
     FLAG_SIMPLE_GRAPH_DUMP,
     FLAG_DETAILED_GRAPH_DUMP,
@@ -42,14 +46,17 @@ struct FlagManager
     const char** argv;
     const char*  input;
     const char*  output;
+    const char*  nasmOutput;
+    bool         flagEnabled[TOTAL_FLAGS];
 
-    bool         tokenDumpEnabled;
-    bool         simpleGraphDumpEnabled;
-    bool         detailedGraphDumpEnabled;
-    bool         openGraphDumpEnabled;
-    bool         treeDumpEnabled;
-    bool         symbTableDumpEnabled;
-    bool         useNumerics;
+    // bool         nasmDumpEnabled;
+    // bool         tokenDumpEnabled;
+    // bool         simpleGraphDumpEnabled;
+    // bool         detailedGraphDumpEnabled;
+    // bool         openGraphDumpEnabled;
+    // bool         treeDumpEnabled;
+    // bool         symbTableDumpEnabled;
+    // bool         useNumerics;
 };
 
 struct FlagSpecification
@@ -60,6 +67,7 @@ struct FlagSpecification
     const char* helpMessage;
 };
 
+Error processFlagNasmDump          (FlagManager* flagManager);
 Error processFlagTokenDump         (FlagManager* flagManager);
 Error processFlagSimpleGraphDump   (FlagManager* flagManager);
 Error processFlagDetailedGraphDump (FlagManager* flagManager);
@@ -81,26 +89,29 @@ const size_t MAX_COMMAND_LENGTH  = 256;
 
 const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] = 
 {
-    /*====FLAG_TOKEN_DUMP====*/
+    /*===========FLAG_NASM_DUMP===========*/
+    "\tWrite nasm listing of the program to the specified file.\n", 
+
+    /*===========FLAG_TOKEN_DUMP==========*/
     "\tPrint parsed tokens in the following format:\n"
     "\tToken <token_number>:\n"
     "\t\ttype = <type_number>\n"
     "\t\tdata = <token_data>\n", 
 
-    /*====FLAG_SIMPLE_GRAPH_DUMP====*/
+    /*=======FLAG_SIMPLE_GRAPH_DUMP=======*/
     "\tWrite simple graph dump in .svg format.\n",
 
-    /*====FLAG_DETAILED_GRAPH_DUMP====*/
+    /*======FLAG_DETAILED_GRAPH_DUMP======*/
     "\tWrite detailed graph dump in .svg format.\n",
 
-    /*====FLAG_OPEN_GRAPH_DUMP====*/
+    /*========FLAG_OPEN_GRAPH_DUMP========*/
     "\tWhen written the graph dump, open it with the default program for viewing .svg format.\n",
 
-    /*====FLAG_TREE_DUMP====*/
+    /*===========FLAG_TREE_DUMP===========*/
     "\tWrites the syntax tree to file.\n",
 
     // FIXME: outdated
-    /*====FLAG_SYMB_TABLE_DUMP====*/
+    /*========FLAG_SYMB_TABLE_DUMP========*/
     "\tPrints the symbol table in the following format:\n"
     "\tSymbol table:\n"
     "\t\tfunctionsCapacity = <capacity of the dynamic array of functions>\n"
@@ -111,18 +122,23 @@ const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] =
     "\t\t\t}\n"
     "\t\t}\n",
 
-    /*====FLAG_USE_NUMERICS====*/
+    /*==========FLAG_USE_NUMERICS=========*/
     "\tAllow using numbers (e.g. '3' instead of 'tria', or '22') in the input file.\n",
 
-    /*====FLAG_HELP====*/
+    /*=============FLAG_HELP=============*/
     "\tPrint this message.\n",
 
-    /*====FLAG_OUTPUT====*/
+    /*============FLAG_OUTPUT============*/
     "\tSpecify output file.\n"
 };
 
 const FlagSpecification FLAG_SPECIFICATIONS[TOTAL_FLAGS] = 
 {
+    { FLAG_NASM_DUMP,      
+      "--nasm-dump",      
+      processFlagNasmDump,     
+      FLAGS_HELP_MESSAGES[FLAG_NASM_DUMP] },
+
     { FLAG_TOKEN_DUMP,      
       "--token-dump",      
       processFlagTokenDump,     
@@ -222,11 +238,28 @@ Error processFlags(FlagManager* flagManager)
     return NO_ERROR;
 }
 
+Error processFlagNasmDump(FlagManager* flagManager)
+{
+    assert(flagManager);
+
+    flagManager->flagEnabled[FLAG_NASM_DUMP] = true;
+
+    if (flagManager->curArg + 1 >= flagManager->argc)
+    {
+        printf("Nasm output file unspecified!\n");
+        return NASM_OUTPUT_UNSPECIFIED;
+    }
+
+    flagManager->nasmOutput = flagManager->argv[flagManager->curArg + 1];
+    
+    return NO_ERROR;
+}
+
 Error processFlagTokenDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->tokenDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_TOKEN_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -234,7 +267,7 @@ Error processFlagSimpleGraphDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->simpleGraphDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_SIMPLE_GRAPH_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -242,7 +275,7 @@ Error processFlagDetailedGraphDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->detailedGraphDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_DETAILED_GRAPH_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -250,7 +283,7 @@ Error processFlagOpenGraphDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->openGraphDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_OPEN_GRAPH_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -258,7 +291,7 @@ Error processFlagTreeDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->treeDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_TREE_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -266,7 +299,7 @@ Error processFlagSymbTableDump(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->symbTableDumpEnabled = true;
+    flagManager->flagEnabled[FLAG_SYMB_TABLE_DUMP] = true;
     return NO_ERROR;
 }
 
@@ -274,7 +307,7 @@ Error processFlagUseNumerics(FlagManager* flagManager)
 {
     assert(flagManager);
 
-    flagManager->useNumerics = true;
+    flagManager->flagEnabled[FLAG_USE_NUMERICS] = true;
     return NO_ERROR;
 }
 
@@ -327,7 +360,7 @@ void makeGraphDump(const FlagManager* flagManager, const Node* tree, bool detail
 
     graphDump(tree, textFilename, imageFilename, detailed);
 
-    if (flagManager->openGraphDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_OPEN_GRAPH_DUMP])
     {
         char dotCmd[MAX_COMMAND_LENGTH] = {};
         snprintf(dotCmd, sizeof(dotCmd), "xdg-open %s", imageFilename);
@@ -339,8 +372,7 @@ Error compile(const FlagManager* flagManager)
 {
     assert(flagManager);
 
-    const char* input  = flagManager->input;
-    const char* output = flagManager->output;
+    const char* input = flagManager->input;
 
     char*  buffer     = nullptr;
     size_t bufferSize = 0;
@@ -354,10 +386,10 @@ Error compile(const FlagManager* flagManager)
     Node* tree = nullptr;
 
     Tokenizer tokenizer = {};
-    construct(&tokenizer, buffer, bufferSize, flagManager->useNumerics);
+    construct(&tokenizer, buffer, bufferSize, flagManager->flagEnabled[FLAG_USE_NUMERICS]);
     tokenizeBuffer(&tokenizer);
 
-    if (flagManager->tokenDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_TOKEN_DUMP])
     {
         FILE* tokensDumpFile = fopen("../examples/log/dumped_tokens.txt", "w");
         assert(tokensDumpFile);
@@ -378,24 +410,24 @@ Error compile(const FlagManager* flagManager)
         return COMPILATION_FAILED;
     }
 
-    if (flagManager->simpleGraphDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_SIMPLE_GRAPH_DUMP])
     {
         makeGraphDump(flagManager, tree, false);
     }
 
-    if (flagManager->detailedGraphDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_DETAILED_GRAPH_DUMP])
     {
         makeGraphDump(flagManager, tree, true);
     }
 
-    if (flagManager->symbTableDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_SYMB_TABLE_DUMP])
     {   
         printf("\n");
         dump(&table);
         printf("\n");
     }
 
-    if (flagManager->treeDumpEnabled)
+    if (flagManager->flagEnabled[FLAG_TREE_DUMP])
     {
         FILE* file = fopen("../examples/log/dumped_tree.txt", "w");
         assert(file);
@@ -407,18 +439,40 @@ Error compile(const FlagManager* flagManager)
 
     Compiler compiler = {};
     construct(&compiler, tree, &table);
-    if (compile(&compiler, output) != COMPILER_NO_ERROR)
+
+    // printf("Before elf opening\n");
+
+    FILE* elfFile = fopen(flagManager->output, "w");
+    if (elfFile == nullptr)
+    {
+        printf("Couldn't load file '%s'\n", flagManager->output);
+        return OUTPUT_LOAD_FAILED;
+    }
+    addElfFile(&compiler, elfFile);
+
+    if (flagManager->flagEnabled[FLAG_NASM_DUMP])
+    {
+        FILE* nasmFile = fopen(flagManager->nasmOutput, "w");
+        if (nasmFile == nullptr)
+        {
+            printf("Couldn't load file '%s'\n", flagManager->nasmOutput);
+            return NASM_OUTPUT_LOAD_FAILED;
+        }
+        addNasmFile(&compiler, nasmFile);
+    }
+
+    if (compile(&compiler) != COMPILER_NO_ERROR)
     {
         printf("Couldn't compile the program.\n");
         return COMPILATION_FAILED;
     }
 
-    // FIXME: get rid of
-    // FILE* dumpedTreeFile = fopen("dumped_insertion_sort.txt", "w");
-    // assert(dumpedTreeFile);
-    // dumpToFile(dumpedTreeFile, tree);
+    if (compiler.isNasmNeeded)
+    {
+        fclose(compiler.nasmFile);
+    }
 
-    // fclose(dumpedTreeFile);
+    fclose(elfFile);
 
     destroy(&table);
     destroy(&tokenizer);

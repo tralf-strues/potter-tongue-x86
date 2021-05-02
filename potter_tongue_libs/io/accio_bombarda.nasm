@@ -14,7 +14,7 @@ accio_bombarda:
                 mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
                 mov rdi, 0x00                   ; fd    = STDIN
                 mov rsi, IO_BUFFER              ; buf   = IO_BUFFER
-                mov rdx, IO_BUFFER_SIZE         ; count = IO_BUFFER_SIZE
+                mov rdx, 512                    ; count = IO_BUFFER_SIZE
                 syscall
 
                 xor rax, rax
