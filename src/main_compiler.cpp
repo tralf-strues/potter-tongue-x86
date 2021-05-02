@@ -6,7 +6,7 @@
 #include "parser/tokenizer.h"
 #include "parser/parser.h"
 #include "compiler/compiler.h"
-#include "../libs/file_manager.h"
+#include <file_manager/file_manager.h>
 
 #define UTB_DEFINITIONS
 #include "../libs/utilib.h"
@@ -85,7 +85,7 @@ const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] =
     "\tPrint parsed tokens in the following format:\n"
     "\tToken <token_number>:\n"
     "\t\ttype = <type_number>\n"
-    "\t\tdata = <token_data>\n",
+    "\t\tdata = <token_data>\n", 
 
     /*====FLAG_SIMPLE_GRAPH_DUMP====*/
     "\tWrite simple graph dump in .svg format.\n",

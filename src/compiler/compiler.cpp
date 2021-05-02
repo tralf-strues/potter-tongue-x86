@@ -2,8 +2,8 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <file_manager/file_manager.h>
 #include "nasm_compilation.h"
-#include "../../libs/file_manager.h"
 
 #define CUR_FUNC compiler->curFunction
 

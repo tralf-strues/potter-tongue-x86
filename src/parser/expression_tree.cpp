@@ -4,9 +4,9 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <file_manager/file_manager.h>
 #include "expression_tree.h"
 #include "../../libs/utilib.h"
-#include "../../libs/file_manager.h"
 
 const size_t MAX_COMMAND_LENGTH = 256;
 

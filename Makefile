@@ -21,7 +21,7 @@ endif
 # ---------------------------------Release-mode---------------------------------
 
 # ------------------------------------Options-----------------------------------
-LXXFLAGS = $(ModeLinkerOptions) 
+LXXFLAGS = 
 CXXFLAGS = -std=c++20 $(ModeCompilerOptions) $(AllWarnings)
 # ------------------------------------Options-----------------------------------
 
@@ -30,6 +30,7 @@ SrcDir = src
 BinDir = bin
 IntDir = $(BinDir)/intermediates
 LibDir = libs
+LIBS   = /usr/lib/file_manager/file_manager.a
 
 CompilerDir = $(SrcDir)/compiler
 DynArrayDir = $(SrcDir)/dynamic_array
@@ -57,7 +58,7 @@ Exec = compiler.out
 .PHONY: init clean
 
 $(BinDir)/$(Exec): $(Objs) $(Deps) $(Libs) 
-	$(CXX) -o $(BinDir)/$(Exec) $(Objs) $(Libs) $(LDFLAGS)
+	$(CXX) -o $(BinDir)/$(Exec) $(Objs) $(Libs) $(LIBS) $(LXXFLAGS)
 
 vpath %.cpp $(SrcDir) $(CompilerDir) $(DynArrayDir) $(ParserDir) $(SymTableDir)
 $(IntDir)/%.o: %.cpp $(Deps)
