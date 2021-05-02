@@ -90,17 +90,20 @@ void write_sal_r64_imm8  (Compiler* compiler, Reg64 reg,  int8_t  imm,  Comment 
 //! @addtogroup CONTROL_FLOW
 //! @{
 
-static const Opcode OPCODE_CALL_REL32 = {.size = 1, .bytes = {0xE8}};
-static const Opcode OPCODE_RET        = {.size = 1, .bytes = {0xC3}};
-static const Opcode OPCODE_JMP_REL32  = {.size = 1, .bytes = {0xE9}};
-static const Opcode OPCODE_JZ_REL32   = {.size = 2, .bytes = {0x0F, 0x84}};
-static const Opcode OPCODE_JE_REL32   = {.size = 2, .bytes = {0x0F, 0x84}};
-static const Opcode OPCODE_JNE_REL32  = {.size = 2, .bytes = {0x0F, 0x85}};
-static const Opcode OPCODE_JL_REL32   = {.size = 2, .bytes = {0x0F, 0x8C}};
-static const Opcode OPCODE_JG_REL32   = {.size = 2, .bytes = {0x0F, 0x8F}};
-static const Opcode OPCODE_JLE_REL32  = {.size = 2, .bytes = {0x0F, 0x8E}};
-static const Opcode OPCODE_JGE_REL32  = {.size = 2, .bytes = {0x0F, 0x8D}};
+static const uint64_t SYSCALL_EXIT      = 0x3C;
+static const Opcode   OPCODE_SYSCALL    = {.size = 2, .bytes = {0x0F, 0x05}};
+static const Opcode   OPCODE_CALL_REL32 = {.size = 1, .bytes = {0xE8}};
+static const Opcode   OPCODE_RET        = {.size = 1, .bytes = {0xC3}};
+static const Opcode   OPCODE_JMP_REL32  = {.size = 1, .bytes = {0xE9}};
+static const Opcode   OPCODE_JZ_REL32   = {.size = 2, .bytes = {0x0F, 0x84}};
+static const Opcode   OPCODE_JE_REL32   = {.size = 2, .bytes = {0x0F, 0x84}};
+static const Opcode   OPCODE_JNE_REL32  = {.size = 2, .bytes = {0x0F, 0x85}};
+static const Opcode   OPCODE_JL_REL32   = {.size = 2, .bytes = {0x0F, 0x8C}};
+static const Opcode   OPCODE_JG_REL32   = {.size = 2, .bytes = {0x0F, 0x8F}};
+static const Opcode   OPCODE_JLE_REL32  = {.size = 2, .bytes = {0x0F, 0x8E}};
+static const Opcode   OPCODE_JGE_REL32  = {.size = 2, .bytes = {0x0F, 0x8D}};
  
+void write_syscall    (Compiler* compiler,              Comment comment = nullptr);
 void write_call_rel32 (Compiler* compiler, Label label, Comment comment = nullptr);
 void write_ret        (Compiler* compiler,              Comment comment = nullptr);
 void write_jmp_rel32  (Compiler* compiler, Label label, Comment comment = nullptr);

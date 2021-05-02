@@ -1,12 +1,11 @@
-global _start   
-section .text   
+global _start 
+section .text 
 
-_start:         
-	call love     
-	mov rax, 0x3C 
-	xor rdi, rdi  
-	syscall       
-
+_start:       
+                call love
+                mov rax, 60
+                xor rdi, rdi
+                syscall ; exiting program with code 0
 ;------------------------------------------------------------------------------
 ; Standard potter-tongue function, that prints decimal number to STDOUT.
 ; 
@@ -484,15 +483,14 @@ MessageOne:
                 db "Hello, World!", 0
 MessageTwo:
                 db "Hello, Hell!", 0
-global _start   
-section .text   
+global _start 
+section .text 
 
-_start:         
-	call love     
-	mov rax, 0x3C 
-	xor rdi, rdi  
-	syscall       
-
+_start:       
+                call love
+                mov rax, 60
+                xor rdi, rdi
+                syscall ; exiting program with code 0
 ;------------------------------------------------------------------------------
 ; Standard potter-tongue function, that prints decimal number to STDOUT.
 ; 

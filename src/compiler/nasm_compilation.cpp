@@ -395,6 +395,20 @@ void write_sal_r64_imm8(Compiler* compiler, Reg64 reg, int8_t imm, Comment comme
 
 
 //================================CONTROL_FLOW==================================
+void write_syscall(Compiler* compiler, Comment comment)
+{
+    ASSERT_COMPILER(compiler);
+
+    /* ----------------BYTECODE---------------- */
+    Instruction_x86_64 instruction = {};
+    instruction.opcode = OPCODE_SYSCALL;
+    writeInstruction(compiler, &instruction);
+
+    /* ------------------NASM------------------ */
+    writeIndented(compiler, "syscall");
+    writeComment(compiler, comment);
+}
+
 void write_call_rel32(Compiler* compiler, Label label, Comment comment)
 {
     ASSERT_COMPILER(compiler);

@@ -22,7 +22,7 @@ CompilerError makeCompilationPass (Compiler* compiler);
 //===================================Compiler===================================
 
 //==================================Write data==================================
-void writeFileHeader   (Compiler* compiler);
+void writeEntryPoint   (Compiler* compiler);
 void writeStdFunctions (Compiler* compiler);
 void writeBSS          (Compiler* compiler);
 void writeData         (Compiler* compiler);
@@ -211,7 +211,7 @@ CompilerError makeCompilationPass(Compiler* compiler)
     resetLabelNumbers(&compiler->labelManager);
     startTextSegment(&compiler->builder);
 
-    writeFileHeader(compiler);
+    writeEntryPoint(compiler);
     writeStdFunctions(compiler);
 
     // Skipping strings declarations
@@ -331,17 +331,20 @@ void writeFunctionHeader(Compiler* compiler)
 
 
 //==================================Write data==================================
-void writeFileHeader(Compiler* compiler)
+void writeEntryPoint(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
 
-    write(compiler, "global _start   \n" 
-                    "section .text   \n\n"
-                    "_start:         \n"
-                    "\tcall love     \n"
-                    "\tmov rax, 0x3C \n"
-                    "\txor rdi, rdi  \n"
-                    "\tsyscall       \n\n");
+    write(compiler, "global _start \n" 
+                    "section .text \n\n"
+                    "_start:       \n");
+
+    Label mainLabel = getExistingLabel(compiler, {0, nullptr, "love", -1});
+    write_call_rel32(compiler, mainLabel);
+    
+    write_mov_r64_imm64(compiler, RAX, SYSCALL_EXIT);
+    write_xor_r64_r64(compiler, RDI, RDI);
+    write_syscall(compiler, "exiting program with code 0");
 }
 
 // FIXME: rdi, rsi, rdx, rcx, r8, r9
