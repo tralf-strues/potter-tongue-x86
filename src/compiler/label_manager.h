@@ -16,7 +16,7 @@ enum LabelPurposeType
 struct Label
 {
     /* Label's offset in the binary file. */
-    uint64_t offset; 
+    int64_t offset; 
 
     /* Label's name in the format: 
      * <functionName><name><number> (e.g. "main.WHILE_9").

@@ -4,13 +4,14 @@
 #include <assert.h>
 #include <stdio.h>
 #include "label_manager.h"
+#include "elf_builder.h"
 #include "../symbol_table/symbol_table.h"
 #include "../parser/expression_tree.h"
       
 #define ASSERT_COMPILER(compiler) assert(compiler);              \
                                   assert(compiler->table);       \
                                   assert(compiler->tree);        \
-                                  assert(compiler->file);        \
+                                  assert(compiler->nasmFile);    \
  
 enum CompilerError
 {
@@ -31,17 +32,23 @@ static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
     "could find io.nasm with standard I/O functions"
 };
 
-static const uint8_t COMPILER_FIRST_PASS   = 0;
-static const uint8_t COMPILER_TOTAL_PASSES = 2;
+static const uint8_t COMPILER_FIRST_PASS        = 0;
+static const uint8_t COMPILER_TOTAL_PASSES_NASM = 1;
+static const uint8_t COMPILER_TOTAL_PASSES_ELF  = 2;
 
 struct Compiler
 {
     SymbolTable*  table;
     Node*         tree;
-    FILE*         file;
     Function*     curFunction;
     uint8_t       passNumber;
     LabelManager  labelManager;
+
+    bool          isElfNeeded;
+    ElfBuilder    builder;
+
+    bool          isNasmNeeded;
+    FILE*         nasmFile;
 
     CompilerError status;
 };

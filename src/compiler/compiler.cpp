@@ -10,7 +10,7 @@
 const size_t HORIZONTAL_LINE_LENGTH     = 50;
 const char*  INDENTATION                = "                ";
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
-const size_t IO_BUFFER_SIZE             = 256;
+const size_t IO_BUFFER_SIZE             = 512;
 
 //===================================Compiler===================================
 int32_t nextLabelNumber  (Compiler* compiler, LabelPurposeType labelType);
@@ -154,8 +154,8 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
     assert(compiler);
     assert(outputFile);
 
-    compiler->file = fopen(outputFile, "w");
-    if (compiler->file == nullptr)
+    compiler->nasmFile = fopen(outputFile, "w");
+    if (compiler->nasmFile == nullptr)
     {
         compileError(compiler, COMPILER_ERROR_FILE_OPEN_FAILURE);
         return compiler->status;
@@ -196,7 +196,7 @@ CompilerError compile(Compiler* compiler, const char* outputFile)
     write(compiler, "section .bss\n");
     writeStdBSS(compiler);
 
-    fclose(compiler->file);
+    fclose(compiler->nasmFile);
 
     return compiler->status;
 }
@@ -212,7 +212,7 @@ void write(Compiler* compiler, const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    vfprintf(compiler->file, format, args);
+    vfprintf(compiler->nasmFile, format, args);
 }
 
 void writeNewLine(Compiler* compiler)
@@ -230,8 +230,8 @@ void writeIndented(Compiler* compiler, const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    fprintf(compiler->file, INDENTATION);
-    vfprintf(compiler->file, format, args);
+    fprintf(compiler->nasmFile, INDENTATION);
+    vfprintf(compiler->nasmFile, format, args);
 }
 
 void writeHorizontalLine(Compiler* compiler)
@@ -318,7 +318,7 @@ void writeStdFunctions(Compiler* compiler)
         return;
     }
 
-    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->file);
+    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->nasmFile);
     writeNewLine(compiler);
 
     free(stdioNasm);

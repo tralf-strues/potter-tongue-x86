@@ -4,42 +4,52 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+//------------------------------------------------------------------------------
+//! Specifies 64-bit registers in the same order they are interpreted in
+//! instructions. Registers RAX-RDI can also be referred to as R0-R7.
+//------------------------------------------------------------------------------
 enum Reg64
 {
-    RAX,
-    RCX,
-    RDX,
-    RBX,
-    RSP,
-    RBP,
-    RSI,
-    RDI,
-
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    R13,
-    R14,
-    R15,
+    RAX, RCX, RDX, RBX, RSP, RBP, RSI, RDI,
+    R8,  R9,  R10, R11, R12, R13, R14, R15,
 
     TOTAL_REGISTERS_64,
     INVALID_REG64 = -1
 };
 
+//------------------------------------------------------------------------------
+//! String representations of 64-bit registers in lower-case ASCII characters.
+//------------------------------------------------------------------------------
+static const char* REGISTERS_64_STRINGS[TOTAL_REGISTERS_64] = 
+{
+    "rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi",
+    "r8",  "r9",  "r10", "r11", "r12", "r13", "r14", "r15"
+};
+
+//------------------------------------------------------------------------------
+//! Specifies memory-addressing used in several instructions. If all the fields
+//! are used then the address is calculated the following way: 
+//!     [base + index * scale + displacement] 
+//!
+//! Note that not all memory addressing combinations of registers are valid. The 
+//! cases bellow aren't supported:
+//! 1) [base]                          - RBP and R13 can't be used as base 
+//! 2) [base + index * scale]          - RBP and R13 can't be used as base
+//! 3) [index * scale + disp32]        - RSP         can't be used as index
+//! 4) [base + index * scale + disp32] - RSP         can't be used as index
+//------------------------------------------------------------------------------
 struct Mem64
 {
     /* Any general-purpose register or INVALID_REG64 to not use. */
     Reg64 base;
 
-    /* Any 32-bit number (if 0 then isn't used). */
+    /* Any 32-bit number (if 0 then not used). */
     int32_t displacement;
 
     /* Any general-purpose register or INVALID_REG64 to not use. */
     Reg64 index;
 
-    /* Either 2, 4 or 8 (otherwise isn't used). */
+    /* Either 1, 2, 4 or 8 (otherwise not used). */
     uint8_t scale;
 };
 
@@ -54,18 +64,19 @@ struct Opcode
     uint8_t bytes[OPCODE_MAX_SIZE]; 
 };
 
-static const size_t REX_ID_SIZE = 4;
-static const size_t REX_W_SIZE  = 1;
-static const size_t REX_R_SIZE  = 1;
-static const size_t REX_X_SIZE  = 1;
-static const size_t REX_B_SIZE  = 1;
+static const size_t  REX_ID_SIZE = 4;
+static const uint8_t REX_ID      = 0b0100;
+static const size_t  REX_W_SIZE  = 1;
+static const size_t  REX_R_SIZE  = 1;
+static const size_t  REX_X_SIZE  = 1;
+static const size_t  REX_B_SIZE  = 1;
 
 //------------------------------------------------------------------------------
 //! Instruction prefix that is used (mostly; see Intel's reference for more
 //! info on the subject) whenever one needs to use 64-bit operand size and the 
 //! instruction doesn't default to it.
 //------------------------------------------------------------------------------
-struct REX
+struct Rex
 {
     /* The first four bits are a fixed bit pattern equal to 0b0100.
      * They indicate the REX byte. */
@@ -85,18 +96,20 @@ struct REX
     uint8_t b : REX_B_SIZE;
 };
 
-static const uint8_t REX_ID      = 0b0100;
-static const REX     DEFAULT_REX = {.id = REX_ID, .w = 0, .r = 0, .x = 0, .b = 0};
+static const Rex DEFAULT_REX = {.id = REX_ID, .w = 0, .r = 0, .x = 0, .b = 0};
 
-static const size_t MODRM_MOD_SIZE = 2;
-static const size_t MODRM_REG_SIZE = 3;
-static const size_t MODRM_RM_SIZE  = 3;
+static const size_t  MODRM_MOD_SIZE      = 2;
+static const size_t  MODRM_REG_SIZE      = 3;
+static const size_t  MODRM_RM_SIZE       = 3;
+static const uint8_t MODRM_MOD_MAX_VALUE = 0b11;
+static const uint8_t MODRM_REG_MAX_VALUE = 0b111;
+static const uint8_t MODRM_RM_MAX_VALUE  = 0b111;
 
 //------------------------------------------------------------------------------
 //! Many instructions that refer to an operand in memory have an addressing-form 
 //! specifier byte (called the ModR/M byte) following the primary opcode.
 //------------------------------------------------------------------------------
-struct ModRM
+struct Modrm
 {
     /* Combines with the r/m field to form 32 possible values: 
      * eight registers and 24 addressing modes. */
@@ -115,8 +128,6 @@ struct ModRM
     uint8_t rm : MODRM_RM_SIZE;
 };
 
-static const ModRM DEFAULT_MODRM = {.mod = 0, .reg = 0, .rm = 0};
-
 static const size_t SIB_SCALE_SIZE = 2;
 static const size_t SIB_INDEX_SIZE = 3;
 static const size_t SIB_BASE_SIZE  = 3;
@@ -126,7 +137,7 @@ static const size_t SIB_BASE_SIZE  = 3;
 //! SIB byte). The base-index and scale-index forms of 32-bit addressing require
 //! the SIB byte. 
 //------------------------------------------------------------------------------
-struct SIB
+struct Sib
 {  
     /* Specifies the scale factor. */
     uint8_t scale : SIB_SCALE_SIZE;
@@ -137,8 +148,6 @@ struct SIB
     /* Specifies the register number of the base register. */
     uint8_t base : SIB_BASE_SIZE;
 };
-
-static const SIB DEFAULT_SIB = {.scale = 0, .index = 0, .base = 0};
 
 //------------------------------------------------------------------------------
 //! A displacement value is a 1, 2, 4, or 8 byte offset added to the calculated 
@@ -153,8 +162,6 @@ union Displacement
     int64_t disp64;
 };
 
-static const Displacement DEFAULT_DISPLACEMENT = {.disp64 = 0};
-
 //------------------------------------------------------------------------------
 //! Some instructions require an immediate value of size 1, 2, 4 or 8 byte. The 
 //! instruction determine the length of the immediate value.
@@ -167,488 +174,182 @@ union Immediate
     int64_t imm64;
 };
 
-static const Immediate DEFAULT_IMMEDIATE = {.imm64 = 0};
-
 //------------------------------------------------------------------------------
 //! Specifies an x86-64 instruction. 
 //------------------------------------------------------------------------------
 struct Instruction_x86_64
 {
+    /* Specify whether the respective optional instruction 
+     * bytes are used. */
     bool isRexUsed;
     bool isModrmUsed;
-    bool isSIBUsed;
-    bool isDisplacementUsed;
-    bool isImmediateUsed;
+    bool isSibUsed;
+
+    /* These two values are in bytes. */
+    uint8_t dispSize;
+    uint8_t immSize;
     
-    REX          rex;
+    Rex          rex;
     Opcode       opcode;
-    ModRM        modRM;
-    SIB          sib;
-    Displacement displacement;
-    Immediate    immediate;
+    Modrm        modrm;
+    Sib          sib;
+    Displacement disp;
+    Immediate    imm;
 };
 
-static const Instruction_x86_64 INSTRUCTIONS[100] =
-{
-    //=============================STACK============================
-    //---------------------------push_r64---------------------------
-    /* 1) opcode += r64 & 0b111
-     * 2) REX.B   = 1 if r64 >= R8 */ 
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! @param reg
+//! 
+//! @return The lower 3 bits of the register number.
+//------------------------------------------------------------------------------
+uint8_t regSpecifier(Reg64 reg);
 
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 1, .bytes = {0x50, 0x00, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE 
-    },
-    //---------------------------push_r64---------------------------
+//------------------------------------------------------------------------------
+//! Adds REX byte to the instruction (if not already used) equal to DEFAULT_REX.
+//! 
+//! @param instruction
+//------------------------------------------------------------------------------
+void addRex(Instruction_x86_64* instruction);
 
-    //----------------------------pop_r64---------------------------
-    /* 1) opcode += r64 & 0b111
-     * 2) REX.B   = 1 (if r64 >= R8) */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! Updates REX byte of the instruction based on the reg:
+//! 1) if reg is in RAX-RDI
+//!     a) if REX is used, sets REX.R to 0 
+//!     b) otherwise does nothing
+//! 2) if reg is in R8-R15
+//!     a) if REX is used, sets REX.R to 1 
+//!     b) otherwise adds REX byte and sets REX.B to 1
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateRexR(Instruction_x86_64* instruction, Reg64 reg);
 
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 1, .bytes = {0x58, 0x00, 0x00}}, 
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE 
-    },
-    //----------------------------pop_r64---------------------------
-    //=============================STACK============================
+//------------------------------------------------------------------------------
+//! Updates REX byte of the instruction based on the reg:
+//! 1) if reg is in RAX-RDI
+//!     a) if REX is used, sets REX.X to 0 
+//!     b) otherwise does nothing
+//! 2) if reg is in R8-R15
+//!     a) if REX is used, sets REX.X to 1 
+//!     b) otherwise adds REX byte and sets REX.B to 1
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateRexX(Instruction_x86_64* instruction, Reg64 reg);
 
-    //============================LOGICAL===========================
-    //--------------------------test_r64_r64------------------------
-    /* 1) Operand1 = modRM.rm  (expanded by REX.b if needed)
-     * 2) Operand2 = modRM.reg (expanded by REX.r if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! Updates REX byte of the instruction based on the reg:
+//! 1) if reg is in RAX-RDI
+//!     a) if REX is used, sets REX.B to 0 
+//!     b) otherwise does nothing
+//! 2) if reg is in R8-R15
+//!     a) if REX is used, sets REX.B to 1 
+//!     b) otherwise adds REX byte and sets REX.B to 1
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateRexB(Instruction_x86_64* instruction, Reg64 reg);
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x85, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------test_r64_r64------------------------
+//------------------------------------------------------------------------------
+//! Adds MODRM byte to the instruction (if not already used) with the specified 
+//! mod and fields reg and rm set to zero.
+//! 
+//! @param instruction
+//! @param mod
+//------------------------------------------------------------------------------
+void addModrm(Instruction_x86_64* instruction, uint8_t mod);
 
-    //--------------------------xor_r64_r64-------------------------
-    /* 1) Operand1 = modRM.rm  (expanded by REX.b if needed)
-     * 2) Operand2 = modRM.reg (expanded by REX.r if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! Adds MODRM (with mod = 0b00) byte if not already used and sets MODRM.reg to 
+//! the lower 3 bits of the register. 
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateModrmReg(Instruction_x86_64* instruction, Reg64 reg);
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x31, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------xor_r64_r64-------------------------
+//------------------------------------------------------------------------------
+//! Adds MODRM (with mod = 0b00) byte if not already used and sets MODRM.rm to 
+//! the lower 3 bits of the register. 
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateModrmRm(Instruction_x86_64* instruction, Reg64 reg);
 
-    //--------------------------cmp_r64_r64-------------------------
-    /* 1) Operand1 = modRM.rm  (expanded by REX.b if needed)
-     * 2) Operand2 = modRM.reg (expanded by REX.r if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! Adds zero SIB byte to the instruction (if not already used).
+//! 
+//! @param instruction
+//------------------------------------------------------------------------------
+void addSib(Instruction_x86_64* instruction);
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x39, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------cmp_r64_r64-------------------------
-    //============================LOGICAL===========================
-    
-    //==========================ARITHMETIC==========================
-    //--------------------------add_r64_r64-------------------------
-    /* 1) Operand1 = modRM.rm  (expanded by REX.b if needed)
-     * 2) Operand2 = modRM.reg (expanded by REX.r if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! Adds SIB (with everything set to 0) byte if not already used and sets 
+//! SIB.index to the lower 3 bits of the register. 
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateSibIndex(Instruction_x86_64* instruction, Reg64 reg);
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x01, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------add_r64_r64-------------------------
+//------------------------------------------------------------------------------
+//! Adds SIB (with everything set to 0) byte if not already used and sets 
+//! SIB.base to the lower 3 bits of the register. 
+//! 
+//! @param instruction
+//! @param reg
+//------------------------------------------------------------------------------
+void updateSibBase(Instruction_x86_64* instruction, Reg64 reg);
 
-    //-------------------------add_r64_imm32------------------------
-    /* 1) Operand1 = modRM.rm (expanded by REX.b if needed)
-     * 2) Operand2 = immediate.imm32 */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = true,
+//------------------------------------------------------------------------------
+//! Sets REX, MODRM and (if necessary SIB) bytes as well as displacement based
+//! on memory. 
+//! 
+//! @param instruction
+//! @param memory
+//!
+//! @return Whether the addressing mode is valid (see Mem64 declaration for 
+//!         information on invalid cases).
+//------------------------------------------------------------------------------
+bool setMemoryAddressing(Instruction_x86_64* instruction, Mem64 memory);
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x81, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //-------------------------add_r64_imm32------------------------
+//------------------------------------------------------------------------------
+//! @param reg
+//! 
+//! @return String representation of reg using lower-case ASCII characters, for 
+//!         example "rdi" if reg = RDI.
+//------------------------------------------------------------------------------
+const char* reg64ToString(Reg64 reg);
 
-    //--------------------------sub_r64_r64-------------------------
-    /* 1) Operand1 = modRM.rm  (expanded by REX.b if needed)
-     * 2) Operand2 = modRM.reg (expanded by REX.r if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
+//------------------------------------------------------------------------------
+//! @param base
+//! @param displacement
+//! 
+//! @return Mem64 with the specified base register and 32-bit displacement.
+//------------------------------------------------------------------------------
+Mem64 mem64BaseDisp(Reg64 base, int32_t displacement); 
 
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x29, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------sub_r64_r64-------------------------
+//------------------------------------------------------------------------------
+//! Determines whether or not scale has one of the valid values: 1, 2, 4 or 8.
+//! 
+//! @param scale
+//! 
+//! @return Whether scale is 1, 2, 4, 8 or not.
+//------------------------------------------------------------------------------
+bool isValidScale(uint8_t scale);
 
-    //-------------------------sub_r64_imm32------------------------
-    /* 1) Operand1 = modRM.rm (expanded by REX.b if needed)
-     * 2) Operand2 = immediate.imm32 */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = true,
-
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0x81, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b101, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //-------------------------sub_r64_imm32------------------------
-
-    //-------------------------imul_r64_r64-------------------------
-    /* 1) Operand1 = modRM.reg (expanded by REX.r if needed)
-     * 2) Operand2 = modRM.rm  (expanded by REX.b if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
-
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 2, .bytes = {0x0f, 0xaf, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b000, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //-------------------------imul_r64_r64-------------------------
-
-    //---------------------------idiv_r64---------------------------
-    /* 1) Operand = modRM.rm (expanded by REX.b if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
-
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0xf7, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b111, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------idiv_r64---------------------------
-
-    //----------------------------neg_r64---------------------------
-    /* 1) Operand = modRM.rm (expanded by REX.b if needed) */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
-
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0xf7, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b011, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //----------------------------neg_r64---------------------------
-
-    //-------------------------sal_r64_imm8-------------------------
-    /* 1) Operand1 = modRM.rm (expanded by REX.b if needed)
-     * 2) Operand2 = immediate.imm8 */
-    { 
-        .isRexUsed          = true,
-        .isModrmUsed        = true,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = true,
-
-        .rex                = {.id = REX_ID, .w = 1, .r = 0, .x = 0, .b = 0},
-        .opcode             = {.size = 1, .bytes = {0xc1, 0x00, 0x00}},
-        .modRM              = {.mod = 0b11, .reg = 0b100, .rm = 0b000}, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //-------------------------sal_r64_imm8-------------------------
-    //==========================ARITHMETIC==========================
-
-    //=========================CONTROL FLOW=========================
-    //--------------------------call_rel32--------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 1, .bytes = {0xe8, 0x00, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //--------------------------call_rel32--------------------------
-
-    //------------------------------ret-----------------------------
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = false,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 1, .bytes = {0xc3, 0x00, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //------------------------------ret-----------------------------
-
-    //---------------------------jmp_rel32--------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 1, .bytes = {0xe9, 0x00, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jmp_rel32--------------------------
-
-    //---------------------------jz_rel32---------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x84, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jz_rel32---------------------------
-
-    //---------------------------je_rel32---------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x84, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------je_rel32---------------------------
-
-    //---------------------------jne_rel32--------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x85, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jne_rel32--------------------------
-
-    //---------------------------jl_rel32---------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x8c, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jl_rel32---------------------------
-
-    //---------------------------jg_rel32---------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x8f, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jg_rel32---------------------------
-
-    //---------------------------jle_rel32--------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed          = false,
-        .isModrmUsed        = false,
-        .isSIBUsed          = false,
-        .isDisplacementUsed = true,
-        .isImmediateUsed    = false,
-
-        .rex                = DEFAULT_REX,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x8e, 0x00}},
-        .modRM              = DEFAULT_MODRM, 
-        .sib                = DEFAULT_SIB, 
-        .displacement       = DEFAULT_DISPLACEMENT, 
-        .immediate          = DEFAULT_IMMEDIATE
-    },
-    //---------------------------jle_rel32--------------------------
-
-    //---------------------------jge_rel32--------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isDisplacementUsed = true,
-        .opcode             = {.size = 2, .bytes = {0x0f, 0x8d}}
-    },
-    //---------------------------jge_rel32--------------------------
-    //=========================CONTROL FLOW=========================
-
-    //=============================MOVE=============================
-    //--------------------------mov_r64_r64-------------------------
-    /* 1) Operand = displacement.disp32 */
-    { 
-        .isRexUsed   = true,
-        .isModrmUsed = true,
-
-        .rex    = {.id = REX_ID, .w = 1},
-        .opcode = {.size = 2, .bytes = {0x0f, 0x8d}}
-    },
-    //--------------------------mov_r64_r64-------------------------
-    //=============================MOVE=============================
-};
-
-static const char* REGISTERS_64_STRINGS[TOTAL_REGISTERS_64] = 
-{
-    "rax",
-    "rcx",
-    "rdx",
-    "rbx",
-    "rsp",
-    "rbp",
-    "rsi",
-    "rdi",
-
-    "r8",
-    "r9",
-    "r10",
-    "r11",
-    "r12",
-    "r13",
-    "r14",
-    "r15"
-};
-
-const char* reg64ToString (Reg64 reg);
-Mem64       mem64BaseDisp (Reg64 base, int32_t displacement); 
-bool        isValidScale  (uint8_t scale);
+//------------------------------------------------------------------------------
+//! Transforms valid Mem64 scales like 1, 2, 4 and 8 to 0b00, 0b01, 0b10 and 
+//! 0b11, respectively. Invalid scales are transformed to 0b00.
+//! 
+//! @param scale
+//! 
+//! @return Transformed to SIB format scale.
+//------------------------------------------------------------------------------
+uint8_t toSibScale(uint8_t scale);
 
 #endif
