@@ -54,10 +54,20 @@ Exec = compiler.out
 # -------------------------------------Files------------------------------------
 
 # ----------------------------------Make rules----------------------------------
+.PHONY: init clean
+
 $(BinDir)/$(Exec): $(Objs) $(Deps) $(Libs) 
 	$(CXX) -o $(BinDir)/$(Exec) $(Objs) $(Libs) $(LDFLAGS)
 
 vpath %.cpp $(SrcDir) $(CompilerDir) $(DynArrayDir) $(ParserDir) $(SymTableDir)
 $(IntDir)/%.o: %.cpp $(Deps)
 	$(CXX) -c $< $(CXXFLAGS) -o $@
+
+.PHONY: init
+init: 
+	mkdir -p bin/intermediates
+
+.PHONY: clean
+clean:
+	rm -f $(Objs) $(BinDir)/$(Exec)
 # ----------------------------------Make rules----------------------------------
