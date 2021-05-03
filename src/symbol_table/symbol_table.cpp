@@ -63,7 +63,9 @@ Function* getFunction(SymbolTable* table, const char* function)
     assert(table);
     assert(function);
 
-    int functionIdx = findFunction(&table->functionsData, {.name = function});
+    int functionIdx = findFunction(&table->functionsData, {.name = function, 
+                                                           .varsData = {}, 
+                                                           .paramsCount = 0});
 
     return functionIdx != -1 ? table->functionsData.functions + functionIdx : nullptr;
 }
@@ -111,11 +113,9 @@ void dump(const SymbolTable* table)
 {
     assert(table);
 
-    printf("==== Symbol table dump ====\n\n");
+    printf("================ Symbol table ================\n");
     dump(&table->functionsData);
 
     printf("\n");
     dump(&table->stringsData);
-    printf("\n==== Symbol table dump ====\n");
-
 }

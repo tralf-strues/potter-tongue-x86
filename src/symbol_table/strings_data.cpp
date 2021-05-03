@@ -20,10 +20,8 @@ void dump(const StringsData* stringsData)
 {
     assert(stringsData);
 
-    printf("stringsCapacity = %zu\n"
-           "stringsCount    = %zu\n\n"
+    printf("stringsCount = %zu\n"
            "strings = {", 
-           stringsData->capacity, 
            stringsData->count);
 
     if (stringsData->count == 0)

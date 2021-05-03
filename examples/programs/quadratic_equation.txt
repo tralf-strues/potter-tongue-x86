@@ -6,7 +6,7 @@ Chapter <<AskSecondNumber>> "Please, enter the second coefficient (b): "
 Chapter <<AskThirdNumber>>  "Please, enter the third  coefficient (c): "
 
 Chapter <<NoSolutions>>     "No solutions!"
-Chapter <<InfSolutions>>    "The solution is any number!"
+Chapter <<InfSolutions>>    "Solution is any number!"
 Chapter <<OneSolution>>     "The solution is "
 Chapter <<TwoSolutions>>    "The solutions are "
 
@@ -79,7 +79,7 @@ alohomora
     revelio protego legilimens Dumbldore equal horcrux protego
     alohomora
         - flagrate-s <<OneSolution>>
-        - flagrate-bombarda 4, -10000 geminio legilimens Hermione sectumsempra 2 geminio 10000 sectumsempra legilimens Harry 
+        - flagrate-bombarda 4, -1 geminio legilimens Hermione sectumsempra 2 geminio 10000 sectumsempra legilimens Harry 
     colloportus 
 
     revelio protego legilimens Dumbldore less horcrux protego

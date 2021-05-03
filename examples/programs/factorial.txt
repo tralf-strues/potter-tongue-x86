@@ -3,13 +3,13 @@ Godric's-Hollow factorial
 (oNo) finds factorial of a number
 imperio fact n
 alohomora 
-    revelio protego legilimens n greater tria flipendo duo protego
+    revelio protego legilimens n greater 1 protego
     alohomora
-        - reverte legilimens n geminio depulso fact protego legilimens n flipendo tria epoximise duo protego
+        - reverte legilimens n geminio depulso fact protego legilimens n flipendo 1 protego
     colloportus
     otherwise
     alohomora
-        - reverte tria flipendo duo
+        - reverte 1
     colloportus
 colloportus 
 
@@ -17,7 +17,7 @@ imperio love horcrux
 alohomora
     - avenseguim n carpe-retractum horcrux
     - n carpe-retractum accio
-    - avenseguim result carpe-retractum depulso fact protego colloshoo protego legilimens n protego protego
+    - avenseguim result carpe-retractum depulso fact protego legilimens n protego
     - flagrate legilimens result
     - reverte horcrux
 colloportus

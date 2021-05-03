@@ -92,10 +92,8 @@ void dump(const FunctionsData* functionsData)
 {
     assert(functionsData);
 
-    printf("functionsCapacity = %zu\n"
-           "functionsCount    = %zu\n\n"
+    printf("functionsCount = %zu\n"
            "functions = {\n    ", 
-           functionsData->capacity, 
            functionsData->count);
 
     if (functionsData->count == 0)
@@ -108,10 +106,9 @@ void dump(const FunctionsData* functionsData)
     {
         Function* function = functionsData->functions + i;
         VarsData* varsData = &function->varsData;
-        printf("{ name='%s', varsCapacity=%zu, varsCount=%zu, paramsCount=%zu, \n    "
+        printf("{ name='%s', varsCount=%zu, paramsCount=%zu, \n    "
                "  vars=[",
                function->name, 
-               varsData->capacity,
                varsData->count,
                function->paramsCount);
 

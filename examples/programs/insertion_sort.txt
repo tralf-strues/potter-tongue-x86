@@ -1,14 +1,11 @@
 Godric's-Hollow Hogwarts
-
 Chapter <<AskPrecision>> "Enter the precision of numbers: "
 Chapter <<AskCount>>     "Enter the number of elements in the array: "
 Chapter <<AskNumbers>>   "Enter the elements of the array: "
-
 Chapter <<SortingFinished>> "The array has been sorted with the total of "
 
 imperio love horcrux
 alohomora
-    
     - flagrate-s <<AskPrecision>>
     - avenseguim precision carpe-retractum accio
     - flagrate-s circumrota
@@ -27,7 +24,6 @@ alohomora
 
     - flagrate-s <<AskNumbers>>
     - flagrate-s circumrota
-
     - capacious array, legilimens count
     - avenseguim curIndex carpe-retractum horcrux
 

@@ -793,7 +793,6 @@ void compileMath(Compiler* compiler, Node* node)
         case DIV_OP: 
         { 
             write_cqo(compiler);
-            // write_xor_r64_r64(compiler, RDX, RDX, "; rdx = 0 (for the division below)");
             write_idiv_r64(compiler, RBX);
             break; 
         }

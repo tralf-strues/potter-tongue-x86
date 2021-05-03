@@ -341,106 +341,64 @@ flagrate:
                 mov rsp, rbp
                 pop rbp
                 ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that calculates the square root of number.
+; 
+; Expects: [RBP + 16] = number
+; 
+; Returns: RAX = sqrt(number)
+; 
+; Changes: RAX, XMM0, XMM1
+;------------------------------------------------------------------------------
+crucio:
+                push rbp
+                mov rbp, rsp
+
+                mov rax, [rbp + 16]
+
+                cvtsi2ss  xmm0, rax
+                sqrtss    xmm1, xmm0
+                cvttss2si rax, xmm1
+
+                mov rsp, rbp
+                pop rbp
+                ret
 ; ==================================================
 ; love
 ;
 ; params: 
-; vars:   number, power
+; vars:   n, i
 ; ==================================================
 love:
                 push rbp
                 mov rbp, rsp
                 sub rsp, 16
 
-                ; ==== if-else statement ====
-                ; condition's expression
-                mov rax, 0
-                test rax, rax
-                jz .ELSE_0
-
-                ; if true
-                mov rax, -1
-                jmp .RETURN
-                jmp .END_IF_ELSE0
-
-.ELSE_0:
-.END_IF_ELSE0:
-                ; --- assignment to number ---
-                ; evaluating expression
-                mov rax, 2
-                mov [rbp - 8], rax
-                ; --- assignment to number ---
-
-                ; --- assignment to power ---
-                ; evaluating expression
-                mov rax, 12
-                mov [rbp - 16], rax
-                ; --- assignment to power ---
-
-                ; --- calling flagrate() ---
-                mov rax, IO_BUFFER
-                push rax
-                ; param 1
-                ; --- calling arithmetic() ---
-                ; param 2
-                mov rax, [rbp - 16]
-                push rax
-                ; param 1
-                mov rax, [rbp - 8]
-                push rax
-
-                call arithmetic
-                add rsp, 16
-
-                push rax
-
-                call flagrate
-                add rsp, 8
-
-                mov rax, 0
-                jmp .RETURN
-.RETURN:
-                mov rsp, rbp
-                pop rbp
-                ret
-
-
-; ==================================================
-; arithmetic
-;
-; params: number, power
-; vars:   curPower, result
-; ==================================================
-arithmetic:
-                push rbp
-                mov rbp, rsp
-                sub rsp, 16
-
-                ; --- assignment to curPower ---
+                ; --- assignment to n ---
                 ; evaluating expression
                 mov rax, 0
                 mov [rbp - 8], rax
-                ; --- assignment to curPower ---
+                ; --- assignment to n ---
 
-                ; --- assignment to result ---
+                ; --- assignment to i ---
                 ; evaluating expression
-                mov rax, 1
+                mov rax, 0
                 mov [rbp - 16], rax
-                ; --- assignment to result ---
+                ; --- assignment to i ---
 
                 ; ==== while ====
 .WHILE_0:
                 ; exit condition
-                mov rax, [rbp - 8]
+                mov rax, [rbp - 16]
 
                 push rax ; save rax
 
-                mov rax, [rbp + 24]
+                mov rax, 1000000
                 mov rbx, rax
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jl .CMP_TRUE_0
+                jle .CMP_TRUE_0
                 xor rax, rax ; false
                 jmp .CMP_END_0
 .CMP_TRUE_0:
@@ -450,23 +408,56 @@ arithmetic:
                 jz .END_WHILE_0
 
                 ; loop body
-                ; --- assignment to result ---
+                ; --- assignment to n ---
                 ; evaluating expression
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
 
                 push rax ; save rax
 
-                mov rax, [rbp + 16]
+                mov rax, 3
+
+                push rax ; save rax
+
+                mov rax, [rbp - 8]
                 mov rbx, rax
                 pop rax ; restore rax
 
                 imul rax, rbx
-                mov [rbp - 16], rax
-                ; --- assignment to result ---
 
-                ; --- assignment to curPower ---
+                push rax ; save rax
+
+                mov rax, 2
+                mov rbx, rax
+                pop rax ; restore rax
+
+                sub rax, rbx
+
+                push rax ; save rax
+
+                mov rax, 2
+                mov rbx, rax
+                pop rax ; restore rax
+
+                cqo
+                idiv rbx
+                mov rbx, rax
+                pop rax ; restore rax
+
+                add rax, rbx
+
+                push rax ; save rax
+
+                mov rax, 4
+                mov rbx, rax
+                pop rax ; restore rax
+
+                add rax, rbx
+                mov [rbp - 8], rax
+                ; --- assignment to n ---
+
+                ; --- assignment to i ---
                 ; evaluating expression
-                mov rax, [rbp - 8]
+                mov rax, [rbp - 16]
 
                 push rax ; save rax
 
@@ -475,12 +466,13 @@ arithmetic:
                 pop rax ; restore rax
 
                 add rax, rbx
-                mov [rbp - 8], rax
-                ; --- assignment to curPower ---
+                mov [rbp - 16], rax
+                ; --- assignment to i ---
 
                 jmp .WHILE_0
 .END_WHILE_0:
-                mov rax, [rbp - 16]
+                mov rax, [rbp - 8]
+                mov rax, 0
                 jmp .RETURN
 .RETURN:
                 mov rsp, rbp
@@ -492,7 +484,3 @@ section .bss
 IO_BUFFER:
                 resb 512
 section .data
-MessageOne:
-                db "Hello, World!", 0
-MessageTwo:
-                db "Hello, Hell!", 0

@@ -48,15 +48,6 @@ struct FlagManager
     const char*  output;
     const char*  nasmOutput;
     bool         flagEnabled[TOTAL_FLAGS];
-
-    // bool         nasmDumpEnabled;
-    // bool         tokenDumpEnabled;
-    // bool         simpleGraphDumpEnabled;
-    // bool         detailedGraphDumpEnabled;
-    // bool         openGraphDumpEnabled;
-    // bool         treeDumpEnabled;
-    // bool         symbTableDumpEnabled;
-    // bool         useNumerics;
 };
 
 struct FlagSpecification
@@ -95,8 +86,16 @@ const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] =
     /*===========FLAG_TOKEN_DUMP==========*/
     "\tPrint parsed tokens in the following format:\n"
     "\tToken <token_number>:\n"
-    "\t\ttype = <type_number>\n"
-    "\t\tdata = <token_data>\n", 
+    "\t\ttype = <type>[<type_number>]\n"
+    "\t\tdata = (<data-type>) <data>\n"
+    "\t\t<line>|...<token>...\n"
+    "\t\t          ^\n"
+    "\tHere's a concrete example:\n"
+    "\tToken 0:\n"
+    "\t\ttype = KEYWORD_TOKEN_TYPE[1]\n"
+    "\t\tdata = (keywordCode) PROG_START_KEYWORD[0] Godric's-Hollow\n"
+    "\t\t1|Godric's-Hollow Hogwarts\n"
+    "\t\t  ^\n", 
 
     /*=======FLAG_SIMPLE_GRAPH_DUMP=======*/
     "\tWrite simple graph dump in .svg format.\n",
@@ -110,67 +109,70 @@ const char* FLAGS_HELP_MESSAGES[TOTAL_FLAGS] =
     /*===========FLAG_TREE_DUMP===========*/
     "\tWrites the syntax tree to file.\n",
 
-    // FIXME: outdated
     /*========FLAG_SYMB_TABLE_DUMP========*/
-    "\tPrints the symbol table in the following format:\n"
-    "\tSymbol table:\n"
-    "\t\tfunctionsCapacity = <capacity of the dynamic array of functions>\n"
-    "\t\tfunctionsCount    = <total number of functions>\n\n"
-    "\t\tfunctions = { \n"
-    "\t\t\t{ name='<>', varsCapacity=<>, varsCount=<>, paramsCount=<>, \n"
-    "\t\t\t  vars=['<>', '<>', '<>']\n"
-    "\t\t\t}\n"
-    "\t\t}\n",
+    "\tPrints the symbol table in the following format:\n\n"
+    "\t================ Symbol table dump ================\n"
+    "\tfunctionsCount = <total number of functions>\n"
+    "\tfunctions = { \n"
+    "\t\t{ name='<>', varsCount=<>, paramsCount=<>, \n"
+    "\t\t  vars=['<>', ...] },\n"
+    "\t\t...\n"
+    "\t}\n\n"
+    "\tstringsCount = <total number of strings>\n"
+    "\tstrings = {\n"
+    "\t\t{ name='<>', content='<>'},\n"
+    "\t\t...\n"
+    "\t}\n",
 
     /*==========FLAG_USE_NUMERICS=========*/
-    "\tAllow using numbers (e.g. '3' instead of 'tria', or '22') in the input file.\n",
+    "\tAllow using numbers (e.g. '3' instead of 'tria', or '22').\n",
 
     /*=============FLAG_HELP=============*/
     "\tPrint this message.\n",
 
     /*============FLAG_OUTPUT============*/
-    "\tSpecify output file.\n"
+    "\tSpecify the output file.\n"
 };
 
 const FlagSpecification FLAG_SPECIFICATIONS[TOTAL_FLAGS] = 
 {
     { FLAG_NASM_DUMP,      
-      "--nasm-dump",      
+      "-S",      
       processFlagNasmDump,     
       FLAGS_HELP_MESSAGES[FLAG_NASM_DUMP] },
 
     { FLAG_TOKEN_DUMP,      
-      "--token-dump",      
+      "-fdump-tokens",      
       processFlagTokenDump,     
       FLAGS_HELP_MESSAGES[FLAG_TOKEN_DUMP] },
 
     { FLAG_SIMPLE_GRAPH_DUMP,
-      "--simple-graph-dump",
+      "-fdump-tree-graph-simple",
       processFlagSimpleGraphDump,
       FLAGS_HELP_MESSAGES[FLAG_SIMPLE_GRAPH_DUMP] },
 
     { FLAG_DETAILED_GRAPH_DUMP,
-      "--detailed-graph-dump",
+      "-fdump-tree-graph-detailed",
       processFlagDetailedGraphDump,
       FLAGS_HELP_MESSAGES[FLAG_DETAILED_GRAPH_DUMP] },
 
     { FLAG_OPEN_GRAPH_DUMP,
-      "--open-graph-dump",
+      "-open-tree-graph",
       processFlagOpenGraphDump,
       FLAGS_HELP_MESSAGES[FLAG_OPEN_GRAPH_DUMP] },
 
     { FLAG_TREE_DUMP,
-      "--tree-dump",
+      "-fdump-tree",
       processFlagTreeDump,
       FLAGS_HELP_MESSAGES[FLAG_TREE_DUMP] },
 
     { FLAG_SYMB_TABLE_DUMP,
-      "--symb-table-dump",
+      "-fdump-symtab",
       processFlagSymbTableDump,
       FLAGS_HELP_MESSAGES[FLAG_SYMB_TABLE_DUMP] },
 
     { FLAG_USE_NUMERICS,
-      "--numeric",
+      "-numeric",
       processFlagUseNumerics,
       FLAGS_HELP_MESSAGES[FLAG_USE_NUMERICS] },
 
@@ -336,12 +338,11 @@ Error processFlagOutput(FlagManager* flagManager)
 
 void printHelp()
 {
-    printf("Simple Harry Potter influenced programming language set. "
-           "Works with my software cpu.\n");
+    printf("Simple Harry Potter influenced programming language set.\n");
 
     for (uint32_t i = 0; i < TOTAL_FLAGS; i++)
     {
-        printf("%s\n%s", FLAG_SPECIFICATIONS[i].string, FLAG_SPECIFICATIONS[i].helpMessage);
+        printf("%s\n%s\n", FLAG_SPECIFICATIONS[i].string, FLAG_SPECIFICATIONS[i].helpMessage);
     }
 }
 

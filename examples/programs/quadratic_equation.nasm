@@ -790,7 +790,7 @@ NEWT:
                 mov rax, IO_BUFFER
                 push rax
                 ; param 2
-                mov rax, -10000
+                mov rax, -1
 
                 push rax ; save rax
 
@@ -1293,7 +1293,7 @@ AskThirdNumber:
 NoSolutions:
                 db "No solutions!", 0
 InfSolutions:
-                db "The solution is any number!", 0
+                db "Solution is any number!", 0
 OneSolution:
                 db "The solution is ", 0
 TwoSolutions:
