@@ -59,7 +59,6 @@ void compileVar              (Compiler* compiler, Node* node);
 
 void compileParamList        (Compiler* compiler, Node* node, const Function* function);
 void compileCall             (Compiler* compiler, Node* node);
-bool compileStdCall          (Compiler* compiler, Node* node);
 //==================================Compilation=================================
 
 
@@ -349,9 +348,6 @@ void writeEntryPoint(Compiler* compiler)
     write_syscall(compiler, "exiting program with code 0");
 }
 
-// FIXME: rdi, rsi, rdx, rcx, r8, r9
-
-// FIXME: make filenames parameters
 void writeStdFunctions(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
@@ -361,35 +357,6 @@ void writeStdFunctions(Compiler* compiler)
         writeStdFunction(compiler, STANDARD_FUNCTIONS[i]);
         if (compiler->status != COMPILER_NO_ERROR) { break; }
     }
-
-    // char*  stdioNasm      = nullptr;
-    // size_t stdioNasmBytes = 0;
-
-    // if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
-    // {
-    //     compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
-    //     return;
-    // }
-
-    // fwrite(stdioNasm, 1, stdioNasmBytes, compiler->nasmFile);
-    // writeNewLine(compiler);
-
-    // free(stdioNasm);
-
-    // // Adding standard functions to the compiler's SymbolTable and LabelManager
-    // for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
-    // {
-    //     const StdFunctionInfo* functionInfo = &STANDARD_FUNCTIONS[i];
-    //     Function* function = pushFunction(compiler->table, functionInfo->workingName);
-
-    //     Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
-    //     insertLabel(&compiler->labelManager.labelArray, label);
-
-    //     for (size_t param = 0; param < functionInfo->parametersCount; param++)
-    //     {
-    //         pushParameter(function, functionInfo->parameters[param]);
-    //     }
-    // }
 }
 
 void writeStdFunction(Compiler* compiler, StdFunctionInfo info)
@@ -921,8 +888,6 @@ void compileCall(Compiler* compiler, Node* node)
 
     writeIndented(compiler, "; --- calling %s() ---\n", node->left->data.id);
 
-    // if (compileStdCall(compiler, node)) { return; } // FIXME: 
-
     Function* function = getFunction(compiler->table, node->left->data.id);
     if (function == nullptr) 
     {
@@ -956,44 +921,5 @@ void compileCall(Compiler* compiler, Node* node)
     }
 
     writeNewLine(compiler);
-}
-
-bool compileStdCall(Compiler* compiler, Node* node)
-{
-    ASSERT_COMPILER(compiler);
-    assert(node);
-
-    const char* name = node->left->data.id;
-    if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
-    {
-        // compileParamList(compiler, node, getFunction(compiler->table, "flagrate"));
-        // compileExpression(compiler, node->right->left);
-        
-
-    } 
-    // else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
-    // {
-    //     fprintf(OUTPUT, "in\n");
-    // } 
-    // else if (strcmp(name, KEYWORDS[FLOOR_KEYWORD].string) == 0)
-    // {
-    //     compileExpression(compiler, node->right->left);
-    //     fprintf(OUTPUT, "flr\n");
-    // }
-    // else if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
-    // {
-    //     compileExpression(compiler, node->right->left);
-    //     fprintf(OUTPUT, "sqrt\n");
-    // }  
-    // else if (strcmp(name, KEYWORDS[RAND_JUMP_KEYWORD].string) == 0)
-    // {
-    //     fprintf(OUTPUT, "rndjmp\n");
-    // }
-    else 
-    {
-        return false;
-    }
-
-    return true; // FIXME: switch back to true
 }
 //==================================Compilation==================================

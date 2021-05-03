@@ -9,14 +9,14 @@ Mode = DEBUG_MODE
 # ----------------------------------Debug-mode----------------------------------
 ifeq ($(Mode), DEBUG_MODE)
 	ModeLinkerOptions   = -g
-	ModeCompilerOptions = -g
+	ModeCompilerOptions = -O1 -g
 endif
 # ----------------------------------Debug-mode----------------------------------
 
 # ---------------------------------Release-mode---------------------------------
 ifeq ($(Mode), RELEASE_MODE)
 	ModeLinkerOptions   = 
-	ModeCompilerOptions = -O2 -g -DNDEBUG
+	ModeCompilerOptions = -O2 -DNDEBUG
 endif
 # ---------------------------------Release-mode---------------------------------
 

@@ -21,11 +21,13 @@ This is an x86-64 compiler set for my [potter-tongue](https://github.com/tralf-s
     - [Writing new-line character](#c-writing-new-line-character)
   - [3. Arrays](#3-arrays-link)
   - [4. Void functions](#4-void-functions-waning_crescent_moon)
-- **[Potter Tongue grammar :pencil:](#potter-tongue-grammar-pencil)**
-- **[Performa]**
+  - [New grammar :pencil:](#new-potter-tongue-grammar-pencil)
+- **[Performance](#performance)**
+  - [Comparison with SCPU](#comparison-with-scpu)
+  - [Optimization](#optimization)
 
 ## Installation
-In order to install the compiler, you **first have to install my [file-manager](https://github.com/tralf-strues/file-manager)** library. Then do the following:
+In order to install the compiler, you first have to install my [file-manager](https://github.com/tralf-strues/file-manager) library. Then do the following:
 ```Shell
 $ git clone https://github.com/tralf-strues/potter-tongue-x86.git
 $ make init
@@ -34,7 +36,7 @@ $ make
 
 ## Usage
 There are many things this potter-tongue compiler can do. To get the idea of what flags it supports, just look at the help message
-```Shell
+```
 $ ./compiler.out -h
 Simple Harry Potter influenced programming language set.
 -S
@@ -114,7 +116,7 @@ You can also look at more scary :smiling_imp: big graph dumps:
 
 #### 3. Tree text dump
 
-This is used mostly for translating between languages ().
+This is used mostly for translating between languages that can dump the syntax tree in the same format (e.g. [vssense](https://github.com/vssense)'s [Drevniy-rus-language](https://github.com/vssense/Compiler) and mine share the same format). This is still a **work-in-progress**, though. It worked flawlessly with the first potter-tongue version, but I haven't yet adapted it to the new one.
 
 #### 4. Symbol table dump
 
@@ -243,8 +245,8 @@ alohomora
 colloportus
 ```
 
-## Potter Tongue grammar :pencil:
-Finally, the grammar is ready and I can begin incorporating aforementioned features into the compiler.
+### New Potter Tongue grammar :pencil:
+The new and polished version of the language's grammar now looks like this:
 ```
 ================================================================================
          Symbols meanings (used for making the grammar look easier):           
@@ -328,13 +330,14 @@ NewLines     ::= {'\n'}+
 
 ## Performance 
 ### Comparison with SCPU
-I have compared performance of a program running on my software cpu emulator and on a real cpu. The [test program](examples/performance/performance_test.txt) is simple - it calculates the expression `n += (3 * n - 2) / 2 + 4` starting with `n = 0` a million times.
+I have compared performance of a program running on my software cpu emulator and on a real cpu. The [test program](examples/performance/performance_test_scpu.txt) is quite simple - it calculates the expression `n += (3 * n - 2) / 2 + 4` starting with `n = 0` a million times.
 
 Here are the results:
 
 SCPU|Real CPU
 ----|--------
 21.263s|0.018s
+> The test has been carried out on an i7 9750H Intel chip powered machine running Linux.
 
 So that's about a **1,180 times performance boost** :rocket: :muscle:!
 
