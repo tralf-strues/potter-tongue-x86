@@ -2,6 +2,7 @@
 ; Standard potter-tongue function, that prints decimal number to STDOUT.
 ; 
 ; Expects: [RBP + 16] = number
+;          [RBP + 24] = i/o buffer address
 ; 
 ; Returns: (none)
 ; 
@@ -11,9 +12,12 @@ flagrate:
                 push rbp
                 mov rbp, rsp
 
+                mov r13, [rbp + 24]
+                add r13, 512 - 1
+
                 mov rax, qword [rbp + 16]       ; rax = number
                 mov rbx, 10
-                mov rdi, IO_BUFFER_END - 1
+                mov rdi, r13
 
                 xor r12, r12                    ; is number negative 
                 cmp rax, 0
@@ -47,7 +51,7 @@ flagrate:
                 mov rsi, rdi
                 inc rsi
 
-                mov rdx, IO_BUFFER_END - 1
+                mov rdx, r13
                 sub rdx, rdi
 
                 mov rdi, 0x01                   ; STDOUT

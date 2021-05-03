@@ -10,6 +10,7 @@
 const size_t ELF_INITIAL_SIZE           = 1024;
 const size_t HORIZONTAL_LINE_LENGTH     = 50;
 const char*  INDENTATION                = "                ";
+const size_t MAX_STD_FUNC_LENGTH        = 256;
 const size_t MAX_INDENTED_STRING_LENGTH = 512;
 const size_t IO_BUFFER_SIZE             = 512;
 
@@ -24,6 +25,7 @@ CompilerError makeCompilationPass (Compiler* compiler);
 //==================================Write data==================================
 void writeEntryPoint   (Compiler* compiler);
 void writeStdFunctions (Compiler* compiler);
+void writeStdFunction  (Compiler* compiler, StdFunctionInfo info);
 void writeBSS          (Compiler* compiler);
 void writeData         (Compiler* compiler);
 void writeStringsData  (Compiler* compiler);
@@ -247,7 +249,7 @@ void write(Compiler* compiler, const char* format, ...)
     ASSERT_COMPILER(compiler);
     assert(format);
 
-    if (compiler->isNasmNeeded)
+    if (compiler->isNasmNeeded && compiler->passNumber < COMPILER_TOTAL_PASSES_NASM)
     {
         va_list args;
         va_start(args, format);
@@ -268,7 +270,7 @@ void writeIndented(Compiler* compiler, const char* format, ...)
     ASSERT_COMPILER(compiler);
     assert(format);
 
-    if (compiler->isNasmNeeded)
+    if (compiler->isNasmNeeded && compiler->passNumber < COMPILER_TOTAL_PASSES_NASM)
     {
         va_list args;
         va_start(args, format);
@@ -354,33 +356,96 @@ void writeStdFunctions(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
     
-    char*  stdioNasm      = nullptr;
-    size_t stdioNasmBytes = 0;
-
-    if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
+    for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
     {
-        compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
+        writeStdFunction(compiler, STANDARD_FUNCTIONS[i]);
+        if (compiler->status != COMPILER_NO_ERROR) { break; }
+    }
+
+    // char*  stdioNasm      = nullptr;
+    // size_t stdioNasmBytes = 0;
+
+    // if (!loadFile("../potter_tongue_libs/io.nasm", &stdioNasm, &stdioNasmBytes))
+    // {
+    //     compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
+    //     return;
+    // }
+
+    // fwrite(stdioNasm, 1, stdioNasmBytes, compiler->nasmFile);
+    // writeNewLine(compiler);
+
+    // free(stdioNasm);
+
+    // // Adding standard functions to the compiler's SymbolTable and LabelManager
+    // for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
+    // {
+    //     const StdFunctionInfo* functionInfo = &STANDARD_FUNCTIONS[i];
+    //     Function* function = pushFunction(compiler->table, functionInfo->workingName);
+
+    //     Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
+    //     insertLabel(&compiler->labelManager.labelArray, label);
+
+    //     for (size_t param = 0; param < functionInfo->parametersCount; param++)
+    //     {
+    //         pushParameter(function, functionInfo->parameters[param]);
+    //     }
+    // }
+}
+
+void writeStdFunction(Compiler* compiler, StdFunctionInfo info)
+{
+    ASSERT_COMPILER(compiler);
+
+    // FIXME: if already exists
+    Function* function = pushFunction(compiler->table, info.workingName);
+    Label     label    = getExistingLabel(compiler, {0, nullptr, function->name, -1});
+
+    /* Needed in order to not have double labels. */
+    bool isNasmNeeded = compiler->isNasmNeeded; 
+    compiler->isNasmNeeded = false;
+    writeLabel(compiler, label);
+    compiler->isNasmNeeded = isNasmNeeded;
+
+    static char filenameBytecode[MAX_STD_FUNC_LENGTH];
+    snprintf(filenameBytecode, MAX_STD_FUNC_LENGTH, 
+             "../potter_tongue_libs/io/%s.bytecode", info.workingName);
+
+    uint8_t* bytecode     = nullptr;
+    size_t   bytecodeSize = 0;
+    if (!loadFile(filenameBytecode, (char**) &bytecode, &bytecodeSize))
+    {
+        compileError(compiler, COMPILER_ERROR_NO_STDIO_BYTECODE);
         return;
     }
 
-    fwrite(stdioNasm, 1, stdioNasmBytes, compiler->nasmFile);
-    writeNewLine(compiler);
+    writeBytes(&compiler->builder, bytecode, bytecodeSize);
+    free(bytecode);
 
-    free(stdioNasm);
-
-    // Adding standard functions to the compiler's SymbolTable and LabelManager
-    for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
+    if (compiler->isNasmNeeded && compiler->passNumber < COMPILER_TOTAL_PASSES_NASM)
     {
-        const StdFunctionInfo* functionInfo = &STANDARD_FUNCTIONS[i];
-        Function* function = pushFunction(compiler->table, functionInfo->workingName);
+        static char filenameNasm[MAX_STD_FUNC_LENGTH];
+        snprintf(filenameNasm, MAX_STD_FUNC_LENGTH, 
+                "../potter_tongue_libs/io/%s.nasm", info.workingName);
 
-        Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
-        insertLabel(&compiler->labelManager.labelArray, label);
+        char*  nasmCode     = nullptr;
+        size_t nasmCodeSize = 0;
 
-        for (size_t param = 0; param < functionInfo->parametersCount; param++)
+        if (!loadFile(filenameNasm, &nasmCode, &nasmCodeSize))
         {
-            pushParameter(function, functionInfo->parameters[param]);
+            compileError(compiler, COMPILER_ERROR_NO_STDIO_NASM_CODE);
+            return;
         }
+
+        fwrite(nasmCode, 1, nasmCodeSize, compiler->nasmFile);
+        writeNewLine(compiler);
+
+        free(nasmCode);
+    
+    }
+
+    for (size_t param = 0; param < info.parametersCount; param++)
+    {
+        pushParameter(function, info.parameters[param]);
     }
 }
 
@@ -389,18 +454,21 @@ void writeBSS(Compiler* compiler)
     ASSERT_COMPILER(compiler);
 
     startBssSegment(&compiler->builder);
-    compiler->builder.offset += IO_BUFFER_SIZE;
-    endBssSegment(&compiler->builder);
 
     write(compiler, "section .bss\n");
-    write(compiler, "IO_BUFFER:\n");
+    Label ioBufferLabel = getExistingLabel(compiler, {0, nullptr, "IO_BUFFER", -1});
+    writeLabel(compiler, ioBufferLabel);
     writeIndented(compiler, "resb %zu\n", IO_BUFFER_SIZE);
-    write(compiler, "IO_BUFFER_END:\n");
+
+    compiler->builder.offset += IO_BUFFER_SIZE;
+    endBssSegment(&compiler->builder);
 }
 
 void writeData(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
+
+    write(compiler, "section .data\n");
 
     startDataSegment(&compiler->builder);
     writeStringsData(compiler);
@@ -860,6 +928,14 @@ void compileCall(Compiler* compiler, Node* node)
     {
         compileError(compiler, COMPILER_ERROR_CALL_UNDEFINED_FUNCTION);
         return; 
+    }
+
+    KeywordCode stdFunction = isStdFunction(function->name);
+    if (stdFunction != INVALID_KEYWORD && getStdFunctionInfo(stdFunction)->additionalParamNeeded)
+    {
+        Label label = getExistingLabel(compiler, {0, nullptr, "IO_BUFFER", -1});
+        write_mov_r64_imm64(compiler, RAX, label);
+        write_push_r64(compiler, RAX);
     }
 
     compileParamList(compiler, node, function);

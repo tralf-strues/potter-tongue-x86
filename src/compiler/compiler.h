@@ -17,6 +17,7 @@ enum CompilerError
     COMPILER_NO_ERROR,
     COMPILER_ERROR_NO_MAIN_FUNCTION,
     COMPILER_ERROR_CALL_UNDEFINED_FUNCTION,
+    COMPILER_ERROR_NO_STDIO_BYTECODE,
     COMPILER_ERROR_NO_STDIO_NASM_CODE,
 
     COMPILER_ERRORS_COUNT
@@ -26,7 +27,8 @@ static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
     "no error",
     "main function ('love') wasn't found",
     "calling undefined function",
-    "could find io.nasm with standard I/O functions"
+    "couldn't find one of the bytecode files with standard I/O functions",
+    "couldn't find one of the nasm files with standard I/O functions"
 };
 
 static const uint8_t COMPILER_FIRST_PASS        = 0;

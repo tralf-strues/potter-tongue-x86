@@ -174,7 +174,7 @@ const char* getKeywordString    (KeywordCode keywordCode);
 
 //-------------------------------Standard functions-----------------------------
 static const char   MAIN_FUNCTION_NAME[]              = "love";
-static const size_t STANDARD_FUNCTIONS_COUNT          = 6;
+static const size_t STANDARD_FUNCTIONS_COUNT          = 5;
 static const size_t STANDARD_FUNCTIONS_MAX_PARAMETERS = 2;
 
 struct StdFunctionInfo
@@ -183,21 +183,23 @@ struct StdFunctionInfo
     const char*  workingName;
     const char*  parameters[STANDARD_FUNCTIONS_MAX_PARAMETERS];
     size_t       parametersCount;
+    bool         additionalParamNeeded;
 };
 
 static const StdFunctionInfo STANDARD_FUNCTIONS[STANDARD_FUNCTIONS_COUNT] = 
 {
-    { SCAN_FLOAT_KEYWORD,   "accio_bombarda",    {"precision"},           1 },
-    { SCAN_KEYWORD,         "accio",             {},                      0 },
+    { SCAN_FLOAT_KEYWORD,   "accio_bombarda",    {"precision"},           1, true  },
+    { SCAN_KEYWORD,         "accio",             {},                      0, true  },
 
-    { PRINT_FLOAT_KEYWORD,  "flagrate_bombarda", {"precision", "number"}, 2 },
-    { PRINT_STRING_KEYWORD, "flagrate_s",        {"string"},              1 },
-    { PRINT_KEYWORD,        "flagrate",          {"number"},              1 },
+    { PRINT_FLOAT_KEYWORD,  "flagrate_bombarda", {"precision", "number"}, 2, true  },
+    { PRINT_STRING_KEYWORD, "flagrate_s",        {"string"},              1, false },
+    { PRINT_KEYWORD,        "flagrate",          {"number"},              1, true  },
 
-    { SQRT_KEYWORD,         "crucio",            {"number"},              1 },
+    // { SQRT_KEYWORD,         "crucio",            {"number"},              1, false },
 };
 
-const StdFunctionInfo* getStdFunctionInfo(KeywordCode keywordCode);
+const StdFunctionInfo* getStdFunctionInfo (KeywordCode keywordCode);
+KeywordCode            isStdFunction      (const char* functionName);
 //-------------------------------Standard functions-----------------------------
 
 #endif

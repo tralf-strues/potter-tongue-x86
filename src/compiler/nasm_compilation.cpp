@@ -622,7 +622,7 @@ void write_mov_r64_imm64(Compiler* compiler, Reg64 dest, Label label, Comment co
     instruction.opcode.bytes[0] += regSpecifier(dest);
 
     instruction.dispSize    = 8;
-    instruction.disp.disp64 = label.offset;
+    instruction.disp.disp64 = label.offset + VIRTUAL_ADDRESS_START;
 
     writeInstruction(compiler, &instruction);
 

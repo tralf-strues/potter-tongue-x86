@@ -13,7 +13,8 @@ alohomora
 
     - avenseguim number carpe-retractum 2
     - avenseguim power  carpe-retractum 12
-    - depulso arithmetic protego legilimens number, legilimens power protego
+
+    - flagrate depulso arithmetic protego legilimens number, legilimens power protego
 
     - reverte horcrux
 colloportus

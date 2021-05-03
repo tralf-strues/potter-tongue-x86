@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <string.h>
 #include "syntax.h"
 
 const char* mathOpToString(MathOp operation)
@@ -42,4 +44,22 @@ const StdFunctionInfo* getStdFunctionInfo(KeywordCode keywordCode)
     }
 
     return &STANDARD_FUNCTIONS[keywordCode - SCAN_FLOAT_KEYWORD];
+}
+
+KeywordCode isStdFunction(const char* functionName)
+{
+    assert(functionName);
+
+    KeywordCode code = INVALID_KEYWORD;
+
+    for (size_t i = 0; i < STANDARD_FUNCTIONS_COUNT; i++)
+    {
+        if (strcmp(functionName, STANDARD_FUNCTIONS[i].workingName) == 0)
+        {
+            code = STANDARD_FUNCTIONS[i].code;
+            break;
+        }
+    }
+
+    return code;
 }

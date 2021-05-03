@@ -2,7 +2,7 @@
 #include <string.h>
 #include "elf_builder.h"
 
-const size_t   BYTECODE_REALLOC_MULTIPLIER = 2;
+const double   BYTECODE_REALLOC_MULTIPLIER = 1.6;
 const uint64_t SEGMENT_ALIGNMENT_SIZE      = 0x1000;
 
 void makeNeededSpace(ElfBuilder* builder, size_t bytesNeeded);

@@ -26,7 +26,7 @@ flagrate_s:
 .END_STRLEN:
                 ; ==== strlen() ====
 
-                ; Writing the number to STDOUT
+                ; Writing the string to STDOUT
                 mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
                 mov rsi, qword [rbp + 16]
                 mov rdi, 0x01                   ; STDOUT

@@ -2,6 +2,7 @@
 ; Standard potter-tongue function, that reads decimal number from STDIN.
 ; 
 ; Expects: [RBP + 16] = precision
+;          [RBP + 24] = i/o buffer address
 ; 
 ; Returns: RAX = read number
 ; 
@@ -13,12 +14,12 @@ accio_bombarda:
 
                 mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
                 mov rdi, 0x00                   ; fd    = STDIN
-                mov rsi, IO_BUFFER              ; buf   = IO_BUFFER
+                mov rsi, [rbp + 24]             ; buf   = IO_BUFFER
                 mov rdx, 512                    ; count = IO_BUFFER_SIZE
                 syscall
 
                 xor rax, rax
-                mov rsi, IO_BUFFER
+                mov rsi, [rbp + 24]
                 mov rbx, 10
                 xor rcx, rcx
 

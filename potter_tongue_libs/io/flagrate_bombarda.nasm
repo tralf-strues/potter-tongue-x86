@@ -4,18 +4,22 @@
 ; 
 ; Expects: [RBP + 16] = precision
 ;          [RBP + 24] = number
+;          [RBP + 32] = i/o buffer address
 ; 
 ; Returns: (none)
 ; 
-; Changes: RAX, RBX, RCX, RDX, RDI, RSI, R12
+; Changes: RAX, RBX, RCX, RDX, RDI, RSI, R12, R13
 ;------------------------------------------------------------------------------
 flagrate_bombarda:
                 push rbp
                 mov rbp, rsp
 
+                mov r13, [rbp + 32]
+                add r13, 512 - 1
+
                 mov rax, qword [rbp + 24]       ; rax = number
                 mov rbx, 10
-                mov rdi, IO_BUFFER_END - 1
+                mov rdi, r13
 
                 xor r12, r12                    ; is number negative 
                 cmp rax, 0
@@ -65,7 +69,7 @@ flagrate_bombarda:
                 mov rsi, rdi
                 inc rsi
 
-                mov rdx, IO_BUFFER_END - 1
+                mov rdx, r13
                 sub rdx, rdi
 
                 mov rdi, 0x01                   ; STDOUT
