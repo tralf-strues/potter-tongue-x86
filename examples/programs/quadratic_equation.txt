@@ -1,5 +1,15 @@
 Godric's-Hollow Hogwarts
 
+Chapter <<Introduction>>    "Quadratic equation (of the form ax^2 + bx + c = 0) solver!"
+Chapter <<AskFirstNumber>>  "Please, enter the first  coefficient (a): "
+Chapter <<AskSecondNumber>> "Please, enter the second coefficient (b): "
+Chapter <<AskThirdNumber>>  "Please, enter the third  coefficient (c): "
+
+Chapter <<NoSolutions>>     "No solutions!"
+Chapter <<InfSolutions>>    "The solution is any number!"
+Chapter <<OneSolution>>     "The solution is "
+Chapter <<TwoSolutions>>    "The solutions are "
+
 (oNo) ax^2 + bx + c = 0
 (oNo) 1) a = 0 
 (oNo)     a) b = 0, c  = 0 --> inf sols 
@@ -12,9 +22,22 @@ Godric's-Hollow Hogwarts
 
 imperio love horcrux
 alohomora
-    - avenseguim Harry    carpe-retractum accio
-    - avenseguim Hermione carpe-retractum accio
-    - avenseguim Ronald   carpe-retractum accio
+    - flagrate-s <<Introduction>>
+    - flagrate-s circumrota
+
+    (oNo) Input
+    - flagrate-s <<AskFirstNumber>>
+    - avenseguim Harry carpe-retractum accio-bombarda protego 4 protego
+
+    - flagrate-s <<AskSecondNumber>>
+    - avenseguim Hermione carpe-retractum accio-bombarda protego 4 protego
+
+    - flagrate-s <<AskThirdNumber>>
+    - avenseguim Ronald carpe-retractum accio-bombarda protego 4 protego
+
+    - flagrate-s circumrota
+    - depulso printEquation protego legilimens Harry, legilimens Hermione, legilimens Ronald protego
+    - flagrate-s circumrota
 
     revelio protego legilimens Harry equal horcrux protego
     alohomora
@@ -32,42 +55,86 @@ alohomora
     alohomora
         revelio protego legilimens Ronald equal horcrux protego
         alohomora
-            - flagrate duo flipendo tria
+            - flagrate-s <<InfSolutions>>
         colloportus
         otherwise
         alohomora
-            - flagrate horcrux
+            - flagrate-s <<NoSolutions>>
         colloportus
     colloportus
     otherwise
     alohomora
-        - flagrate tria flipendo duo
-        - flagrate protego duo flipendo tria protego geminio legilimens Ronald sectumsempra legilimens Hermione
+        - flagrate-s <<OneSolution>>
+        - Ronald carpe-retractum legilimens Ronald geminio 10000
+        - flagrate-bombarda 4, -1 geminio legilimens Ronald sectumsempra legilimens Hermione
     colloportus
+
+    - flagrate-s circumrota
 colloportus
 
 imperio horcrux NEWT Harry, Hermione, Ronald
 alohomora
-    - avenseguim Dumbldore carpe-retractum legilimens Hermione geminio legilimens Hermione flipendo duo geminio duo geminio legilimens Harry geminio legilimens Ronald
+    - avenseguim Dumbldore carpe-retractum legilimens Hermione geminio legilimens Hermione sectumsempra 10000 flipendo 4 geminio legilimens Harry geminio legilimens Ronald sectumsempra 10000
 
     revelio protego legilimens Dumbldore equal horcrux protego
     alohomora
-        - flagrate tria flipendo duo
-        - flagrate protego duo flipendo tria protego geminio legilimens Hermione sectumsempra duo sectumsempra legilimens Harry 
+        - flagrate-s <<OneSolution>>
+        - flagrate-bombarda 4, -10000 geminio legilimens Hermione sectumsempra 2 geminio 10000 sectumsempra legilimens Harry 
     colloportus 
 
     revelio protego legilimens Dumbldore less horcrux protego
     alohomora
-        - flagrate horcrux
+        - flagrate-s <<NoSolutions>>
     colloportus 
 
     revelio protego legilimens Dumbldore greater horcrux protego
     alohomora
-        - flagrate duo
-        - avenseguim Umbridge carpe-retractum crucio protego legilimens Dumbldore protego
-        - flagrate protego protego duo flipendo tria protego geminio legilimens Hermione flipendo  legilimens Umbridge protego sectumsempra duo sectumsempra legilimens Harry 
-        - flagrate protego protego duo flipendo tria protego geminio legilimens Hermione epoximise legilimens Umbridge protego sectumsempra duo sectumsempra legilimens Harry 
+        - flagrate-s <<TwoSolutions>>
+        - avenseguim Umbridge carpe-retractum crucio protego 10000 geminio legilimens Dumbldore protego
+
+        - flagrate-bombarda 4, protego -1 geminio legilimens Hermione flipendo  legilimens Umbridge protego sectumsempra duo geminio 10000 sectumsempra legilimens Harry 
+        - flagrate-s " and "
+        - flagrate-bombarda 4, protego -1 geminio legilimens Hermione epoximise legilimens Umbridge protego sectumsempra duo geminio 10000 sectumsempra legilimens Harry 
     colloportus 
+
+    - flagrate-s circumrota
+colloportus
+
+imperio horcrux printEquation Harry, Hermione, Ronald
+alohomora
+    - flagrate-bombarda 4, legilimens Harry
+    - flagrate-s " * x^2"
+
+    revelio protego legilimens Hermione less horcrux protego
+    alohomora
+        - flagrate-s " - "
+        - Hermione carpe-retractum legilimens Hermione geminio -1
+    colloportus
+    otherwise
+    alohomora
+        - flagrate-s " + "
+    colloportus
+
+    - flagrate-bombarda 4, legilimens Hermione
+    - flagrate-s " * x"
+
+    revelio protego legilimens Ronald not-equal horcrux protego
+    alohomora
+        revelio protego legilimens Ronald less horcrux protego
+        alohomora
+            - flagrate-s " - "
+            - Ronald carpe-retractum legilimens Ronald geminio -1 
+        colloportus
+        otherwise
+        alohomora
+            - flagrate-s " + "
+        colloportus
+
+        - flagrate-bombarda 4, legilimens Ronald
+    colloportus
+
+    - flagrate-s " = 0"
+    - flagrate-s circumrota
 colloportus
 
 Privet-Drive 

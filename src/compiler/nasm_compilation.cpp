@@ -311,6 +311,24 @@ void write_imul_r64_r64(Compiler* compiler, Reg64 reg1, Reg64 reg2, Comment comm
     writeComment(compiler, comment);
 }
 
+void write_cqo(Compiler* compiler, Comment comment)
+{
+    ASSERT_COMPILER(compiler);
+
+    /* ----------------BYTECODE---------------- */
+    Instruction_x86_64 instruction = {};
+    
+    addRex(&instruction);
+    instruction.rex.w = 1; /* long mode */
+    instruction.opcode = OPCODE_CQO;
+
+    writeInstruction(compiler, &instruction);
+
+    /* ------------------NASM------------------ */
+    writeIndented(compiler, "cqo");
+    writeComment(compiler, comment);
+}
+
 void write_idiv_r64(Compiler* compiler, Reg64 reg, Comment comment)
 {
     ASSERT_COMPILER(compiler);

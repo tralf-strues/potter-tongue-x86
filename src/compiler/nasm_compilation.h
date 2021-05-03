@@ -65,6 +65,7 @@ static const Opcode  OPCODE_SUB_R64_R64    = {.size = 1, .bytes = {0x29}      };
 static const Opcode  OPCODE_SUB_R64_IMM32  = {.size = 1, .bytes = {0x81}      };
 static const uint8_t OPCODE_SUB_EXTENSION  = 0b101;
 static const Opcode  OPCODE_IMUL_R64_R64   = {.size = 2, .bytes = {0x0F, 0xAF}};
+static const Opcode  OPCODE_CQO            = {.size = 1, .bytes = {0x99}      };
 static const Opcode  OPCODE_IDIV_R64       = {.size = 1, .bytes = {0xF7}      };
 static const uint8_t OPCODE_IDIV_EXTENSION = 0b111;
 static const Opcode  OPCODE_NEG_R64        = {.size = 1, .bytes = {0xF7}      };
@@ -77,6 +78,7 @@ void write_add_r64_imm32 (Compiler* compiler, Reg64 reg,  int32_t imm,  Comment 
 void write_sub_r64_r64   (Compiler* compiler, Reg64 reg1, Reg64   reg2, Comment comment = nullptr);
 void write_sub_r64_imm32 (Compiler* compiler, Reg64 reg,  int32_t imm,  Comment comment = nullptr);
 void write_imul_r64_r64  (Compiler* compiler, Reg64 reg1, Reg64   reg2, Comment comment = nullptr);
+void write_cqo           (Compiler* compiler,                           Comment comment = nullptr);
 void write_idiv_r64      (Compiler* compiler, Reg64 reg,                Comment comment = nullptr);
 void write_neg_r64       (Compiler* compiler, Reg64 reg,                Comment comment = nullptr);
 void write_sal_r64_imm8  (Compiler* compiler, Reg64 reg,  int8_t  imm,  Comment comment = nullptr);
