@@ -174,7 +174,7 @@ const char* getKeywordString    (KeywordCode keywordCode);
 
 //-------------------------------Standard functions-----------------------------
 static const char   MAIN_FUNCTION_NAME[]              = "love";
-static const size_t STANDARD_FUNCTIONS_COUNT          = 5;
+static const size_t STANDARD_FUNCTIONS_COUNT          = 6;
 static const size_t STANDARD_FUNCTIONS_MAX_PARAMETERS = 2;
 
 struct StdFunctionInfo
@@ -195,7 +195,7 @@ static const StdFunctionInfo STANDARD_FUNCTIONS[STANDARD_FUNCTIONS_COUNT] =
     { PRINT_STRING_KEYWORD, "flagrate_s",        {"string"},              1, false },
     { PRINT_KEYWORD,        "flagrate",          {"number"},              1, true  },
 
-    // { SQRT_KEYWORD,         "crucio",            {"number"},              1, false },
+    { SQRT_KEYWORD,         "crucio",            {"number"},              1, false },
 };
 
 const StdFunctionInfo* getStdFunctionInfo (KeywordCode keywordCode);

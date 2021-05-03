@@ -9,9 +9,11 @@ alohomora
     (oNo) - depulso testAccio         protego protego
     
     (oNo) - depulso testFloatFlagrate protego protego
-    - depulso testFloatAccio    protego protego
+    (oNo) - depulso testFloatAccio    protego protego
 
-    - depulso testArrays protego protego
+    (oNo) - depulso testArrays protego protego
+
+    - depulso testSqrt protego protego 
         
     - reverte horcrux
 
@@ -140,6 +142,19 @@ alohomora
     - flagrate-s circumrota
 
     - flagrate   TestArray~2~
+    - flagrate-s circumrota
+colloportus
+
+
+imperio testSqrt horcrux
+alohomora
+    - flagrate-s "Please, enter number: "
+    - avenseguim number carpe-retractum accio
+
+    - flagrate-s "crucio of "
+    - flagrate   legilimens number
+    - flagrate-s " is "
+    - flagrate   crucio protego legilimens number protego
     - flagrate-s circumrota
 colloportus
 

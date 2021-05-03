@@ -1,247 +1,16 @@
-global _start   
-section .text   
+global _start 
+section .text 
 
-_start:         
-	call love     
-	mov rax, 0x3C 
-	xor rdi, rdi  
-	syscall       
-
-;------------------------------------------------------------------------------
-; Standard potter-tongue function, that prints decimal number to STDOUT.
-; 
-; Expects: [RBP + 16] = number
-; 
-; Returns: (none)
-; 
-; Changes: RAX, RBX, RDX, RDI, RSI, R12
-;------------------------------------------------------------------------------
-flagrate:
-                push rbp
-                mov rbp, rsp
-
-                mov rax, qword [rbp + 16]       ; rax = number
-                mov rbx, 10
-                mov rdi, IO_BUFFER_END - 1
-
-                xor r12, r12                    ; is number negative 
-                cmp rax, 0
-                jge .NOT_NEGATIVE
-                mov r12, 1 
-                neg rax
-.NOT_NEGATIVE:
-
-.WHILE_DIGITS_LEFT:
-                xor rdx, rdx
-                div rbx                         ; rax = quotient; rdx = last digit
-
-                add dl, '0'
-                mov byte [rdi], dl
-
-                dec rdi
-
-                test rax, rax
-                jnz .WHILE_DIGITS_LEFT
-.END_WHILE:
-
-                test r12, r12
-                jz .SKIP_NEGATIVE_SIGN
-
-                mov byte [rdi], '-'
-                dec rdi
-.SKIP_NEGATIVE_SIGN:
-
-                ; Writing the number to STDOUT
-                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
-                mov rsi, rdi
-                inc rsi
-
-                mov rdx, IO_BUFFER_END - 1
-                sub rdx, rdi
-
-                mov rdi, 0x01                   ; STDOUT
-                syscall             
-
-                mov rsp, rbp
-                pop rbp
-                ret
-
-;------------------------------------------------------------------------------
-; Standard potter-tongue function, that prints a string to STDOUT.
-; 
-; Expects: [RBP + 16] = string address
-; 
-; Returns: (none)
-; 
-; Changes: RAX, RCX, RDX, RDI, RSI
-;------------------------------------------------------------------------------
-flagrate_s:
-                push rbp
-                mov rbp, rsp
-
-                ; ==== strlen() ====
-                mov rsi, qword [rbp + 16]       ; rsi = string
-                xor rdx, rdx                    ; rdx = string's length 
-
-.LOOP_STRLEN:
-                mov cl, byte [rsi]              ; cl = current char
-                test cl, cl
-                jz .END_STRLEN
-
-                inc rdx
-                inc rsi
-                jmp .LOOP_STRLEN
-.END_STRLEN:
-                ; ==== strlen() ====
-
-                ; Writing the number to STDOUT
-                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
-                mov rsi, qword [rbp + 16]
-                mov rdi, 0x01                   ; STDOUT
-                syscall           
-
-                mov rsp, rbp
-                pop rbp
-                ret
-
-;------------------------------------------------------------------------------
-; Standard potter-tongue function, that prints decimal number to STDOUT and 
-; puts a decimal point '.' after precision number of least-significant digits.
-; 
-; Expects: [RBP + 16] = precision
-;          [RBP + 24] = number
-; 
-; Returns: (none)
-; 
-; Changes: RAX, RBX, RCX, RDX, RDI, RSI, R12
-;------------------------------------------------------------------------------
-flagrate_bombarda:
-                push rbp
-                mov rbp, rsp
-
-                mov rax, qword [rbp + 24]       ; rax = number
-                mov rbx, 10
-                mov rdi, IO_BUFFER_END - 1
-
-                xor r12, r12                    ; is number negative 
-                cmp rax, 0
-                jge .NOT_NEGATIVE
-                mov r12, 1 
-                neg rax
-.NOT_NEGATIVE:
-
-		mov rcx, qword [rbp + 16]	; rcx = precision
-.PRECISION_DIGITS:
-		xor rdx, rdx
-                div rbx                         ; rax = quotient; rdx = last digit
-
-                add dl, '0'
-                mov byte [rdi], dl
-		dec rdi
-
-		dec rcx 
-		test rcx, rcx
-		jnz .PRECISION_DIGITS
-
-		; Putting '.'
-		mov byte [rdi], '.'
-		dec rdi
-
-.WHILE_DIGITS_LEFT:
-                xor rdx, rdx
-                div rbx                         ; rax = quotient; rdx = last digit
-
-                add dl, '0'
-                mov byte [rdi], dl
-
-                dec rdi
-
-                test rax, rax
-                jnz .WHILE_DIGITS_LEFT
-
-                test r12, r12
-                jz .SKIP_NEGATIVE_SIGN
-
-                mov byte [rdi], '-'
-                dec rdi
-.SKIP_NEGATIVE_SIGN:
-
-                ; Writing the number to STDOUT
-                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
-                mov rsi, rdi
-                inc rsi
-
-                mov rdx, IO_BUFFER_END - 1
-                sub rdx, rdi
-
-                mov rdi, 0x01                   ; STDOUT
-                syscall             
-
-                mov rsp, rbp
-                pop rbp
-                ret
-
-;------------------------------------------------------------------------------
-; Standard potter-tongue function, that reads decimal number from STDIN.
-; 
-; Expects: (none)
-; 
-; Returns: RAX = read number
-; 
-; Changes: RAX, RBX, RCX, RDI, RSI, R12
-;------------------------------------------------------------------------------
-accio:
-                push rbp
-                mov rbp, rsp
-
-                mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
-                mov rdi, 0x00                   ; fd    = STDIN
-                mov rsi, IO_BUFFER              ; buf   = IO_BUFFER
-                mov rdx, IO_BUFFER_SIZE         ; count = IO_BUFFER_SIZE
-                syscall
-
-                xor rax, rax
-                mov rsi, IO_BUFFER
-                mov rbx, 10
-                xor rcx, rcx
-
-                xor r12, r12                    ; r12 = is number negative
-
-                cmp byte [rsi], '-'                   
-                jne .NOT_NEGATIVE
-                mov r12, 1
-                inc rsi
-.NOT_NEGATIVE:
-
-.WHILE_DIGITS_LEFT:
-                mov cl, byte [rsi]
-                cmp cl, 0xa                    ; new line character
-
-                je .END_WHILE
-
-                imul rax, rbx
-                
-                add  rax, rcx
-                sub  rax, '0'
-
-                inc rsi
-                jmp .WHILE_DIGITS_LEFT
-.END_WHILE:
-
-                test r12, r12
-                jz .SKIP_NEGATIVE_SIGN
-
-                neg rax
-.SKIP_NEGATIVE_SIGN:
-
-                mov rsp, rbp
-                pop rbp
-                ret
-
+_start:       
+                call love
+                mov rax, 60
+                xor rdi, rdi
+                syscall ; exiting program with code 0
 ;------------------------------------------------------------------------------
 ; Standard potter-tongue function, that reads decimal number from STDIN.
 ; 
 ; Expects: [RBP + 16] = precision
+;          [RBP + 24] = i/o buffer address
 ; 
 ; Returns: RAX = read number
 ; 
@@ -253,12 +22,12 @@ accio_bombarda:
 
                 mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
                 mov rdi, 0x00                   ; fd    = STDIN
-                mov rsi, IO_BUFFER              ; buf   = IO_BUFFER
-                mov rdx, IO_BUFFER_SIZE         ; count = IO_BUFFER_SIZE
+                mov rsi, [rbp + 24]             ; buf   = IO_BUFFER
+                mov rdx, 512                    ; count = IO_BUFFER_SIZE
                 syscall
 
                 xor rax, rax
-                mov rsi, IO_BUFFER
+                mov rsi, [rbp + 24]
                 mov rbx, 10
                 xor rcx, rcx
 
@@ -337,7 +106,263 @@ accio_bombarda:
                 mov rsp, rbp
                 pop rbp
                 ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that reads decimal number from STDIN.
+; 
+; Expects: [RBP + 16] = i/o buffer address
+; 
+; Returns: RAX = read number
+; 
+; Changes: RAX, RBX, RCX, RDI, RSI, R12
+;------------------------------------------------------------------------------
+accio:
+                push rbp
+                mov rbp, rsp
 
+                mov rax, 0x00                   ; read(int fd, void *buf, size_t count)
+                mov rdi, 0x00                   ; fd    = STDIN
+                mov rsi, [rbp + 16]             ; buf   = IO_BUFFER
+                mov rdx, 512                    ; count = IO_BUFFER_SIZE
+                syscall
+
+                xor rax, rax
+                mov rsi, [rbp + 16]
+                mov rbx, 10
+                xor rcx, rcx
+
+                xor r12, r12                    ; r12 = is number negative
+
+                cmp byte [rsi], '-'                   
+                jne .NOT_NEGATIVE
+                mov r12, 1
+                inc rsi
+.NOT_NEGATIVE:
+
+.WHILE_DIGITS_LEFT:
+                mov cl, byte [rsi]
+                cmp cl, 0xa                    ; new line character
+
+                je .END_WHILE
+
+                imul rax, rbx
+                
+                add  rax, rcx
+                sub  rax, '0'
+
+                inc rsi
+                jmp .WHILE_DIGITS_LEFT
+.END_WHILE:
+
+                test r12, r12
+                jz .SKIP_NEGATIVE_SIGN
+
+                neg rax
+.SKIP_NEGATIVE_SIGN:
+
+                mov rsp, rbp
+                pop rbp
+                ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that prints decimal number to STDOUT and 
+; puts a decimal point '.' after precision number of least-significant digits.
+; 
+; Expects: [RBP + 16] = precision
+;          [RBP + 24] = number
+;          [RBP + 32] = i/o buffer address
+; 
+; Returns: (none)
+; 
+; Changes: RAX, RBX, RCX, RDX, RDI, RSI, R12, R13
+;------------------------------------------------------------------------------
+flagrate_bombarda:
+                push rbp
+                mov rbp, rsp
+
+                mov r13, [rbp + 32]
+                add r13, 512 - 1
+
+                mov rax, qword [rbp + 24]       ; rax = number
+                mov rbx, 10
+                mov rdi, r13
+
+                xor r12, r12                    ; is number negative 
+                cmp rax, 0
+                jge .NOT_NEGATIVE
+                mov r12, 1 
+                neg rax
+.NOT_NEGATIVE:
+
+		mov rcx, qword [rbp + 16]	; rcx = precision
+.PRECISION_DIGITS:
+		xor rdx, rdx
+                div rbx                         ; rax = quotient; rdx = last digit
+
+                add dl, '0'
+                mov byte [rdi], dl
+		dec rdi
+
+		dec rcx 
+		test rcx, rcx
+		jnz .PRECISION_DIGITS
+
+		; Putting '.'
+		mov byte [rdi], '.'
+		dec rdi
+
+.WHILE_DIGITS_LEFT:
+                xor rdx, rdx
+                div rbx                         ; rax = quotient; rdx = last digit
+
+                add dl, '0'
+                mov byte [rdi], dl
+
+                dec rdi
+
+                test rax, rax
+                jnz .WHILE_DIGITS_LEFT
+
+                test r12, r12
+                jz .SKIP_NEGATIVE_SIGN
+
+                mov byte [rdi], '-'
+                dec rdi
+.SKIP_NEGATIVE_SIGN:
+
+                ; Writing the number to STDOUT
+                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
+                mov rsi, rdi
+                inc rsi
+
+                mov rdx, r13
+                sub rdx, rdi
+
+                mov rdi, 0x01                   ; STDOUT
+                syscall             
+
+                mov rsp, rbp
+                pop rbp
+                ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that prints a string to STDOUT.
+; 
+; Expects: [RBP + 16] = string address
+; 
+; Returns: (none)
+; 
+; Changes: RAX, RCX, RDX, RDI, RSI
+;------------------------------------------------------------------------------
+flagrate_s:
+                push rbp
+                mov rbp, rsp
+
+                ; ==== strlen() ====
+                mov rsi, qword [rbp + 16]       ; rsi = string
+                xor rdx, rdx                    ; rdx = string's length 
+
+.LOOP_STRLEN:
+                mov cl, byte [rsi]              ; cl = current char
+                test cl, cl
+                jz .END_STRLEN
+
+                inc rdx
+                inc rsi
+                jmp .LOOP_STRLEN
+.END_STRLEN:
+                ; ==== strlen() ====
+
+                ; Writing the string to STDOUT
+                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
+                mov rsi, qword [rbp + 16]
+                mov rdi, 0x01                   ; STDOUT
+                syscall           
+
+                mov rsp, rbp
+                pop rbp
+                ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that prints decimal number to STDOUT.
+; 
+; Expects: [RBP + 16] = number
+;          [RBP + 24] = i/o buffer address
+; 
+; Returns: (none)
+; 
+; Changes: RAX, RBX, RDX, RDI, RSI, R12
+;------------------------------------------------------------------------------
+flagrate:
+                push rbp
+                mov rbp, rsp
+
+                mov r13, [rbp + 24]
+                add r13, 512 - 1
+
+                mov rax, qword [rbp + 16]       ; rax = number
+                mov rbx, 10
+                mov rdi, r13
+
+                xor r12, r12                    ; is number negative 
+                cmp rax, 0
+                jge .NOT_NEGATIVE
+                mov r12, 1 
+                neg rax
+.NOT_NEGATIVE:
+
+.WHILE_DIGITS_LEFT:
+                xor rdx, rdx
+                div rbx                         ; rax = quotient; rdx = last digit
+
+                add dl, '0'
+                mov byte [rdi], dl
+
+                dec rdi
+
+                test rax, rax
+                jnz .WHILE_DIGITS_LEFT
+.END_WHILE:
+
+                test r12, r12
+                jz .SKIP_NEGATIVE_SIGN
+
+                mov byte [rdi], '-'
+                dec rdi
+.SKIP_NEGATIVE_SIGN:
+
+                ; Writing the number to STDOUT
+                mov rax, 0x01                   ; write(rdi=fd, rsi=buf, rdx=cnt)
+                mov rsi, rdi
+                inc rsi
+
+                mov rdx, r13
+                sub rdx, rdi
+
+                mov rdi, 0x01                   ; STDOUT
+                syscall             
+
+                mov rsp, rbp
+                pop rbp
+                ret
+;------------------------------------------------------------------------------
+; Standard potter-tongue function, that calculates the square root of number.
+; 
+; Expects: [RBP + 16] = number
+; 
+; Returns: RAX = sqrt(number)
+; 
+; Changes: RAX, XMM0, XMM1
+;------------------------------------------------------------------------------
+crucio:
+                push rbp
+                mov rbp, rsp
+
+                mov rax, [rbp + 16]
+
+                cvtsi2ss  xmm0, rax
+                sqrtss    xmm1, xmm0
+                cvttss2si rax, xmm1
+
+                mov rsp, rbp
+                pop rbp
+                ret
 ; ==================================================
 ; love
 ;
@@ -348,13 +373,9 @@ love:
                 push rbp
                 mov rbp, rsp
 
-                ; --- calling testFloatAccio() ---
+                ; --- calling testSqrt() ---
 
-                call testFloatAccio
-
-                ; --- calling testArrays() ---
-
-                call testArrays
+                call testSqrt
 
                 mov rax, 0
                 jmp .RETURN
@@ -430,10 +451,9 @@ testArithmeticIf:
                 mov [rbp - 16], rax
                 ; --- assignment to b ---
 
-                jmp .END_IF_ELSE_0
+                jmp .END_IF_ELSE0
 
 .ELSE_0:
-
                 ; --- assignment to b ---
                 ; evaluating expression
                 mov rax, [rbp - 8]
@@ -448,8 +468,7 @@ testArithmeticIf:
                 mov [rbp - 16], rax
                 ; --- assignment to b ---
 
-.END_IF_ELSE_0:
-
+.END_IF_ELSE0:
                 mov rax, [rbp - 16]
                 jmp .RETURN
 .RETURN:
@@ -493,12 +512,12 @@ testWhile:
                 pop rax ; restore rax
 
                 cmp rax, rbx
-                jg .COMPARISON_TRUE_0
+                jg .CMP_TRUE_0
                 xor rax, rax ; false
-                jmp .COMPARISON_END_0
-.COMPARISON_TRUE_0:
+                jmp .CMP_END_0
+.CMP_TRUE_0:
                 mov rax, 1 ; true
-.COMPARISON_END_0:
+.CMP_END_0:
                 test rax, rax
                 jz .END_WHILE_0
 
@@ -547,7 +566,6 @@ testWhile:
 
                 jmp .WHILE_0
 .END_WHILE_0:
-
                 mov rax, [rbp - 16]
                 jmp .RETURN
 .RETURN:
@@ -574,20 +592,24 @@ testFlagrate:
                 ; --- assignment to a ---
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, 10
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
 .RETURN:
                 mov rsp, rbp
@@ -609,19 +631,24 @@ testAccio:
                 ; --- assignment to input ---
                 ; evaluating expression
                 ; --- calling accio() ---
+                mov rax, IO_BUFFER
+                push rax
 
                 call accio
+                add rsp, 8
 
                 mov [rbp - 8], rax
                 ; --- assignment to input ---
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
 .RETURN:
                 mov rsp, rbp
@@ -643,8 +670,11 @@ testFloatFlagrate:
                 ; --- assignment to precision ---
                 ; evaluating expression
                 ; --- calling accio() ---
+                mov rax, IO_BUFFER
+                push rax
 
                 call accio
+                add rsp, 8
 
                 mov [rbp - 8], rax
                 ; --- assignment to precision ---
@@ -652,13 +682,18 @@ testFloatFlagrate:
                 ; --- assignment to number ---
                 ; evaluating expression
                 ; --- calling accio() ---
+                mov rax, IO_BUFFER
+                push rax
 
                 call accio
+                add rsp, 8
 
                 mov [rbp - 16], rax
                 ; --- assignment to number ---
 
                 ; --- calling flagrate_bombarda() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 2
                 mov rax, [rbp - 16]
                 push rax
@@ -667,7 +702,7 @@ testFloatFlagrate:
                 push rax
 
                 call flagrate_bombarda
-                add rsp, 16
+                add rsp, 24
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -705,8 +740,11 @@ testFloatAccio:
                 ; --- assignment to precision ---
                 ; evaluating expression
                 ; --- calling accio() ---
+                mov rax, IO_BUFFER
+                push rax
 
                 call accio
+                add rsp, 8
 
                 mov [rbp - 8], rax
                 ; --- assignment to precision ---
@@ -720,12 +758,14 @@ testFloatAccio:
                 add rsp, 8
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -754,12 +794,14 @@ testFloatAccio:
                 ; --- assignment to numberOne ---
                 ; evaluating expression
                 ; --- calling accio_bombarda() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax
 
                 call accio_bombarda
-                add rsp, 8
+                add rsp, 16
 
                 mov [rbp - 16], rax
                 ; --- assignment to numberOne ---
@@ -773,6 +815,8 @@ testFloatAccio:
                 add rsp, 8
 
                 ; --- calling flagrate_bombarda() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 2
                 mov rax, [rbp - 16]
                 push rax
@@ -781,7 +825,7 @@ testFloatAccio:
                 push rax
 
                 call flagrate_bombarda
-                add rsp, 16
+                add rsp, 24
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -800,12 +844,14 @@ testFloatAccio:
                 add rsp, 8
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 16]
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -834,12 +880,14 @@ testFloatAccio:
                 ; --- assignment to numberTwo ---
                 ; evaluating expression
                 ; --- calling accio_bombarda() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax
 
                 call accio_bombarda
-                add rsp, 8
+                add rsp, 16
 
                 mov [rbp - 24], rax
                 ; --- assignment to numberTwo ---
@@ -853,6 +901,8 @@ testFloatAccio:
                 add rsp, 8
 
                 ; --- calling flagrate_bombarda() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 2
                 mov rax, [rbp - 24]
                 push rax
@@ -861,7 +911,7 @@ testFloatAccio:
                 push rax
 
                 call flagrate_bombarda
-                add rsp, 16
+                add rsp, 24
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -880,12 +930,14 @@ testFloatAccio:
                 add rsp, 8
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 24]
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -958,6 +1010,8 @@ testArrays:
                 ; --- assignment to TestArray ---
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax ; save variable
@@ -968,7 +1022,7 @@ testArrays:
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -979,6 +1033,8 @@ testArrays:
                 add rsp, 8
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax ; save variable
@@ -989,7 +1045,7 @@ testArrays:
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -1000,6 +1056,8 @@ testArrays:
                 add rsp, 8
 
                 ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
                 ; param 1
                 mov rax, [rbp - 8]
                 push rax ; save variable
@@ -1010,7 +1068,7 @@ testArrays:
                 push rax
 
                 call flagrate
-                add rsp, 8
+                add rsp, 16
 
                 ; --- calling flagrate_s() ---
                 ; param 1
@@ -1026,8 +1084,98 @@ testArrays:
                 ret
 
 
+; ==================================================
+; testSqrt
+;
+; params: 
+; vars:   number
+; ==================================================
+testSqrt:
+                push rbp
+                mov rbp, rsp
+                sub rsp, 8
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR9
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- assignment to number ---
+                ; evaluating expression
+                ; --- calling accio() ---
+                mov rax, IO_BUFFER
+                push rax
+
+                call accio
+                add rsp, 8
+
+                mov [rbp - 8], rax
+                ; --- assignment to number ---
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR10
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call flagrate
+                add rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR11
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+                ; --- calling flagrate() ---
+                mov rax, IO_BUFFER
+                push rax
+                ; param 1
+                ; --- calling crucio() ---
+                ; param 1
+                mov rax, [rbp - 8]
+                push rax
+
+                call crucio
+                add rsp, 8
+
+                push rax
+
+                call flagrate
+                add rsp, 16
+
+                ; --- calling flagrate_s() ---
+                ; param 1
+                mov rax, STR0
+                push rax
+
+                call flagrate_s
+                add rsp, 8
+
+.RETURN:
+                mov rsp, rbp
+                pop rbp
+                ret
+
+
+section .bss
+IO_BUFFER:
+                resb 512
 section .data
-IO_BUFFER_SIZE equ 256
 STR0:
                 db `\n`, 0
 STR1:
@@ -1046,8 +1194,9 @@ STR7:
                 db "Number is (with    decimal point): ", 0
 STR8:
                 db "Number is (without decimal point): ", 0
-
-section .bss
-IO_BUFFER:
-                resb 256
-IO_BUFFER_END:
+STR9:
+                db "Please, enter number: ", 0
+STR10:
+                db "crucio of ", 0
+STR11:
+                db " is ", 0

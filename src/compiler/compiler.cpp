@@ -964,11 +964,12 @@ bool compileStdCall(Compiler* compiler, Node* node)
     assert(node);
 
     const char* name = node->left->data.id;
-    if (strcmp(name, KEYWORDS[PRINT_KEYWORD].string) == 0)
+    if (strcmp(name, KEYWORDS[SQRT_KEYWORD].string) == 0)
     {
-        compileParamList(compiler, node, getFunction(compiler->table, "flagrate"));
+        // compileParamList(compiler, node, getFunction(compiler->table, "flagrate"));
         // compileExpression(compiler, node->right->left);
         
+
     } 
     // else if (strcmp(name, KEYWORDS[SCAN_KEYWORD].string) == 0)
     // {
