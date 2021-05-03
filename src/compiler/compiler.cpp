@@ -944,9 +944,15 @@ void compileCall(Compiler* compiler, Node* node)
     Label label = getExistingLabel(compiler, {0, nullptr, function->name, -1});
     write_call_rel32(compiler, label);
 
-    if (function->paramsCount > 0)
+    size_t paramsCount = function->paramsCount;
+    if (stdFunction != INVALID_KEYWORD && getStdFunctionInfo(stdFunction)->additionalParamNeeded)
     {
-        write_add_r64_imm32(compiler, RSP, function->paramsCount * 8);
+        paramsCount++;
+    }
+
+    if (paramsCount > 0)
+    {
+        write_add_r64_imm32(compiler, RSP, paramsCount * 8);
     }
 
     writeNewLine(compiler);
