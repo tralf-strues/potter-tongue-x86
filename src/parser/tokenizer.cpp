@@ -331,8 +331,7 @@ bool processId(Tokenizer* tokenizer)
 {
     ASSERT_TOKENIZER(tokenizer);
 
-    // FIXME: add ID_ALLOWED_SYMBOLS into syntax
-    size_t length = strspn(tokenizer->position, LETTERS); 
+    size_t length = strspn(tokenizer->position, ID_VALID_SYMBOLS); 
 
     if (tokenizer->position + length > tokenizer->buffer + tokenizer->bufferSize || length == 0)
     {

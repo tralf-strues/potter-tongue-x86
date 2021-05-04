@@ -1,13 +1,10 @@
-#ifndef COMPILATION_H
-#define COMPILATION_H
+#ifndef INSTRUCTIONS_COMPILING_H
+#define INSTRUCTIONS_COMPILING_H
 
 #include "compiler.h"
 #include "x86_64_specification.h"
 
 typedef const char* Comment;
-
-// TODO: add operations depending on a constant's size (e.g. add_r64_imm8)
-// TODO: add add_rax_imm32, sub_rax_imm32, sal_r64_1
 
 //===================================GENERAL====================================
 //! @defgroup GENERAL Template instructions based on the operands' types.

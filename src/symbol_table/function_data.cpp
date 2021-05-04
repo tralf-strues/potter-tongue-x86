@@ -57,7 +57,6 @@ int getVarOffset(Function* function, const char* variable)
     int varIndex = findVariable(&function->varsData, variable);
     if (varIndex == -1) { return -1; }
 
-    // FIXME: add isParam function or something similar
     if (varIndex < (int) function->paramsCount)
     {
         return 2 * 8 + varIndex * 8;  

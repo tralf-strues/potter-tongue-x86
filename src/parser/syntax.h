@@ -100,8 +100,9 @@ struct Keyword
     const char* codeString;
 };
 
-#define TO_STR(keywordCode) #keywordCode
+static const char* ID_VALID_SYMBOLS = LETTERS;
 
+#define TO_STR(keywordCode) #keywordCode
 static const Keyword KEYWORDS[KEYWORDS_COUNT] = 
 {
     { "Godric's-Hollow",   15, PROG_START_KEYWORD,    TO_STR(PROG_START_KEYWORD)    },

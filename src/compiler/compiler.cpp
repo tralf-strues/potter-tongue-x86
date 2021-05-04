@@ -3,7 +3,7 @@
 #include <inttypes.h>
 
 #include <file_manager/file_manager.h>
-#include "nasm_compilation.h"
+#include "instruction_compiling.h"
 
 #define CUR_FUNC compiler->curFunction
 
@@ -298,9 +298,6 @@ void writeHorizontalLine(Compiler* compiler)
     write(compiler, "\n");
 }
 
-// TODO:
-// 1) for each variable write it's offset in the form [rbp - x]
-// 2)
 void writeFunctionHeader(Compiler* compiler)
 {
     ASSERT_COMPILER(compiler);
@@ -368,7 +365,6 @@ void writeStdFunction(Compiler* compiler, StdFunctionInfo info)
 {
     ASSERT_COMPILER(compiler);
 
-    // FIXME: if already exists
     Function* function = pushFunction(compiler->table, info.workingName);
     Label     label    = getExistingLabel(compiler, {0, nullptr, function->name, -1});
 
@@ -502,7 +498,6 @@ void compileFunction(Compiler* compiler, Node* node)
     write_push_r64(compiler, RBP);
     write_mov_r64_r64(compiler, RBP, RSP);
     
-    // FIXME: local vars change
     if (CUR_FUNC->varsData.count != CUR_FUNC->paramsCount)
     {
         write_sub_r64_imm32(compiler, RSP, 8 * (CUR_FUNC->varsData.count - CUR_FUNC->paramsCount)); 

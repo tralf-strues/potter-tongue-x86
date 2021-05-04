@@ -177,7 +177,7 @@ void setDataIsVoidFunction(Node* node, bool isVoidFunction)
 {
     assert(node);
 
-    node->type = FDECL_TYPE; // FIXME: Needed?
+    node->type = FDECL_TYPE;
     node->data.isVoidFunction = isVoidFunction;
 }
 

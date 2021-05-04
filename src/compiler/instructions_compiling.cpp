@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#include "nasm_compilation.h"
+#include "instructions_compiling.h"
 
 void writeInstruction(Compiler* compiler, const Instruction_x86_64* instruction);
 
@@ -52,7 +52,6 @@ void writeInstruction(Compiler* compiler, const Instruction_x86_64* instruction)
     }
 }
 
-// FIXME: write '\n' here?
 void writeComment(Compiler* compiler, Comment comment)
 {
     ASSERT_COMPILER(compiler);

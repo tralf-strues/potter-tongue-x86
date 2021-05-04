@@ -594,7 +594,6 @@ Node* parseFactor(Parser* parser)
             proceed(parser);
             Node* scanFloatId = ID(getStdFunctionInfo(SCAN_FLOAT_KEYWORD)->workingName);
             Node* param       = newNode(EXPR_LIST_TYPE, {}, parseExpression(parser), nullptr);
-            // FIXME: add error handling
             factor = newNode(CALL_TYPE, {}, scanFloatId, param);
             
             break;
@@ -726,12 +725,6 @@ Node* parseADeclaration(Parser* parser)
 Node* parseAssignment(Parser* parser)
 {
     ASSERT_PARSER(parser);
-    
-    // if (!isIdType(curToken(parser)) || isEndReached(parser) || 
-    //     (!isEndReached(parser) && !isKeyword(curToken(parser) + 1, ASSIGN_KEYWORD)))
-    // {
-    //     return nullptr;
-    // }
 
     size_t assignmentStart = parser->offset;
 
