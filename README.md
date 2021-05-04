@@ -385,10 +385,10 @@ Here are the results:
 
 SCPU|Real CPU
 ----|--------
-21.263s|0.018s
+299s|0.188s
 > The test has been carried out on an i7 9750H Intel chip powered machine running Linux.
 
-So that's about a **1,180 times performance boost** :rocket: :muscle:!
+So that's about a **1590 times performance boost** :rocket: :muscle:!
 
 ### Optimization
 >:warning: Warning: this section covers how I have (so far) optimized the compiler, so read it only if you are interested.
