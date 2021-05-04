@@ -48,7 +48,7 @@ enum ParseError
     PARSE_ERROR_ARRAY_DECLARATION_NO_SIZE,
 
     PARSE_ERROR_MEM_ACCESS_IVALID_EXPRESSION,
-    PARSE_ERROR_MEM_ACCESS_NO_SECOND_BRACKET, // FIXME: bracket
+    PARSE_ERROR_MEM_ACCESS_NO_SECOND_BRACKET,
 
     PARSE_ERROR_OPEN_BRACE_NEEDED,
     PARSE_ERROR_CLOSE_BRACE_NEEDED,
@@ -101,7 +101,7 @@ static const char* PARSE_ERROR_STRINGS[TOTAL_PARSE_ERRORS] =
     "couldn't find a precision after 'flagrate-bombarda' operator",
     "there has to be a ',' between precision and expression",
     "couldn't find an expression after 'flagrate-bombarda' operator",
-    "couldn't find a valid expression after 'flagrate-s' operator",
+    "couldn't find a valid expression after 'flagrate-s' operator (note, you can only pass strings to it)",
     "this global string hasn't been declared",
 
     "revelio operator needs a condition",

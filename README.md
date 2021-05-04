@@ -149,6 +149,15 @@ strings = {
 #### 5. Using numbers (and the magic goes away)
 Simple as that, with flag `-numeric` you can without any problems (*other than moral ones, at least* :cry:) use numbers in a program. So you can write `-1` instead of `duo flipendo tria`.
 
+## Error handling
+With quite informative syntax error messages (*of which there are already over 50!*) you can be sure that you won't have to waste hours on trying to find a little error that doesn't let you compile your program. Suppose, for example, you forgot that `flagrate-s` takes only strings as arguments and passed a number to it. Then you'll see this message:
+```
+SYNTAX ERROR: couldn't find a valid expression after 'flagrate-s' operator (note, you 
+can only pass strings to it)
+27|    - flagrate-s 220202
+                    ^
+``` 
+
 ## New language features
 ### 1. Switch from float to integer :abacus:
 First things first, my language used floating-point numbers. Now I would like it to only be able to have integer type. Noninteger values will therefore have to be manually interpreted as fixed-point. This particularly means **no need in "colloshoo" (floor)** function. 
