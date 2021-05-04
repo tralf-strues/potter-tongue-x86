@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+//! Many of the comments are taken from official Intel documentation.
+//! 
+//! @file   x86_64_specification.h
+//! @author tralf-strues
+//! @date   2021-05-04
+//! 
+//! @copyright Copyright (c) 2021
+//------------------------------------------------------------------------------
+
 #ifndef X86_64_SPECIFICATION_H
 #define X86_64_SPECIFICATION_H
 

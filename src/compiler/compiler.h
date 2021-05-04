@@ -23,7 +23,8 @@ enum CompilerError
     COMPILER_ERRORS_COUNT
 };
 
-static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = {
+static const char* COMPILER_ERROR_STRINGS[COMPILER_ERRORS_COUNT] = 
+{
     "no error",
     "main function ('love') wasn't found",
     "calling undefined function",
