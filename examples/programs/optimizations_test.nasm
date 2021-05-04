@@ -394,7 +394,6 @@ fact:
 
                 call fact
                 add rsp, 8
-
                 mov rbx, rax
                 pop rax ; restore rax
 
@@ -440,7 +439,6 @@ fib:
                 call fib
                 add rsp, 8
 
-
                 push rax ; save rax
 
                 ; --- calling fib() ---
@@ -452,7 +450,6 @@ fib:
 
                 call fib
                 add rsp, 8
-
                 mov rbx, rax
                 pop rax ; restore rax
 
@@ -499,18 +496,22 @@ love:
                 ; evaluating expression
                 mov rax, 100000
                 mov [rbp - 8], rax
+
                 ; --- assignment to factNumber ---
                 ; evaluating expression
                 mov rax, 12
                 mov [rbp - 16], rax
+
                 ; --- assignment to fibNumber ---
                 ; evaluating expression
                 mov rax, 22
                 mov [rbp - 24], rax
+
                 ; --- assignment to i ---
                 ; evaluating expression
                 mov rax, 0
                 mov [rbp - 32], rax
+
                 ; ==== while ====
 .WHILE_0:
                 ; exit condition
@@ -533,7 +534,6 @@ love:
 
                 call fact
                 add rsp, 8
-
                 ; --- calling fib() ---
                 ; param 1
                 mov rax, [rbp - 24]
@@ -541,13 +541,13 @@ love:
 
                 call fib
                 add rsp, 8
-
                 ; --- assignment to i ---
                 ; evaluating expression
                 mov rax, [rbp - 32]
                 mov rbx, 1
                 add rax, rbx
                 mov [rbp - 32], rax
+
                 jmp .WHILE_0
 .END_WHILE_0:
                 mov rax, 0

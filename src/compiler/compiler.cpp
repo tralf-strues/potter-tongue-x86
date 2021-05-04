@@ -670,6 +670,8 @@ void compileAssignmentVar(Compiler* compiler, Node* node)
     compileExpression(compiler, node->right);      
 
     write_mov_m64_r64(compiler, varMemory, RAX); 
+
+    writeNewLine(compiler);
 }
 
 void compileAssignmentArray(Compiler* compiler, Node* node)

@@ -353,7 +353,7 @@ So that's about a **1,180 times performance boost** :rocket: :muscle:!
 ### Optimization
 >:warning: Warning: this section covers how I have (so far) optimized the compiler, so read it only if you are interested.
 
-First things first, there are many simple things one could do to improve code generation. To begin with at least something, I have written a simple [testing program](examples/performance/optimizations_test.txt) which I have based investigation :see_no_evil: on. What it does is it basically calculates *factorial of 12* and *22th Fibonacci number* 100,000 times (don't overthink these numbers, they are random).
+First things first, there are many simple things one could do to improve code generation. To begin with at least something, I have written a simple [testing program](examples/performance/optimizations_test.txt) which I have based investigation on. What it does is it basically calculates factorial of 12 and 22th Fibonacci number 100,000 times (don't overthink these numbers, they are random).
 
 #### Two-operand based operations
 The way math operations `Expr1 (operation) Expr2` were compiled is the following:
@@ -466,3 +466,14 @@ turns into this:
 ```
 
 And the same works for loops!
+
+#### Optimization conclusion
+Here are the differences between unoptimized generated code and optimized (other than the two optimizations described below there were several much smaller ones with little to no performance impact):
+
+Criteria  |Unoptimized|Two-operand based operations optimization|Conditions optimization
+----------|-----------|-----------------------------------------|-----------------------
+Time,s    |15.3       | 15 (-2%)                                |10 (-50%)
+Nasm lines|263        | 221 (-19%)                              |193 (-14.5%)
+> The number of Nasm code lines is given not including standard functions and not .text sections. The percentages in the table are relative to the previous column.
+
+So, totally, I have **increased performance by 53%** and decreased the number of Nasm lines by 36%.
