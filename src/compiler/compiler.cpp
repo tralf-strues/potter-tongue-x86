@@ -3,7 +3,7 @@
 #include <inttypes.h>
 
 #include <file_manager/file_manager.h>
-#include "instruction_compiling.h"
+#include "instructions_compiling.h"
 
 #define CUR_FUNC compiler->curFunction
 

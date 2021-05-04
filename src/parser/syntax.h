@@ -100,7 +100,8 @@ struct Keyword
     const char* codeString;
 };
 
-static const char* ID_VALID_SYMBOLS = LETTERS;
+static const char* ID_VALID_SYMBOLS = "abcdefghijklmnopqrstuvwxyz"
+                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 #define TO_STR(keywordCode) #keywordCode
 static const Keyword KEYWORDS[KEYWORDS_COUNT] = 
