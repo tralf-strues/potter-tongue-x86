@@ -43,6 +43,7 @@ void compileStatement        (Compiler* compiler, Node* node);
 
 void compileCondition        (Compiler* compiler, Node* node);
 void compileLoop             (Compiler* compiler, Node* node);
+void compileExitCondition    (Compiler* compiler, Node* node, Label exitLabel);
 void compileAssignment       (Compiler* compiler, Node* node);
 void compileAssignmentVar    (Compiler* compiler, Node* node);
 void compileAssignmentArray  (Compiler* compiler, Node* node);
@@ -53,6 +54,7 @@ void compileExpression       (Compiler* compiler, Node* node);
 bool isSimpleOperand         (Compiler* compiler, Node* node);
 void compileSimpleOperand    (Compiler* compiler, Node* node, Reg64 result);
 bool tryTwoOperandSimple     (Compiler* compiler, Node* node);
+void compileTwoOperand       (Compiler* compiler, Node* node);
 void compileMath             (Compiler* compiler, Node* node);
 void compileCompare          (Compiler* compiler, Node* node);
 void compileMemAccess        (Compiler* compiler, Node* node);
@@ -556,31 +558,30 @@ void compileCondition(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    writeIndented(compiler, "; ==== if-else statement ====\n");
-
-    writeIndented(compiler, "; condition's expression\n");
-    compileExpression(compiler, node->left);             
+    Node*   condition = node->left;
+    Node*   body      = node->right;
 
     int32_t labelNum  = nextLabelNumber(compiler, LABEL_COND);
     Label   elseLabel = getExistingLabel(compiler, {0, CUR_FUNC->name, ".ELSE_",       labelNum});
     Label   endLabel  = getExistingLabel(compiler, {0, CUR_FUNC->name, ".END_IF_ELSE", labelNum});
-    
-    write_test_r64_r64(compiler, RAX, RAX);            
-    write_jz_rel32(compiler, elseLabel);
 
+    writeIndented(compiler, "; ==== if-else statement ====\n");
+    
+    writeIndented(compiler, "; condition's expression\n");
+    compileExitCondition(compiler, condition, elseLabel);
     writeNewLine(compiler);
 
     writeIndented(compiler, "; if true\n");
-    compileBlock(compiler, node->right->left);    
+    compileBlock(compiler, body->left);    
 
     write_jmp_rel32(compiler, endLabel);
     writeNewLine(compiler);
 
     writeLabel(compiler, elseLabel);
 
-    if (node->right->right != nullptr)
+    if (body->right != nullptr)
     {
-        compileBlock(compiler, node->right->right);
+        compileBlock(compiler, body->right);
     }
 
     writeLabel(compiler, endLabel);
@@ -591,6 +592,9 @@ void compileLoop(Compiler* compiler, Node* node)
     ASSERT_COMPILER(compiler);
     assert(node);
 
+    Node*   condition  = node->left;
+    Node*   body       = node->right;
+
     int32_t labelNum   = nextLabelNumber(compiler, LABEL_LOOP);
     Label   whileLabel = getExistingLabel(compiler, {0, CUR_FUNC->name, ".WHILE_",     labelNum});
     Label   endLabel   = getExistingLabel(compiler, {0, CUR_FUNC->name, ".END_WHILE_", labelNum});
@@ -599,18 +603,43 @@ void compileLoop(Compiler* compiler, Node* node)
     writeLabel(compiler, whileLabel);
 
     writeIndented(compiler, "; exit condition\n");
-    compileExpression(compiler, node->left);
-    
-    write_test_r64_r64(compiler, RAX, RAX);
-
-    write_jz_rel32(compiler, endLabel);
+    compileExitCondition(compiler, condition, endLabel);
     writeNewLine(compiler);
 
     writeIndented(compiler, "; loop body\n");
-    compileBlock(compiler, node->right);
+    compileBlock(compiler, body);
 
     write_jmp_rel32(compiler, whileLabel);
     writeLabel(compiler, endLabel);
+}
+
+void compileExitCondition(Compiler* compiler, Node* node, Label exitLabel)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    if (node->type != MATH_TYPE || !isComparisonOp(node->data.operation))
+    {
+        compileExpression(compiler, node);
+        write_test_r64_r64(compiler, RAX, RAX);
+        write_jz_rel32(compiler, exitLabel);
+    }
+    else 
+    {
+        compileTwoOperand(compiler, node);
+        write_cmp_r64_r64(compiler, RAX, RBX);
+
+        switch (node->data.operation)
+        {
+            case EQUAL_OP:         { write_jne_rel32 (compiler, exitLabel); break; }
+            case NOT_EQUAL_OP:     { write_je_rel32  (compiler, exitLabel); break; }
+            case LESS_EQUAL_OP:    { write_jg_rel32  (compiler, exitLabel); break; }
+            case GREATER_EQUAL_OP: { write_jl_rel32  (compiler, exitLabel); break; }
+            case LESS_OP:          { write_jge_rel32 (compiler, exitLabel); break; }
+            case GREATER_OP:       { write_jle_rel32 (compiler, exitLabel); break; }
+            default:               { assert(!"Comparison operation");       break; }
+        }
+    }
 }
 
 void compileAssignment(Compiler* compiler, Node* node)
@@ -637,9 +666,6 @@ void compileAssignmentVar(Compiler* compiler, Node* node)
     Mem64       varMemory = mem64BaseDisp(RBP, getVarOffset(CUR_FUNC, var)); 
 
     writeIndented(compiler, "; --- assignment to %s ---\n", var);
-
-    // if (optimizationNeeded && node->right->type == )
-
     writeIndented(compiler, "; evaluating expression\n");
     compileExpression(compiler, node->right);      
 
@@ -772,17 +798,12 @@ bool tryTwoOperandSimple(Compiler* compiler, Node* node)
     return true;
 }
 
-void compileMath(Compiler* compiler, Node* node)
+void compileTwoOperand(Compiler* compiler, Node* node)
 {
-    ASSERT_COMPILER(compiler);
-    assert(node);
-
-    MathOp operation = node->data.operation;
-
     if (!tryTwoOperandSimple(compiler, node))
     {
         compileExpression(compiler, node->left);
-        
+            
         writeNewLine(compiler);
         write_push_r64(compiler, RAX, "save rax");
         writeNewLine(compiler);
@@ -794,9 +815,17 @@ void compileMath(Compiler* compiler, Node* node)
 
         writeNewLine(compiler);
     }
+}
 
-    // FIXME: add isBinaryOperation function
-    if (operation > DIV_OP)
+void compileMath(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    MathOp operation = node->data.operation;
+    compileTwoOperand(compiler, node);
+
+    if (isComparisonOp(operation))
     {
         compileCompare(compiler, node);
         return;

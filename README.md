@@ -351,6 +351,8 @@ SCPU|Real CPU
 So that's about a **1,180 times performance boost** :rocket: :muscle:!
 
 ### Optimization
+>:warning: Warning: this section covers how I have (so far) optimized the compiler, so read it only if you are interested.
+
 First things first, there are many simple things one could do to improve code generation. To begin with at least something, I have written a simple [testing program](examples/performance/optimizations_test.txt) which I have based investigation :see_no_evil: on. What it does is it basically calculates *factorial of 12* and *22th Fibonacci number* 100,000 times (don't overthink these numbers, they are random).
 
 #### Two-operand based operations
@@ -448,4 +450,19 @@ This way an ugly code (*if rax > rbx then ... else ...*) such as this:
 turns into this:
 
 ```asm
+                ; ==== if-else statement ====
+                ; condition's expression
+                ...
+                cmp rax, rbx
+                jle .ELSE_0
+
+                ; if true
+                ...
+
+                jmp .END_IF_ELSE0
+.ELSE_0:
+                ...
+.END_IF_ELSE0:
 ```
+
+And the same works for loops!

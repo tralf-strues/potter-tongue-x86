@@ -24,6 +24,11 @@ const char* mathOpToString(MathOp operation)
     return "invalid operation";
 }
 
+bool isComparisonOp(MathOp operation)
+{
+    return operation > DIV_OP;
+}
+
 const char* keywordCodeToString(KeywordCode keywordCode)
 {
     if (keywordCode == INVALID_KEYWORD) { return nullptr; }

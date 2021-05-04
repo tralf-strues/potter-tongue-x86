@@ -24,8 +24,6 @@ alohomora
         - reverte 1
     colloportus
 
-    - flagrate-s 220202
-
     - reverte 0
 colloportus 
 

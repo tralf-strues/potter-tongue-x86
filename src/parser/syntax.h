@@ -20,8 +20,8 @@ enum MathOp
 };
 
 const char* mathOpToString(MathOp operation);
+bool        isComparisonOp(MathOp operation);
 //--------------------------------Math operations-------------------------------
-
 
 //------------------------------------Keywords----------------------------------
 enum KeywordCode
@@ -170,7 +170,6 @@ static const Keyword KEYWORDS[KEYWORDS_COUNT] =
 const char* keywordCodeToString (KeywordCode keywordCode);
 const char* getKeywordString    (KeywordCode keywordCode);
 //------------------------------------Keywords----------------------------------
-
 
 //-------------------------------Standard functions-----------------------------
 static const char   MAIN_FUNCTION_NAME[]              = "love";
