@@ -50,12 +50,15 @@ void compileArrayDeclaration (Compiler* compiler, Node* node);
 void compileReturn           (Compiler* compiler, Node* node);
 
 void compileExpression       (Compiler* compiler, Node* node);
+bool isSimpleOperand         (Compiler* compiler, Node* node);
+void compileSimpleOperand    (Compiler* compiler, Node* node, Reg64 result);
+bool tryTwoOperandSimple     (Compiler* compiler, Node* node);
 void compileMath             (Compiler* compiler, Node* node);
 void compileCompare          (Compiler* compiler, Node* node);
 void compileMemAccess        (Compiler* compiler, Node* node);
-void compileString           (Compiler* compiler, Node* node);
-void compileNumber           (Compiler* compiler, Node* node);
-void compileVar              (Compiler* compiler, Node* node);
+void compileString           (Compiler* compiler, Node* node, Reg64 result);
+void compileNumber           (Compiler* compiler, Node* node, Reg64 result);
+void compileVar              (Compiler* compiler, Node* node, Reg64 result);
 
 void compileParamList        (Compiler* compiler, Node* node, const Function* function);
 void compileCall             (Compiler* compiler, Node* node);
@@ -635,11 +638,12 @@ void compileAssignmentVar(Compiler* compiler, Node* node)
 
     writeIndented(compiler, "; --- assignment to %s ---\n", var);
 
+    // if (optimizationNeeded && node->right->type == )
+
     writeIndented(compiler, "; evaluating expression\n");
     compileExpression(compiler, node->right);      
 
     write_mov_m64_r64(compiler, varMemory, RAX); 
-    writeIndented(compiler, "; --- assignment to %s ---\n\n", var);
 }
 
 void compileAssignmentArray(Compiler* compiler, Node* node)
@@ -669,7 +673,6 @@ void compileAssignmentArray(Compiler* compiler, Node* node)
     arrayElementMemory.scale = 8;
     write_mov_m64_r64(compiler, arrayElementMemory, RAX); 
 
-    writeIndented(compiler, "; --- assignment to %s ---\n", var);
     writeNewLine(compiler);
 }
 
@@ -713,15 +716,60 @@ void compileExpression(Compiler* compiler, Node* node)
 
     switch (node->type)
     {
-        case MATH_TYPE:       { compileMath      (compiler, node); break; }
-        case MEM_ACCESS_TYPE: { compileMemAccess (compiler, node); break; }
-        case STRING_TYPE:     { compileString    (compiler, node); break; }
-        case NUMBER_TYPE:     { compileNumber    (compiler, node); break; }
-        case ID_TYPE:         { compileVar       (compiler, node); break; }
-        case CALL_TYPE:       { compileCall      (compiler, node); break; }
+        case MATH_TYPE:       { compileMath      (compiler, node);      break; }
+        case MEM_ACCESS_TYPE: { compileMemAccess (compiler, node);      break; }
+        case STRING_TYPE:     { compileString    (compiler, node, RAX); break; }
+        case NUMBER_TYPE:     { compileNumber    (compiler, node, RAX); break; }
+        case ID_TYPE:         { compileVar       (compiler, node, RAX); break; }
+        case CALL_TYPE:       { compileCall      (compiler, node);      break; }
 
-        default:              { assert(!"Valid node type");   break; }
+        default:              { assert(!"Valid node type");             break; }
     }
+}
+
+bool isSimpleOperand(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+    
+    return node->type == ID_TYPE     || 
+           node->type == NUMBER_TYPE || 
+           node->type == STRING_TYPE;
+}
+ 
+void compileSimpleOperand(Compiler* compiler, Node* node, Reg64 result)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    switch (node->type)
+    {
+        case STRING_TYPE: { compileString (compiler, node, result); break; }
+        case NUMBER_TYPE: { compileNumber (compiler, node, result); break; }
+        case ID_TYPE:     { compileVar    (compiler, node, result); break; }
+        default:          { assert        (!"Valid simple type");   break;}
+    }
+}
+
+bool tryTwoOperandSimple(Compiler* compiler, Node* node)
+{
+    ASSERT_COMPILER(compiler);
+    assert(node);
+
+    if (!isSimpleOperand(compiler, node->left) || !isSimpleOperand(compiler, node->right))
+    {
+        return false;
+    }
+
+    if (node->left->type == ID_TYPE && node->right->type == ID_TYPE)
+    {
+        return false;
+    }
+
+    compileSimpleOperand(compiler, node->left,  RAX);
+    compileSimpleOperand(compiler, node->right, RBX);
+
+    return true;
 }
 
 void compileMath(Compiler* compiler, Node* node)
@@ -731,18 +779,21 @@ void compileMath(Compiler* compiler, Node* node)
 
     MathOp operation = node->data.operation;
 
-    compileExpression(compiler, node->left);
-    
-    writeNewLine(compiler);
-    write_push_r64(compiler, RAX, "save rax");
-    writeNewLine(compiler);
+    if (!tryTwoOperandSimple(compiler, node))
+    {
+        compileExpression(compiler, node->left);
+        
+        writeNewLine(compiler);
+        write_push_r64(compiler, RAX, "save rax");
+        writeNewLine(compiler);
 
-    compileExpression(compiler, node->right);
+        compileExpression(compiler, node->right);
 
-    write_mov_r64_r64(compiler, RBX, RAX);
-    write_pop_r64(compiler, RAX, "restore rax");
+        write_mov_r64_r64(compiler, RBX, RAX);
+        write_pop_r64(compiler, RAX, "restore rax");
 
-    writeNewLine(compiler);
+        writeNewLine(compiler);
+    }
 
     // FIXME: add isBinaryOperation function
     if (operation > DIV_OP)
@@ -822,7 +873,7 @@ void compileMemAccess(Compiler* compiler, Node* node)
     write_mov_r64_m64(compiler, RAX, arrayElementMemory);    
 }
 
-void compileString(Compiler* compiler, Node* node)
+void compileString(Compiler* compiler, Node* node, Reg64 result)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -833,18 +884,18 @@ void compileString(Compiler* compiler, Node* node)
                                               nullptr, 
                                               "STR", 
                                               getStringNumber(compiler->table, string)});
-    write_mov_r64_imm64(compiler, RAX, label);
+    write_mov_r64_imm64(compiler, result, label);
 }
 
-void compileNumber(Compiler* compiler, Node* node)
+void compileNumber(Compiler* compiler, Node* node, Reg64 result)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
 
-    write_mov_r64_imm64(compiler, RAX, node->data.number);
+    write_mov_r64_imm64(compiler, result, node->data.number);
 }
 
-void compileVar(Compiler* compiler, Node* node)
+void compileVar(Compiler* compiler, Node* node, Reg64 result)
 {
     ASSERT_COMPILER(compiler);
     assert(node);
@@ -853,12 +904,12 @@ void compileVar(Compiler* compiler, Node* node)
     if (varOffset != -1)
     {
         Mem64 varMemory = mem64BaseDisp(RBP, varOffset); 
-        write_mov_r64_m64(compiler, RAX, varMemory);
+        write_mov_r64_m64(compiler, result, varMemory);
     }
     else
     {   
         Label label = getExistingLabel(compiler, {0, nullptr, node->data.id, -1});
-        write_mov_r64_imm64(compiler, RAX, label);
+        write_mov_r64_imm64(compiler, result, label);
     }
 }
 

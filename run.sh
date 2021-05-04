@@ -1,4 +1,3 @@
-make clean
 make
 
 cd bin

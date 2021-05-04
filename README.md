@@ -342,3 +342,101 @@ SCPU|Real CPU
 So that's about a **1,180 times performance boost** :rocket: :muscle:!
 
 ### Optimization
+First things first, there are many simple things one could do to improve code generation. To begin with at least something, I have written a simple [testing program](examples/performance/optimizations_test.txt) which I have based investigation :see_no_evil: on. What it does is it basically calculates *factorial of 12* and *22th Fibonacci number* 100,000 times (don't overthink these numbers, they are random).
+
+#### Two-operand based operations
+The way math operations `Expr1 (operation) Expr2` were compiled is the following:
+```
+1. Compile Expr1 (the result is in RAX)
+2. Push RAX      (push Expr1)
+3. Compile Expr2 (the result is in RAX)
+4. Mov RBX, RAX  (RBX = Expr2)
+5. Pop RAX       (RAX = Expr1)
+
+6. RAX (operation) RBX
+```
+
+Clearly there are many redundant steps here if `Expr1` and `Expr2` are "simple enough". For example, line
+```
+depulso fact protego legilimens n flipendo 1 protego
+```
+was translated as 
+
+```asm
+mov rax, [rbp + 16]
+
+push rax ; save rax
+
+mov rax, 2
+mov rbx, rax
+pop rax ; restore rax
+
+sub rax, rbx
+push rax
+
+call fib
+```
+
+whereas it could be translated to
+
+```asm
+mov rax, [rbp + 16]
+mov rbx, 2
+sub rax, rbx
+
+push rax
+call fib
+```
+
+The optimized version has fewer memory accessing instructions (by two, to be precise, - push and pop are got disposed of).
+
+#### Conditions
+Conditional statements are everywhere and the most common way they work is by getting a comparison (e.g. `a <= b`, or `a != b`). But they can also be passed a number. This is where it gets interesting... Let's look at how I did conditional statements before:
+```asm
+                ; rax = expression in the condition
+                ... 
+                
+                test rax, rax
+                jz .ELSE_0
+
+                ; if true
+                ...
+
+                jmp .END_IF_ELSE0
+.ELSE_0:
+                ; if false
+                ...
+.END_IF_ELSE0:
+```
+
+This is pretty much the only option if some expression is inside the condition. But this is rarely the case. If a comparison is located inside the condition, then we can simplify it quite drastically!
+
+This way an ugly code (*if rax > rbx then ... else ...*) such as this:
+```asm
+                ; ==== if-else statement ====
+                ; condition's expression
+                ...
+                cmp rax, rbx
+                jg .CMP_TRUE_0
+                xor rax, rax ; false
+                jmp .CMP_END_0
+.CMP_TRUE_0:
+                mov rax, 1 ; true
+.CMP_END_0:
+                test rax, rax
+                jz .ELSE_0
+
+                ; if true
+                ...
+
+                jmp .END_IF_ELSE0
+
+.ELSE_0:
+                ...
+.END_IF_ELSE0:
+```
+
+turns into this:
+
+```asm
+```

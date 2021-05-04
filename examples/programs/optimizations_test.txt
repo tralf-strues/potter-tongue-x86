@@ -1,0 +1,48 @@
+Godric's-Hollow Testing
+
+imperio fact n
+alohomora 
+    revelio protego legilimens n greater 1 protego
+    alohomora
+        - reverte legilimens n geminio depulso fact protego legilimens n flipendo 1 protego
+    colloportus
+    otherwise
+    alohomora
+        - reverte 1
+    colloportus
+colloportus 
+
+imperio fib n
+alohomora 
+    revelio protego legilimens n greater 1 protego
+    alohomora
+        - reverte depulso fib protego legilimens n flipendo 2 protego epoximise depulso fib protego legilimens n flipendo 1 protego
+    colloportus
+   
+    revelio protego legilimens n equal 1 protego
+    alohomora
+        - reverte 1
+    colloportus
+
+    - reverte 0
+colloportus 
+
+imperio love horcrux
+alohomora
+    - avenseguim iterations carpe-retractum 100000
+    - avenseguim factNumber carpe-retractum 12
+    - avenseguim fibNumber carpe-retractum  22
+
+    - avenseguim i carpe-retractum 0
+    while protego legilimens i less legilimens iterations protego
+    alohomora
+        - depulso fact protego legilimens factNumber protego
+        - depulso fib protego legilimens fibNumber protego
+
+        - i carpe-retractum legilimens i epoximise 1
+    colloportus
+
+    - reverte horcrux
+colloportus
+
+Privet-Drive 
