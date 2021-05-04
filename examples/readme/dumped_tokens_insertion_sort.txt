@@ -1,0 +1,2243 @@
+Token 0:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PROG_START_KEYWORD[0] Godric's-Hollow
+	1|Godric's-Hollow Hogwarts
+	  ^
+Token 1:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) Hogwarts
+	1|Godric's-Hollow Hogwarts
+	                  ^
+Token 2:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	1|Godric's-Hollow Hogwarts
+	                          ^
+Token 3:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SDECL_KEYWORD[42] Chapter
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	  ^
+Token 4:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	          ^
+Token 5:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskPrecision
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	            ^
+Token 6:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	                        ^
+Token 7:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	                              ^
+Token 8:
+	type = QUOTED_STRING_TOKEN_TYPE[0]
+	data = (quotedString) "Enter the precision of numbers: "
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	                               ^
+Token 9:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	                                                               ^
+Token 10:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	2|Chapter <<AskPrecision>>    "Enter the precision of numbers: "
+	                                                                ^
+Token 11:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SDECL_KEYWORD[42] Chapter
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	  ^
+Token 12:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	          ^
+Token 13:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskCount
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	            ^
+Token 14:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	                    ^
+Token 15:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	                              ^
+Token 16:
+	type = QUOTED_STRING_TOKEN_TYPE[0]
+	data = (quotedString) "Enter the number of elements in the array: "
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	                               ^
+Token 17:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	                                                                          ^
+Token 18:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	3|Chapter <<AskCount>>        "Enter the number of elements in the array: "
+	                                                                           ^
+Token 19:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SDECL_KEYWORD[42] Chapter
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	  ^
+Token 20:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	          ^
+Token 21:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskNumbers
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	            ^
+Token 22:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	                      ^
+Token 23:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	                              ^
+Token 24:
+	type = QUOTED_STRING_TOKEN_TYPE[0]
+	data = (quotedString) "Enter the elements of the array: "
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	                               ^
+Token 25:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	                                                                ^
+Token 26:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	4|Chapter <<AskNumbers>>      "Enter the elements of the array: "
+	                                                                 ^
+Token 27:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SDECL_KEYWORD[42] Chapter
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	  ^
+Token 28:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	          ^
+Token 29:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) SortingFinished
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	            ^
+Token 30:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	                           ^
+Token 31:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	                              ^
+Token 32:
+	type = QUOTED_STRING_TOKEN_TYPE[0]
+	data = (quotedString) "The array has been sorted with the total of "
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	                               ^
+Token 33:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	                                                                           ^
+Token 34:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	5|Chapter <<SortingFinished>> "The array has been sorted with the total of "
+	                                                                            ^
+Token 35:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	6|
+
+	   ^
+Token 36:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) FDECL_KEYWORD[4] imperio
+	7|imperio love horcrux
+	  ^
+Token 37:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) love
+	7|imperio love horcrux
+	          ^
+Token 38:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	7|imperio love horcrux
+	               ^
+Token 39:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	7|imperio love horcrux
+	                      ^
+Token 40:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	8|alohomora
+	  ^
+Token 41:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	8|alohomora
+	           ^
+Token 42:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	9|    - flagrate-s <<AskPrecision>>
+	      ^
+Token 43:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	9|    - flagrate-s <<AskPrecision>>
+	        ^
+Token 44:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	9|    - flagrate-s <<AskPrecision>>
+	                   ^
+Token 45:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskPrecision
+	9|    - flagrate-s <<AskPrecision>>
+	                     ^
+Token 46:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	9|    - flagrate-s <<AskPrecision>>
+	                                 ^
+Token 47:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	9|    - flagrate-s <<AskPrecision>>
+	                                   ^
+Token 48:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	10|    - avenseguim precision carpe-retractum accio
+	       ^
+Token 49:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	10|    - avenseguim precision carpe-retractum accio
+	         ^
+Token 50:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) precision
+	10|    - avenseguim precision carpe-retractum accio
+	                    ^
+Token 51:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	10|    - avenseguim precision carpe-retractum accio
+	                              ^
+Token 52:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SCAN_KEYWORD[23] accio
+	10|    - avenseguim precision carpe-retractum accio
+	                                              ^
+Token 53:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	10|    - avenseguim precision carpe-retractum accio
+	                                                   ^
+Token 54:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	11|    - flagrate-s circumrota
+	       ^
+Token 55:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	11|    - flagrate-s circumrota
+	         ^
+Token 56:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	11|    - flagrate-s circumrota
+	                    ^
+Token 57:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	11|    - flagrate-s circumrota
+	                              ^
+Token 58:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	12|
+
+	    ^
+Token 59:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	13|    (oNo) - flagrate-s "Precision is "
+	       ^
+Token 60:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	14|    (oNo) - flagrate   legilimens precision
+	       ^
+Token 61:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	15|    (oNo) - flagrate-s circumrota
+	       ^
+Token 62:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	16|
+
+	    ^
+Token 63:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	17|    - flagrate-s <<AskCount>>
+	       ^
+Token 64:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	17|    - flagrate-s <<AskCount>>
+	         ^
+Token 65:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	17|    - flagrate-s <<AskCount>>
+	                    ^
+Token 66:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskCount
+	17|    - flagrate-s <<AskCount>>
+	                      ^
+Token 67:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	17|    - flagrate-s <<AskCount>>
+	                              ^
+Token 68:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	17|    - flagrate-s <<AskCount>>
+	                                ^
+Token 69:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	18|    - avenseguim count carpe-retractum accio 
+	       ^
+Token 70:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	18|    - avenseguim count carpe-retractum accio 
+	         ^
+Token 71:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	18|    - avenseguim count carpe-retractum accio 
+	                    ^
+Token 72:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	18|    - avenseguim count carpe-retractum accio 
+	                          ^
+Token 73:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SCAN_KEYWORD[23] accio
+	18|    - avenseguim count carpe-retractum accio 
+	                                          ^
+Token 74:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	18|    - avenseguim count carpe-retractum accio 
+	                                                ^
+Token 75:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	19|    - flagrate-s circumrota
+	       ^
+Token 76:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	19|    - flagrate-s circumrota
+	         ^
+Token 77:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	19|    - flagrate-s circumrota
+	                    ^
+Token 78:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	19|    - flagrate-s circumrota
+	                              ^
+Token 79:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	20|
+
+	    ^
+Token 80:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	21|    (oNo) - flagrate-s "Count is "
+	       ^
+Token 81:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	22|    (oNo) - flagrate   legilimens count
+	       ^
+Token 82:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	23|    (oNo) - flagrate-s circumrota
+	       ^
+Token 83:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	24|
+
+	    ^
+Token 84:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	25|    - flagrate-s <<AskNumbers>>
+	       ^
+Token 85:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	25|    - flagrate-s <<AskNumbers>>
+	         ^
+Token 86:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	25|    - flagrate-s <<AskNumbers>>
+	                    ^
+Token 87:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) AskNumbers
+	25|    - flagrate-s <<AskNumbers>>
+	                      ^
+Token 88:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	25|    - flagrate-s <<AskNumbers>>
+	                                ^
+Token 89:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	25|    - flagrate-s <<AskNumbers>>
+	                                  ^
+Token 90:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	26|    - flagrate-s circumrota
+	       ^
+Token 91:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	26|    - flagrate-s circumrota
+	         ^
+Token 92:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	26|    - flagrate-s circumrota
+	                    ^
+Token 93:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	26|    - flagrate-s circumrota
+	                              ^
+Token 94:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	27|    - capacious array, legilimens count
+	       ^
+Token 95:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ADECL_KEYWORD[39] capacious
+	27|    - capacious array, legilimens count
+	         ^
+Token 96:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	27|    - capacious array, legilimens count
+	                   ^
+Token 97:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	27|    - capacious array, legilimens count
+	                        ^
+Token 98:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	27|    - capacious array, legilimens count
+	                          ^
+Token 99:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	27|    - capacious array, legilimens count
+	                                     ^
+Token 100:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	27|    - capacious array, legilimens count
+	                                          ^
+Token 101:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	       ^
+Token 102:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	         ^
+Token 103:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) curIndex
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	                    ^
+Token 104:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	                             ^
+Token 105:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	                                             ^
+Token 106:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	28|    - avenseguim curIndex carpe-retractum horcrux
+	                                                    ^
+Token 107:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	29|
+
+	    ^
+Token 108:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LOOP_KEYWORD[19] while
+	30|    while protego legilimens curIndex less legilimens count protego
+	       ^
+Token 109:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	30|    while protego legilimens curIndex less legilimens count protego
+	             ^
+Token 110:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	30|    while protego legilimens curIndex less legilimens count protego
+	                     ^
+Token 111:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) curIndex
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                ^
+Token 112:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LESS_KEYWORD[37] less
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                         ^
+Token 113:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                              ^
+Token 114:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                                         ^
+Token 115:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                                               ^
+Token 116:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	30|    while protego legilimens curIndex less legilimens count protego
+	                                                                      ^
+Token 117:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	31|    alohomora
+	       ^
+Token 118:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	31|    alohomora
+	                ^
+Token 119:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	           ^
+Token 120:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	             ^
+Token 121:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                  ^
+Token 122:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                   ^
+Token 123:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) curIndex
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                              ^
+Token 124:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                      ^
+Token 125:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                        ^
+Token 126:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) SCAN_FLOAT_KEYWORD[22] accio-bombarda
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                        ^
+Token 127:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                                       ^
+Token 128:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                                               ^
+Token 129:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) precision
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                                                          ^
+Token 130:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                                                                    ^
+Token 131:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	32|        - array~legilimens curIndex~ carpe-retractum accio-bombarda protego legilimens precision protego 
+	                                                                                                            ^
+Token 132:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	           ^
+Token 133:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) curIndex
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	             ^
+Token 134:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                      ^
+Token 135:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                      ^
+Token 136:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) curIndex
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                 ^
+Token 137:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                          ^
+Token 138:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                                    ^
+Token 139:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                                         ^
+Token 140:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                                                  ^
+Token 141:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	33|        - curIndex carpe-retractum legilimens curIndex epoximise tria flipendo duo
+	                                                                                     ^
+Token 142:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	34|    colloportus
+	       ^
+Token 143:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	34|    colloportus
+	                  ^
+Token 144:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	35|
+
+	    ^
+Token 145:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	       ^
+Token 146:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	         ^
+Token 147:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                    ^
+Token 148:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                          ^
+Token 149:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CALL_KEYWORD[10] depulso
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                          ^
+Token 150:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) insertionSort
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                  ^
+Token 151:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                ^
+Token 152:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                        ^
+Token 153:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                   ^
+Token 154:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                        ^
+Token 155:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                          ^
+Token 156:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                                     ^
+Token 157:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                                           ^
+Token 158:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	36|    - avenseguim swaps carpe-retractum depulso insertionSort protego legilimens array, legilimens count protego
+	                                                                                                                  ^
+Token 159:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	37|
+
+	    ^
+Token 160:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	38|    - flagrate-s circumrota
+	       ^
+Token 161:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	38|    - flagrate-s circumrota
+	         ^
+Token 162:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	38|    - flagrate-s circumrota
+	                    ^
+Token 163:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	38|    - flagrate-s circumrota
+	                              ^
+Token 164:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	39|    - flagrate-s <<SortingFinished>>
+	       ^
+Token 165:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	39|    - flagrate-s <<SortingFinished>>
+	         ^
+Token 166:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_OPEN_KEYWORD[43] <<
+	39|    - flagrate-s <<SortingFinished>>
+	                    ^
+Token 167:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) SortingFinished
+	39|    - flagrate-s <<SortingFinished>>
+	                      ^
+Token 168:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_ID_CLOSE_KEYWORD[44] >>
+	39|    - flagrate-s <<SortingFinished>>
+	                                     ^
+Token 169:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	39|    - flagrate-s <<SortingFinished>>
+	                                       ^
+Token 170:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	40|    - flagrate   legilimens swaps
+	       ^
+Token 171:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_KEYWORD[26] flagrate
+	40|    - flagrate   legilimens swaps
+	         ^
+Token 172:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	40|    - flagrate   legilimens swaps
+	                    ^
+Token 173:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	40|    - flagrate   legilimens swaps
+	                               ^
+Token 174:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	40|    - flagrate   legilimens swaps
+	                                    ^
+Token 175:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	41|    - flagrate-s " swaps:"
+	       ^
+Token 176:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	41|    - flagrate-s " swaps:"
+	         ^
+Token 177:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	41|    - flagrate-s " swaps:"
+	                    ^
+Token 178:
+	type = QUOTED_STRING_TOKEN_TYPE[0]
+	data = (quotedString) " swaps:"
+	41|    - flagrate-s " swaps:"
+	                     ^
+Token 179:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_QUOTE_KEYWORD[41] "
+	41|    - flagrate-s " swaps:"
+	                            ^
+Token 180:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	41|    - flagrate-s " swaps:"
+	                             ^
+Token 181:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	42|    - flagrate-s circumrota
+	       ^
+Token 182:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	42|    - flagrate-s circumrota
+	         ^
+Token 183:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	42|    - flagrate-s circumrota
+	                    ^
+Token 184:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	42|    - flagrate-s circumrota
+	                              ^
+Token 185:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	43|
+
+	    ^
+Token 186:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	       ^
+Token 187:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CALL_KEYWORD[10] depulso
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	         ^
+Token 188:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) printArray
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                 ^
+Token 189:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                            ^
+Token 190:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                    ^
+Token 191:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                               ^
+Token 192:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                    ^
+Token 193:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                      ^
+Token 194:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                 ^
+Token 195:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                      ^
+Token 196:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                        ^
+Token 197:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) precision
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                                   ^
+Token 198:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                                             ^
+Token 199:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	44|    - depulso printArray protego legilimens array, legilimens count, legilimens precision protego
+	                                                                                                    ^
+Token 200:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	45|
+
+	    ^
+Token 201:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	46|    - reverte horcrux
+	       ^
+Token 202:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) RETURN_KEYWORD[11] reverte
+	46|    - reverte horcrux
+	         ^
+Token 203:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	46|    - reverte horcrux
+	                 ^
+Token 204:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	46|    - reverte horcrux
+	                        ^
+Token 205:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	47|
+
+	    ^
+Token 206:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	48|colloportus    
+	   ^
+Token 207:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	48|colloportus    
+	                  ^
+Token 208:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	49|
+
+	    ^
+Token 209:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) FDECL_KEYWORD[4] imperio
+	50|imperio insertionSort array, count
+	   ^
+Token 210:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) insertionSort
+	50|imperio insertionSort array, count
+	           ^
+Token 211:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	50|imperio insertionSort array, count
+	                         ^
+Token 212:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	50|imperio insertionSort array, count
+	                              ^
+Token 213:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	50|imperio insertionSort array, count
+	                                ^
+Token 214:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	50|imperio insertionSort array, count
+	                                     ^
+Token 215:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	51|alohomora
+	   ^
+Token 216:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	51|alohomora
+	            ^
+Token 217:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	52|
+
+	    ^
+Token 218:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	53|    - avenseguim swaps carpe-retractum horcrux
+	       ^
+Token 219:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	53|    - avenseguim swaps carpe-retractum horcrux
+	         ^
+Token 220:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	53|    - avenseguim swaps carpe-retractum horcrux
+	                    ^
+Token 221:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	53|    - avenseguim swaps carpe-retractum horcrux
+	                          ^
+Token 222:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	53|    - avenseguim swaps carpe-retractum horcrux
+	                                          ^
+Token 223:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	53|    - avenseguim swaps carpe-retractum horcrux
+	                                                 ^
+Token 224:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	       ^
+Token 225:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	         ^
+Token 226:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                    ^
+Token 227:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                          ^
+Token 228:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                                          ^
+Token 229:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                                               ^
+Token 230:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                                                        ^
+Token 231:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	54|    - avenseguim i     carpe-retractum tria flipendo duo
+	                                                           ^
+Token 232:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	55|    
+	       ^
+Token 233:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LOOP_KEYWORD[19] while
+	56|    while protego legilimens i less legilimens count protego
+	       ^
+Token 234:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	56|    while protego legilimens i less legilimens count protego
+	             ^
+Token 235:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	56|    while protego legilimens i less legilimens count protego
+	                     ^
+Token 236:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	56|    while protego legilimens i less legilimens count protego
+	                                ^
+Token 237:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LESS_KEYWORD[37] less
+	56|    while protego legilimens i less legilimens count protego
+	                                  ^
+Token 238:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	56|    while protego legilimens i less legilimens count protego
+	                                       ^
+Token 239:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	56|    while protego legilimens i less legilimens count protego
+	                                                  ^
+Token 240:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	56|    while protego legilimens i less legilimens count protego
+	                                                        ^
+Token 241:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	56|    while protego legilimens i less legilimens count protego
+	                                                               ^
+Token 242:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	57|    alohomora
+	       ^
+Token 243:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	57|    alohomora
+	                ^
+Token 244:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	58|        
+	           ^
+Token 245:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	           ^
+Token 246:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	             ^
+Token 247:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) element
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                        ^
+Token 248:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                ^
+Token 249:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                ^
+Token 250:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                     ^
+Token 251:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                      ^
+Token 252:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                                 ^
+Token 253:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                                  ^
+Token 254:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	59|        - avenseguim element carpe-retractum array~legilimens i~
+	                                                                   ^
+Token 255:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	           ^
+Token 256:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	             ^
+Token 257:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                        ^
+Token 258:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                ^
+Token 259:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                ^
+Token 260:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                           ^
+Token 261:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                             ^
+Token 262:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                                      ^
+Token 263:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                                           ^
+Token 264:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                                                     ^
+Token 265:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	60|        - avenseguim j       carpe-retractum legilimens i flipendo tria epoximise duo
+	                                                                                        ^
+Token 266:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	61|
+
+	    ^
+Token 267:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LOOP_KEYWORD[19] while
+	62|        while protego legilimens j greater-equal horcrux protego
+	           ^
+Token 268:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	62|        while protego legilimens j greater-equal horcrux protego
+	                 ^
+Token 269:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	62|        while protego legilimens j greater-equal horcrux protego
+	                         ^
+Token 270:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	62|        while protego legilimens j greater-equal horcrux protego
+	                                    ^
+Token 271:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) GREATER_EQUAL_KEYWORD[36] greater-equal
+	62|        while protego legilimens j greater-equal horcrux protego
+	                                      ^
+Token 272:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	62|        while protego legilimens j greater-equal horcrux protego
+	                                                    ^
+Token 273:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	62|        while protego legilimens j greater-equal horcrux protego
+	                                                            ^
+Token 274:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	62|        while protego legilimens j greater-equal horcrux protego
+	                                                                   ^
+Token 275:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	63|        alohomora
+	           ^
+Token 276:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	63|        alohomora
+	                    ^
+Token 277:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	64|
+
+	    ^
+Token 278:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) IF_KEYWORD[17] revelio
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	               ^
+Token 279:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                       ^
+Token 280:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                               ^
+Token 281:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) element
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                          ^
+Token 282:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LESS_KEYWORD[37] less
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                  ^
+Token 283:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                       ^
+Token 284:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                            ^
+Token 285:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                             ^
+Token 286:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                                        ^
+Token 287:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                                         ^
+Token 288:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                                           ^
+Token 289:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	65|            revelio protego legilimens element less array~legilimens j~ protego
+	                                                                                  ^
+Token 290:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	66|            alohomora
+	               ^
+Token 291:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	66|            alohomora
+	                        ^
+Token 292:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                   ^
+Token 293:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                     ^
+Token 294:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                          ^
+Token 295:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                           ^
+Token 296:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                      ^
+Token 297:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                        ^
+Token 298:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                  ^
+Token 299:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                       ^
+Token 300:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                ^
+Token 301:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                   ^
+Token 302:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                     ^
+Token 303:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                     ^
+Token 304:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                          ^
+Token 305:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                           ^
+Token 306:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                                      ^
+Token 307:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                                       ^
+Token 308:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	67|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum array~legilimens j~
+	                                                                                                        ^
+Token 309:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                   ^
+Token 310:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                     ^
+Token 311:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                       ^
+Token 312:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                       ^
+Token 313:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                  ^
+Token 314:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                    ^
+Token 315:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                             ^
+Token 316:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                                  ^
+Token 317:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                                            ^
+Token 318:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	68|                - j carpe-retractum legilimens j flipendo tria epoximise duo
+	                                                                               ^
+Token 319:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	69|
+
+	    ^
+Token 320:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                   ^
+Token 321:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                     ^
+Token 322:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                           ^
+Token 323:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                           ^
+Token 324:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                      ^
+Token 325:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                            ^
+Token 326:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                                      ^
+Token 327:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                                           ^
+Token 328:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                                                    ^
+Token 329:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	70|                - swaps carpe-retractum legilimens swaps epoximise tria flipendo duo
+	                                                                                       ^
+Token 330:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                   ^
+Token 331:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                     ^
+Token 332:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                          ^
+Token 333:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                           ^
+Token 334:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                      ^
+Token 335:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                        ^
+Token 336:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                  ^
+Token 337:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                       ^
+Token 338:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                ^
+Token 339:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                   ^
+Token 340:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                     ^
+Token 341:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                                     ^
+Token 342:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) element
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                                                ^
+Token 343:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	71|                - array~legilimens j epoximise tria flipendo duo~ carpe-retractum legilimens element
+	                                                                                                       ^
+Token 344:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	72|            colloportus
+	               ^
+Token 345:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	72|            colloportus
+	                          ^
+Token 346:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ELSE_KEYWORD[18] otherwise
+	73|            otherwise
+	               ^
+Token 347:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	73|            otherwise
+	                        ^
+Token 348:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	74|            alohomora
+	               ^
+Token 349:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	74|            alohomora
+	                        ^
+Token 350:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                   ^
+Token 351:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) j
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                     ^
+Token 352:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                       ^
+Token 353:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                                       ^
+Token 354:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                                           ^
+Token 355:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                                                    ^
+Token 356:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	75|                - j carpe-retractum duo flipendo tria (oNo) to exit the loop
+	                                                         ^
+Token 357:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	76|            colloportus 
+	               ^
+Token 358:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	76|            colloportus 
+	                           ^
+Token 359:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	77|        colloportus
+	           ^
+Token 360:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	77|        colloportus
+	                      ^
+Token 361:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	78|
+
+	    ^
+Token 362:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	           ^
+Token 363:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	             ^
+Token 364:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	               ^
+Token 365:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                               ^
+Token 366:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                          ^
+Token 367:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                            ^
+Token 368:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                      ^
+Token 369:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                           ^
+Token 370:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                                    ^
+Token 371:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	79|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                                       ^
+Token 372:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	80|    colloportus
+	       ^
+Token 373:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	80|    colloportus
+	                  ^
+Token 374:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	81|
+
+	    ^
+Token 375:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	82|    - reverte legilimens swaps
+	       ^
+Token 376:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) RETURN_KEYWORD[11] reverte
+	82|    - reverte legilimens swaps
+	         ^
+Token 377:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	82|    - reverte legilimens swaps
+	                 ^
+Token 378:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) swaps
+	82|    - reverte legilimens swaps
+	                            ^
+Token 379:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	82|    - reverte legilimens swaps
+	                                 ^
+Token 380:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	83|colloportus
+	   ^
+Token 381:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	83|colloportus
+	              ^
+Token 382:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	84|
+
+	    ^
+Token 383:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) FDECL_KEYWORD[4] imperio
+	85|imperio horcrux printArray array, count, precision
+	   ^
+Token 384:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	85|imperio horcrux printArray array, count, precision
+	           ^
+Token 385:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) printArray
+	85|imperio horcrux printArray array, count, precision
+	                   ^
+Token 386:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	85|imperio horcrux printArray array, count, precision
+	                              ^
+Token 387:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	85|imperio horcrux printArray array, count, precision
+	                                   ^
+Token 388:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	85|imperio horcrux printArray array, count, precision
+	                                     ^
+Token 389:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	85|imperio horcrux printArray array, count, precision
+	                                          ^
+Token 390:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) precision
+	85|imperio horcrux printArray array, count, precision
+	                                            ^
+Token 391:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	85|imperio horcrux printArray array, count, precision
+	                                                     ^
+Token 392:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	86|alohomora
+	   ^
+Token 393:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	86|alohomora
+	            ^
+Token 394:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	87|    - avenseguim i carpe-retractum horcrux
+	       ^
+Token 395:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) VDECL_KEYWORD[5] avenseguim
+	87|    - avenseguim i carpe-retractum horcrux
+	         ^
+Token 396:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	87|    - avenseguim i carpe-retractum horcrux
+	                    ^
+Token 397:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	87|    - avenseguim i carpe-retractum horcrux
+	                      ^
+Token 398:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 0
+	87|    - avenseguim i carpe-retractum horcrux
+	                                      ^
+Token 399:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	87|    - avenseguim i carpe-retractum horcrux
+	                                             ^
+Token 400:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	88|
+
+	    ^
+Token 401:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LOOP_KEYWORD[19] while
+	89|    while protego legilimens i less legilimens count protego
+	       ^
+Token 402:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	89|    while protego legilimens i less legilimens count protego
+	             ^
+Token 403:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	89|    while protego legilimens i less legilimens count protego
+	                     ^
+Token 404:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	89|    while protego legilimens i less legilimens count protego
+	                                ^
+Token 405:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) LESS_KEYWORD[37] less
+	89|    while protego legilimens i less legilimens count protego
+	                                  ^
+Token 406:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	89|    while protego legilimens i less legilimens count protego
+	                                       ^
+Token 407:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) count
+	89|    while protego legilimens i less legilimens count protego
+	                                                  ^
+Token 408:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) BRACKET_KEYWORD[14] protego
+	89|    while protego legilimens i less legilimens count protego
+	                                                        ^
+Token 409:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	89|    while protego legilimens i less legilimens count protego
+	                                                               ^
+Token 410:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) OPEN_BRACE_KEYWORD[12] alohomora
+	90|    alohomora
+	       ^
+Token 411:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	90|    alohomora
+	                ^
+Token 412:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	           ^
+Token 413:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_FLOAT_KEYWORD[24] flagrate-bombarda
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	             ^
+Token 414:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                               ^
+Token 415:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) precision
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                          ^
+Token 416:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) COMMA_KEYWORD[15] ,
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                   ^
+Token 417:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) array
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                     ^
+Token 418:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                          ^
+Token 419:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                           ^
+Token 420:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                                      ^
+Token 421:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MEM_ACCESS_KEYWORD[40] ~
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                                       ^
+Token 422:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	91|        - flagrate-bombarda legilimens precision, array~legilimens i~
+	                                                                        ^
+Token 423:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	92|        - flagrate-s        circumrota
+	           ^
+Token 424:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PRINT_STRING_KEYWORD[25] flagrate-s
+	92|        - flagrate-s        circumrota
+	             ^
+Token 425:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) STR_NEW_LINE_KEYWORD[45] circumrota
+	92|        - flagrate-s        circumrota
+	                               ^
+Token 426:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	92|        - flagrate-s        circumrota
+	                                         ^
+Token 427:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	93|
+
+	    ^
+Token 428:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CMD_LINE_KEYWORD[16] -
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	           ^
+Token 429:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	             ^
+Token 430:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) ASSIGN_KEYWORD[20] carpe-retractum
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	               ^
+Token 431:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) DEREF_KEYWORD[21] legilimens
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                               ^
+Token 432:
+	type = ID_TOKEN_TYPE[3]
+	data = (id) i
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                          ^
+Token 433:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PLUS_KEYWORD[29] epoximise
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                            ^
+Token 434:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 3
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                      ^
+Token 435:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) MINUS_KEYWORD[30] flipendo
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                           ^
+Token 436:
+	type = NUMBER_TOKEN_TYPE[2]
+	data = (number) 2
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                                    ^
+Token 437:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	94|        - i carpe-retractum legilimens i epoximise tria flipendo duo
+	                                                                       ^
+Token 438:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	95|    colloportus
+	       ^
+Token 439:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	95|    colloportus
+	                  ^
+Token 440:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) CLOSE_BRACE_KEYWORD[13] colloportus
+	96|colloportus
+	   ^
+Token 441:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	96|colloportus
+	              ^
+Token 442:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) NEW_LINE_KEYWORD[2] \n
+	97|
+
+	    ^
+Token 443:
+	type = KEYWORD_TOKEN_TYPE[1]
+	data = (keywordCode) PROG_END_KEYWORD[1] Privet-Drive
+	98|Privet-Drive 
+	   ^
+

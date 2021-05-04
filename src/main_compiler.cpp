@@ -441,8 +441,6 @@ Error compile(const FlagManager* flagManager)
     Compiler compiler = {};
     construct(&compiler, tree, &table);
 
-    // printf("Before elf opening\n");
-
     FILE* elfFile = fopen(flagManager->output, "w");
     if (elfFile == nullptr)
     {

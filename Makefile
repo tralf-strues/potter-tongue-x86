@@ -22,7 +22,7 @@ endif
 
 # ------------------------------------Options-----------------------------------
 LXXFLAGS = 
-CXXFLAGS = -std=c++20 $(ModeCompilerOptions) $(AllWarnings)
+CXXFLAGS = -std=c++20 $(ModeCompilerOptions) $(NoWarnings)
 # ------------------------------------Options-----------------------------------
 
 # -------------------------------------Files------------------------------------

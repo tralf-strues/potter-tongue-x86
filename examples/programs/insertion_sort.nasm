@@ -392,6 +392,7 @@ love:
                 add rsp, 8
 
                 mov [rbp - 8], rax
+
                 ; --- calling flagrate_s() ---
                 ; param 1
                 mov rax, STR4
@@ -418,6 +419,7 @@ love:
                 add rsp, 8
 
                 mov [rbp - 16], rax
+
                 ; --- calling flagrate_s() ---
                 ; param 1
                 mov rax, STR4
@@ -455,6 +457,7 @@ love:
                 ; evaluating expression
                 mov rax, 0
                 mov [rbp - 32], rax
+
                 ; ==== while ====
 .WHILE_0:
                 ; exit condition
@@ -504,6 +507,7 @@ love:
 
                 sub rax, rbx
                 mov [rbp - 32], rax
+
                 jmp .WHILE_0
 .END_WHILE_0:
                 ; --- assignment to swaps ---
@@ -520,6 +524,7 @@ love:
                 add rsp, 16
 
                 mov [rbp - 40], rax
+
                 ; --- calling flagrate_s() ---
                 ; param 1
                 mov rax, STR4
@@ -599,12 +604,14 @@ insertionSort:
                 ; evaluating expression
                 mov rax, 0
                 mov [rbp - 8], rax
+
                 ; --- assignment to i ---
                 ; evaluating expression
                 mov rax, 3
                 mov rbx, 2
                 sub rax, rbx
                 mov [rbp - 16], rax
+
                 ; ==== while ====
 .WHILE_1:
                 ; exit condition
@@ -629,6 +636,7 @@ insertionSort:
                 pop rbx ; restore variable to rbx
                 mov rax, [rbx + rax * 8]
                 mov [rbp - 24], rax
+
                 ; --- assignment to j ---
                 ; evaluating expression
                 mov rax, [rbp - 16]
@@ -643,6 +651,7 @@ insertionSort:
 
                 add rax, rbx
                 mov [rbp - 32], rax
+
                 ; ==== while ====
 .WHILE_2:
                 ; exit condition
@@ -711,6 +720,7 @@ insertionSort:
 
                 add rax, rbx
                 mov [rbp - 32], rax
+
                 ; --- assignment to swaps ---
                 ; evaluating expression
                 mov rax, [rbp - 8]
@@ -725,6 +735,7 @@ insertionSort:
 
                 sub rax, rbx
                 mov [rbp - 8], rax
+
                 ; --- assignment to array ---
                 mov rax, [rbp + 16]
                 push rax ; save variable
@@ -755,6 +766,7 @@ insertionSort:
                 mov rbx, 3
                 sub rax, rbx
                 mov [rbp - 32], rax
+
 .END_IF_ELSE0:
                 jmp .WHILE_2
 .END_WHILE_2:
@@ -772,6 +784,7 @@ insertionSort:
 
                 sub rax, rbx
                 mov [rbp - 16], rax
+
                 jmp .WHILE_1
 .END_WHILE_1:
                 mov rax, [rbp - 8]
@@ -797,6 +810,7 @@ printArray:
                 ; evaluating expression
                 mov rax, 0
                 mov [rbp - 8], rax
+
                 ; ==== while ====
 .WHILE_3:
                 ; exit condition
@@ -852,6 +866,7 @@ printArray:
 
                 sub rax, rbx
                 mov [rbp - 8], rax
+
                 jmp .WHILE_3
 .END_WHILE_3:
 .RETURN:
